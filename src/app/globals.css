@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+:root {
+  --background: ...;
+  --foreground: ...;
+  /* остальные переменные */
+}
+
+.dark {
+  --background: ...;
+  --foreground: ...;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* остальные переменные маппим */
+}
+
+@layer base {
+  html {
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+  body {
+    @apply font-sans bg-background text-foreground min-h-screen antialiased;
+    padding: 1rem;
+  }
+}
