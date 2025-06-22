@@ -1,0 +1,17 @@
+{
+  "title": "Owner Profile Setup",
+  "photo": "Profile Photo",
+  "noPhoto": "No photo",
+  "fullName": "Full Name or Nickname",
+  "bio": "About You",
+  "city": "City",
+  "phone": "Phone",
+  "email": "Email",
+  "socials": "Social Links",
+  "instagram": "Instagram",
+  "telegram": "Telegram",
+  "save": "Save and continue",
+  "saving": "Saving...",
+  "successMessage": "Profile saved successfully!",
+  "errorMessage": "Error while saving profile"
+}

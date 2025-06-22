@@ -1,0 +1,17 @@
+{
+  "title": "Настройка профиля владельца",
+  "photo": "Фото профиля",
+  "noPhoto": "Нет фото",
+  "fullName": "Имя или ник",
+  "bio": "О себе",
+  "city": "Город",
+  "phone": "Телефон",
+  "email": "Email",
+  "socials": "Ссылки на соцсети",
+  "instagram": "Instagram",
+  "telegram": "Telegram",
+  "save": "Сохранить и продолжить",
+  "saving": "Сохраняем...",
+  "successMessage": "Профиль успешно сохранён!",
+  "errorMessage": "Ошибка при сохранении профиля"
+}

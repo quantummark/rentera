@@ -1,0 +1,46 @@
+{
+  "setup": {
+    "title": "Renter Profile Setup",
+    "photo": "Profile Photo",
+    "noPhoto": "No photo",
+    "name": "Name or nickname",
+    "bio": "About you / Who are you?",
+    "city": "City where you're looking for housing",
+    "budget": "Monthly Budget ($)",
+    "budgetRange": "From",
+    "to": "to",
+    "duration": "Preferred Rental Duration",
+    "durationPlaceholder": "Select rental duration",
+    "pets": "Pets",
+    "petsPlaceholder": "Do you have any pets?",
+    "kids": "Children",
+    "kidsPlaceholder": "Do you have children?",
+    "job": "Work / Occupation",
+    "save": "Save and continue",
+
+    "placeholder": {
+      "name": "Andrew, Marina, tech girl...",
+      "bio": "Working as a designer, quiet, no pets. Looking for a place for 6 months.",
+      "city": "Kyiv, Lviv, etc.",
+      "job": "Freelancer, student, developer..."
+    },
+
+    "options": {
+      "duration": {
+        "1-3": "1–3 months",
+        "3-6": "3–6 months",
+        "6+": "6+ months",
+        "12+": "One year or more"
+      },
+      "pets": {
+        "no": "No",
+        "cat": "Cat",
+        "dog": "Dog"
+      },
+      "kids": {
+        "no": "No",
+        "yes": "Yes"
+      }
+    }
+  }
+}

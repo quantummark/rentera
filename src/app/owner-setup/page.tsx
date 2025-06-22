@@ -1,134 +1,220 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/hooks/useAuth';
+
+import { db, storage } from '@/app/firebase/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export default function OwnerSetupPage() {
-  const [formData, setFormData] = useState<{
-    fullName: string;
-    phoneNumber: string;
-    profileImage: File | null;
-    bio: string;
-    experienceYears: string;
-    languages: string;
-    location: string;
-    servicesOffered: string;
-    availableProperties: string;
-    propertyTypes: string;
-    licenseNumber: string;
-    socialLinks: string;
-    paymentMethods: string;
-    termsAccepted: boolean;
-  }>({
+  const { t } = useTranslation();
+  const { user } = useAuth();
+
+  const [formData, setFormData] = useState({
     fullName: '',
-    phoneNumber: '',
-    profileImage: null,
     bio: '',
-    experienceYears: '',
-    languages: '',
-    location: '',
-    servicesOffered: '',
-    availableProperties: '',
-    propertyTypes: '',
-    licenseNumber: '',
-    socialLinks: '',
-    paymentMethods: '',
-    termsAccepted: false,
+    city: '',
+    contactPhone: '',
+    contactEmail: '',
+    socialLinks: {
+      instagram: '',
+      telegram: '',
+    },
   });
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    handleChange('profileImage', file);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    if (name in formData.socialLinks) {
+      setFormData((prev) => ({
+        ...prev,
+        socialLinks: { ...prev.socialLinks, [name]: value },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setIsSubmitting(true);
+
+    let profileImageUrl = '';
+
+    try {
+      // Загружаем фото, если есть
+      if (profileImage) {
+        const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
+        await uploadBytes(imageRef, profileImage);
+        profileImageUrl = await getDownloadURL(imageRef);
+      }
+
+      // Собираем данные
+      const ownerProfile = {
+        ...formData,
+        profileImageUrl: profileImageUrl || '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      // Сохраняем в Firestore
+      await setDoc(doc(db, 'owners', user.uid), ownerProfile);
+
+      alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
+    } catch (error) {
+      console.error('Ошибка при сохранении профиля:', error);
+      alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="min-h-screen px-4 py-10 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center">Профиль владельца</h1>
-      <form className="grid gap-6">
-        <div>
-          <Label>Полное имя</Label>
-          <Input value={formData.fullName} onChange={(e) => handleChange('fullName', e.target.value)} />
-        </div>
+    <div className="min-h-screen bg-background py-12 px-4 flex justify-center items-start">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-2xl space-y-8 bg-card p-8 rounded-2xl shadow-md border"
+      >
+        <h1 className="text-2xl font-bold text-center">
+          {t('ownerSetup.title', 'Настройка профиля владельца')}
+        </h1>
 
-        <div>
-          <Label>Телефон</Label>
-          <Input value={formData.phoneNumber} onChange={(e) => handleChange('phoneNumber', e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Фото профиля</Label>
-          <div className="flex items-center gap-4">
-            <Input type="file" accept="image/*" onChange={handleFileChange} />
-            {formData.profileImage && <span>{formData.profileImage.name}</span>}
+        {/* Фото профиля */}
+        <div className="flex flex-col items-center gap-4">
+          <Label>{t('ownerSetup.photo', 'Фото профиля')}</Label>
+          <div className="w-32 h-32 rounded-full overflow-hidden border shadow">
+            {previewUrl ? (
+              <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
+                {t('ownerSetup.noPhoto', 'Нет фото')}
+              </div>
+            )}
           </div>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="max-w-xs"
+          />
         </div>
 
-        <div>
-          <Label>О себе</Label>
-          <Textarea value={formData.bio} onChange={(e) => handleChange('bio', e.target.value)} />
+        <Separator />
+
+        <div className="space-y-2">
+          <Label htmlFor="fullName">{t('ownerSetup.fullName', 'Имя или ник')}</Label>
+          <Input
+            id="fullName"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            required
+            placeholder="Ирина Коваль"
+          />
         </div>
 
-        <div>
-          <Label>Опыт (лет)</Label>
-          <Input type="number" value={formData.experienceYears} onChange={(e) => handleChange('experienceYears', e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="bio">{t('ownerSetup.bio', 'О себе')}</Label>
+          <Textarea
+            id="bio"
+            name="bio"
+            value={formData.bio}
+            onChange={handleChange}
+            maxLength={300}
+            required
+            placeholder="Сдаю жильё более 5 лет, предпочитаю долгосрочных арендаторов..."
+          />
         </div>
 
-        <div>
-          <Label>Языки</Label>
-          <Input value={formData.languages} onChange={(e) => handleChange('languages', e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="city">{t('ownerSetup.city', 'Город')}</Label>
+          <Input
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            required
+            placeholder="Киев"
+          />
         </div>
 
-        <div>
-          <Label>Город / Страна</Label>
-          <Input value={formData.location} onChange={(e) => handleChange('location', e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="contactPhone">{t('ownerSetup.phone', 'Телефон')}</Label>
+          <Input
+            id="contactPhone"
+            name="contactPhone"
+            value={formData.contactPhone}
+            onChange={handleChange}
+            placeholder="+380501234567"
+          />
         </div>
 
-        <div>
-          <Label>Доп. услуги</Label>
-          <Textarea value={formData.servicesOffered} onChange={(e) => handleChange('servicesOffered', e.target.value)} placeholder="уборка, трансфер и т.п." />
+        <div className="space-y-2">
+          <Label htmlFor="contactEmail">Email</Label>
+          <Input
+            id="contactEmail"
+            name="contactEmail"
+            value={formData.contactEmail}
+            onChange={handleChange}
+            type="email"
+            placeholder="owner@email.com"
+          />
         </div>
 
-        <div>
-          <Label>Кол-во объектов</Label>
-          <Input type="number" value={formData.availableProperties} onChange={(e) => handleChange('availableProperties', e.target.value)} />
+        <div className="space-y-2">
+          <Label htmlFor="instagram">Instagram</Label>
+          <Input
+            id="instagram"
+            name="instagram"
+            value={formData.socialLinks.instagram}
+            onChange={handleChange}
+            placeholder="https://instagram.com/..."
+          />
         </div>
 
-        <div>
-          <Label>Типы объектов</Label>
-          <Input value={formData.propertyTypes} onChange={(e) => handleChange('propertyTypes', e.target.value)} placeholder="квартира, дом, апартаменты..." />
+        <div className="space-y-2">
+          <Label htmlFor="telegram">Telegram</Label>
+          <Input
+            id="telegram"
+            name="telegram"
+            value={formData.socialLinks.telegram}
+            onChange={handleChange}
+            placeholder="@owner"
+          />
         </div>
 
-        <div>
-          <Label>Лицензия</Label>
-          <Input value={formData.licenseNumber} onChange={(e) => handleChange('licenseNumber', e.target.value)} />
-        </div>
-
-        <div>
-          <Label>Соцсети</Label>
-          <Input value={formData.socialLinks} onChange={(e) => handleChange('socialLinks', e.target.value)} placeholder="Instagram, LinkedIn..." />
-        </div>
-
-        <div>
-          <Label>Методы оплаты</Label>
-          <Input value={formData.paymentMethods} onChange={(e) => handleChange('paymentMethods', e.target.value)} placeholder="карта, наличные..." />
-        </div>
-
-        <div className="flex items-center gap-4">
-          <Switch checked={formData.termsAccepted} onCheckedChange={(val) => handleChange('termsAccepted', val)} className="data-[state=checked]:bg-orange-500" />
-          <Label>Я принимаю условия платформы</Label>
-        </div>
-
-        <Button type="submit">Сохранить профиль</Button>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-base py-6 rounded-xl mt-4 transition"
+        >
+          {isSubmitting
+            ? t('ownerSetup.saving', 'Сохраняем...')
+            : t('ownerSetup.save', 'Сохранить и продолжить')}
+        </Button>
       </form>
     </div>
   );

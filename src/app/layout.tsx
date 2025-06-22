@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/app/components/providers/ThemeProvider";
+import type { Metadata } from "next"; // Импортируем типы для метаданных из Next.js
+import { Geist, Geist_Mono } from "next/font/google";   // Импортируем шрифты Geist и Geist Mono из Google Fonts
+import "./globals.css"; // Импортируем глобальные стили
+import { ThemeProvider } from "@/app/components/providers/ThemeProvider"; // Импортируем провайдер темы
+import ClientRoot from '@/app/components/ClientRoot'; // Импортируем i18n для локализации
 
 // Подключаем шрифты
 const geistSans = Geist({
@@ -35,10 +36,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
       <body className="bg-background text-foreground min-h-screen antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="container mx-auto py-8 px-4">{children}</div>
-        </ThemeProvider>
-      </body>
+  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ClientRoot>
+      <div className="container mx-auto py-8 px-4">{children}</div>
+    </ClientRoot>
+  </ThemeProvider>
+</body>
     </html>
   );
 }
