@@ -80,26 +80,25 @@ export default function PropertyInfoBlock({
 
   return (
     <div className="space-y-6">
-      {/* Базовые характеристики */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <InfoCard icon={<BedDouble className="w-5 h-5 text-orange-500" />} label={t('property.rooms', 'Комнат')} value={rooms} />
-        <InfoCard icon={<Ruler className="w-5 h-5 text-orange-500" />} label={t('property.area', 'Площадь')} value={`${area} м²`} />
-        <InfoCard icon={<Building2 className="w-5 h-5 text-orange-500" />} label={t('property.floor', 'Этаж')} value={floor} />
+        <p className="text-xl font-semibold text-foreground">
+          {t('property.amenities.title', 'Условия аренды')}
+        </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <InfoCard icon={<BedDouble className="w-6 h-6 text-orange-500" />} label={t('property.rooms', 'Комнат')} value={rooms} />
+        <InfoCard icon={<Ruler className="w-6 h-6 text-orange-500" />} label={t('property.area', 'Площадь')} value={`${area} м²`} />
+        <InfoCard icon={<Building2 className="w-6 h-6 text-orange-500" />} label={t('property.floor', 'Этаж')} value={floor} />
         <InfoCard icon={<span className="text-orange-500">🧳</span>} label={t('property.furnished', 'Меблирована')} value={furnished ? 'Да' : 'Нет'} />
-      </div>
-
-      {/* Условия */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <InfoCard icon={<span className="text-orange-500">🧸</span>} label={t('property.children', 'С детьми')} value={withChildren ? 'Разрешено' : 'Запрещено'} />
         <InfoCard icon={<span className="text-orange-500">🐾</span>} label={t('property.pets', 'С животными')} value={withPets ? 'Разрешено' : 'Запрещено'} />
-        <InfoCard icon={<CigaretteOff className="w-5 h-5 text-orange-500" />} label={t('property.smoking', 'Курение')} value={smokingAllowed ? 'Да' : 'Нет'} />
-        <InfoCard icon={<Clock className="w-5 h-5 text-orange-500" />} label={t('property.longTerm', 'Долгосрочная')} value={longTerm ? 'Да' : 'Нет'} />
+        <InfoCard icon={<CigaretteOff className="w-6 h-6 text-orange-500" />} label={t('property.smoking', 'Курение')} value={smokingAllowed ? 'Да' : 'Нет'} />
+        <InfoCard icon={<Clock className="w-6 h-6 text-orange-500" />} label={t('property.longTerm', 'Долгосрочная')} value={longTerm ? 'Да' : 'Нет'} />
       </div>
 
-      {/* Удобства */}
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-muted-foreground">{t('property.amenities.title', 'Удобства')}</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="space-y-6">
+        <p className="text-xl font-semibold text-foreground">
+          {t('property.amenities.title', 'Удобства')}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           {amenities.slice(0, showAll ? amenities.length : 4).map((key) => {
             const amenity = amenityMap[key];
             return (
@@ -127,11 +126,11 @@ export default function PropertyInfoBlock({
 
 function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string | number }) {
   return (
-    <div className="flex items-center gap-2">
-      {icon}
-      <div>
-        <p className="text-xs text-muted-foreground leading-none">{label}</p>
-        {value !== '' && <p className="text-sm font-medium">{value}</p>}
+    <div className="flex items-start gap-3 p-4 rounded-2xl border border-muted bg-background shadow-sm">
+      <div className="shrink-0">{icon}</div>
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium text-foreground leading-none">{label}</p>
+        {value !== '' && <p className="text-base text-muted-foreground">{value}</p>}
       </div>
     </div>
   );
