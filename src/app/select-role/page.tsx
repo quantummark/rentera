@@ -24,11 +24,16 @@ const roles = [
 
 type RoleKey = (typeof roles)[number]['key'];
 
+const roleRoutes: Record<RoleKey, string> = {
+  owner: '/owner-setup',
+  renter: '/renter-setup',
+};
+
 const SelectRolePage = () => {
   const router = useRouter();
 
   const handleSelect = (role: RoleKey) => {
-    router.push(`/profile/${role}`);
+    router.push(roleRoutes[role]);
   };
 
   return (

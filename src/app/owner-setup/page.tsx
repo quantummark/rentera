@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 import { db, storage } from '@/app/firebase/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -32,63 +33,85 @@ export default function OwnerSetupPage() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-
-    if (name in formData.socialLinks) {
-      setFormData((prev) => ({
-        ...prev,
-        socialLinks: { ...prev.socialLinks, [name]: value },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  e.preventDefault();
+  if (!user) return;
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    let profileImageUrl = '';
+  let profileImageUrl = '';
 
-    try {
-      // Загружаем фото, если есть
-      if (profileImage) {
-        const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
-        await uploadBytes(imageRef, profileImage);
-        profileImageUrl = await getDownloadURL(imageRef);
-      }
+  try {
+    // Загружаем фото, если есть
+    if (profileImage) {
+      const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
+      await uploadBytes(imageRef, profileImage);
+      profileImageUrl = await getDownloadURL(imageRef);
+    }
 
-      // Собираем данные
-      const ownerProfile = {
-        ...formData,
-        profileImageUrl: profileImageUrl || '',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+    // Собираем данные
+    const ownerProfile = {
+      ...formData,
+      profileImageUrl: profileImageUrl || '',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+
+      // Стартовые метрики (можно потом обновить из админки)
+      metrics: {
+        listingsCount: 0,
+        completedRentals: 0,
+        averageRating: 0,
+        responseTime: '~1 день',
+      },
+    };
+
+    // Сохраняем в Firestore (Единообразно: 'owner')
+    await setDoc(doc(db, 'owner', user.uid), ownerProfile);
+
+    // Уведомление и переход
+    alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
+    router.push('/profile/owner');
+  } catch (error) {
+    console.error('Ошибка при сохранении профиля:', error);
+    alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    // Handle nested socialLinks fields
+    if (name === 'instagram' || name === 'telegram') {
+      setFormData((prev) => ({
+        ...prev,
+        socialLinks: {
+          ...prev.socialLinks,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Handle profile image file input
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setProfileImage(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
       };
-
-      // Сохраняем в Firestore
-      await setDoc(doc(db, 'owners', user.uid), ownerProfile);
-
-      alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
-    } catch (error) {
-      console.error('Ошибка при сохранении профиля:', error);
-      alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
-    } finally {
-      setIsSubmitting(false);
+      reader.readAsDataURL(file);
+    } else {
+      setPreviewUrl(null);
     }
   };
 

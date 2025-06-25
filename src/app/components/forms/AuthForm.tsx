@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/app/firebase/firebase';
 
 type Language = 'ru' | 'en' | 'ua';
 
@@ -62,29 +64,67 @@ export const AuthForm = ({ language }: AuthFormProps) => {
   const t = texts[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    try {
-      if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+  e.preventDefault();
+  setError('');
+  try {
+    if (isRegistering) {
+      await createUserWithEmailAndPassword(auth, email, password);
+      // Только после регистрации — выбор роли
       router.push('/select-role');
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+    } else {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      router.push('/select-role');
-    } catch (err: any) {
-      setError(err.message);
+      // Проверка роли: owner или renter
+      const ownerDocRef = doc(db, 'owners', uid);
+      const renterDocRef = doc(db, 'renters', uid);
+
+      const [ownerSnap, renterSnap] = await Promise.all([
+        getDoc(ownerDocRef),
+        getDoc(renterDocRef),
+      ]);
+
+      if (ownerSnap.exists()) {
+        router.push('/profile/owner');
+      } else if (renterSnap.exists()) {
+        router.push('/profile/renter');
+      } else {
+        // fallback (если что-то пошло не так)
+        router.push('/select-role');
+      }
     }
-  };
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
+
+const handleGoogleSignIn = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const userCredential = await signInWithPopup(auth, provider);
+    const uid = userCredential.user.uid;
+
+    // Проверка роли
+    const ownerDocRef = doc(db, 'owners', uid);
+    const renterDocRef = doc(db, 'renters', uid);
+
+    const [ownerSnap, renterSnap] = await Promise.all([
+      getDoc(ownerDocRef),
+      getDoc(renterDocRef),
+    ]);
+
+    if (ownerSnap.exists()) {
+      router.push('/profile/owner');
+    } else if (renterSnap.exists()) {
+      router.push('/profile/renter');
+    } else {
+      // Если это новый пользователь
+      router.push('/select-role');
+    }
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
 
   return (
     <div className="bg-card p-6 rounded-xl shadow-md space-y-6 w-full">
