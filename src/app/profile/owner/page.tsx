@@ -7,10 +7,13 @@ import { db } from '@/app/firebase/firebase';
 import OwnerCard from '@/app/components/profile/OwnerCard';
 import OwnerListings from '@/app/components/profile/OwnerListings';
 import { Separator } from '@/components/ui/separator';
+import CommentSection from '@/app/components/comments/CommentSection';
 
 export default function OwnerProfilePage() {
   const [owner, setOwner] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uid, setUid] = useState<string | null>(null);
+  const [ownerId, setOwnerId] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -49,6 +52,14 @@ export default function OwnerProfilePage() {
       <OwnerCard owner={owner} />
       <Separator className="my-4" />
       <OwnerListings /> {/* 👈 Добавляем компонент */}
+      <Separator className="my-4" />
+      <CommentSection
+      userRole="owner"
+      currentUserId={uid ?? ''}
+      contextType="owner"
+      contextId={ownerId ?? ''}
+    />
+      {/* 👈 Передаем id владельца как contextId */}
     </div>
   );
   
