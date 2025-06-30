@@ -10,7 +10,7 @@ export function useAuth(options?: { redirectTo?: string; requireAuth?: boolean }
   const router = useRouter();
 
   const requireAuth = options?.requireAuth ?? true;
-  const redirectTo = options?.redirectTo ?? '/auth/login';
+  const redirectTo = options?.redirectTo ?? '/login';
 
   useEffect(() => {
     if (!loading && requireAuth && !user) {

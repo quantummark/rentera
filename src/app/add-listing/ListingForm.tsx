@@ -10,7 +10,10 @@ import StepPhotos from './steps/StepPhotos';
 import { cn } from '@/lib/utils';
 import { db } from '@/app/firebase/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { useAuth } from '@/app/context/AuthContext'; // если ты его уже подключил
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useAuth } from '@/hooks/useAuth'; // ✅ новый импорт
+import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
 
 const steps = [
   { component: StepBasicInfo },
@@ -21,8 +24,10 @@ const steps = [
 
 function ListingFormInner() {
   const [step, setStep] = useState(0);
-  const { updateData, ...formContext } = useListingForm();
-  const { user } = useAuth(); // uid для владельца
+  const { updateData, resetData, data } = useListingForm();
+  const { user, loading } = useAuth(); // ✅ хук из hooks/useAuth
+  const { t } = useTranslation();
+  const router = useRouter();
   const StepComponent = steps[step].component;
 
   const nextStep = () => {
@@ -34,25 +39,48 @@ function ListingFormInner() {
   };
 
   const handlePublish = async () => {
+    if (loading) {
+      alert(t('listing.authLoading', 'Подождите, идёт загрузка профиля...'));
+      return;
+    }
+
     if (!user) {
-      alert('Вы должны быть авторизованы, чтобы опубликовать объект.');
+      alert(t('listing.authRequired', 'Вы должны быть авторизованы, чтобы опубликовать объект.'));
       return;
     }
 
     try {
+      const storage = getStorage();
+      const uploadPromises = data.photos.map(async (file, idx) => {
+        const fileName = `${user.uid}/${Date.now()}_${idx}_${file.name}`;
+        const fileRef = storageRef(storage, `listings/${fileName}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        return url;
+      });
+
+      const photoURLs = await Promise.all(uploadPromises);
+
       const listingRef = collection(db, 'listings');
-      await addDoc(listingRef, {
-        ...formContext.data,
-        ownerId: user?.uid,
+      const docRef = await addDoc(listingRef, {
+        ...data,
+        photos: photoURLs,
+        ownerId: user.uid,
         createdAt: serverTimestamp(),
       });
-      alert('Объект успешно опубликован!');
-      // сброс или переход на страницу
+
+      alert(t('listing.successMessage', 'Объект успешно опубликован!'));
+      resetData();
+      router.push(`/listing/${docRef.id}`);
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
-      alert('Произошла ошибка при публикации. Попробуйте позже.');
+      alert(t('listing.errorMessage', 'Произошла ошибка при публикации. Попробуйте позже.'));
     }
   };
+
+  if (loading) {
+    return <div className="text-center py-10">Загрузка...</div>;
+  }
 
   return (
     <div className="min-h-screen px-4 md:px-10 py-10 bg-background flex flex-col gap-8 max-w-4xl mx-auto">
@@ -64,7 +92,7 @@ function ListingFormInner() {
         )}>
           {step > 0 ? (
             <Button variant="outline" onClick={prevStep}>
-              Назад
+              {t('listing.back', 'Назад')}
             </Button>
           ) : (
             <div />
@@ -72,11 +100,15 @@ function ListingFormInner() {
 
           {step < steps.length - 1 ? (
             <Button onClick={nextStep} className="bg-orange-500 hover:bg-orange-600 text-white">
-              Далее
+              {t('listing.next', 'Далее')}
             </Button>
           ) : (
-            <Button onClick={handlePublish} className="bg-green-600 hover:bg-green-700 text-white">
-              Опубликовать
+            <Button
+              onClick={handlePublish}
+              className="bg-green-600 hover:bg-green-700 text-white"
+              disabled={loading}
+            >
+              {t('listing.publish', 'Опубликовать')}
             </Button>
           )}
         </div>

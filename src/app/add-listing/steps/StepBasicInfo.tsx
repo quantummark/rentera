@@ -2,12 +2,20 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useListingForm } from '@/context/ListingFormContext';
 import { useTranslation } from 'react-i18next';
 
 export default function StepBasicInfo() {
   const { data, updateData } = useListingForm();
   const { t } = useTranslation();
+
+  const housingTypes = [
+    'Квартира',
+    'Дом',
+    'Комната',
+    'Апартаменты',
+  ];
 
   return (
     <div className="space-y-6">
@@ -58,12 +66,21 @@ export default function StepBasicInfo() {
 
         <div className="space-y-2">
           <Label htmlFor="type">{t('listing.basic.type', 'Тип жилья')}</Label>
-          <Input
-            id="type"
-            placeholder="Квартира / Дом / Комната / Апартаменты"
+          <Select
             value={data.type}
-            onChange={(e) => updateData({ type: e.target.value })}
-          />
+            onValueChange={(value) => updateData({ type: value })}
+          >
+            <SelectTrigger id="type">
+              <SelectValue placeholder={t('listing.basic.type', 'Тип жилья')} />
+            </SelectTrigger>
+            <SelectContent>
+              {housingTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -73,8 +90,8 @@ export default function StepBasicInfo() {
             type="number"
             min={1}
             placeholder="45"
-            value={data.area}
-            onChange={(e) => updateData({ area: parseInt(e.target.value) || 0 })}
+            value={data.area || ''}
+            onChange={(e) => updateData({ area: Number(e.target.value) || undefined })}
           />
         </div>
 
@@ -85,8 +102,8 @@ export default function StepBasicInfo() {
             type="number"
             min={1}
             placeholder="2"
-            value={data.rooms}
-            onChange={(e) => updateData({ rooms: parseInt(e.target.value) || 0 })}
+            value={data.rooms || ''}
+            onChange={(e) => updateData({ rooms: Number(e.target.value) || undefined })}
           />
         </div>
       </div>

@@ -63,7 +63,7 @@ export default function OwnerSetupPage() {
         listingsCount: 0,
         completedRentals: 0,
         averageRating: 0,
-        responseTime: '~1 день',
+        responseTime: '1 день',
       },
     };
 

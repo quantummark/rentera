@@ -1,11 +1,13 @@
 'use client';
 
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Building2, Home } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import React from 'react';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db, auth } from '@/app/firebase/firebase'; // ✅ импорт auth из firebase.ts
 
 const roles = [
   {
@@ -32,8 +34,27 @@ const roleRoutes: Record<RoleKey, string> = {
 const SelectRolePage = () => {
   const router = useRouter();
 
-  const handleSelect = (role: RoleKey) => {
-    router.push(roleRoutes[role]);
+  const handleSelect = async (role: RoleKey) => {
+    const user = auth.currentUser; // ✅ используем auth из центра
+
+    if (!user) {
+      alert('Вы должны быть авторизованы, чтобы выбрать роль.');
+      return;
+    }
+
+    const roleCollection = role === 'owner' ? 'owner' : 'renter';
+
+    try {
+      await setDoc(doc(db, roleCollection, user.uid), {
+        email: user.email,
+        createdAt: serverTimestamp(),
+      });
+
+      router.push(roleRoutes[role]);
+    } catch (error) {
+      console.error('Ошибка при сохранении роли:', error);
+      alert('Не удалось сохранить роль. Попробуйте позже.');
+    }
   };
 
   return (

@@ -55,6 +55,7 @@ const defaultData: ListingFormData = {
 type ListingFormContextType = {
   data: ListingFormData;
   updateData: (newData: Partial<ListingFormData>) => void;
+  resetData: () => void;
 };
 
 const ListingFormContext = createContext<ListingFormContextType | undefined>(undefined);
@@ -72,8 +73,12 @@ export const ListingFormProvider = ({ children }: { children: ReactNode }) => {
     setData((prev) => ({ ...prev, ...newData }));
   };
 
+  const resetData = () => {
+    setData(defaultData);
+  };
+
   return (
-    <ListingFormContext.Provider value={{ data, updateData,  }}>
+    <ListingFormContext.Provider value={{ data, updateData, resetData }}>
       {children}
     </ListingFormContext.Provider>
   );

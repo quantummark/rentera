@@ -10,7 +10,7 @@ export default function AddListingPage() {
           <h1 className="text-2xl font-semibold tracking-tight">
             Добавление нового объекта
           </h1>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          <p className="text-base text-muted-foreground max-w-xl mx-auto">
             Заполните информацию о вашем жилье. Это займёт всего пару минут и поможет арендатору лучше понять ваш объект.
           </p>
         </div>

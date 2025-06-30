@@ -76,8 +76,8 @@ export const AuthForm = ({ language }: AuthFormProps) => {
       const uid = userCredential.user.uid;
 
       // Проверка роли: owner или renter
-      const ownerDocRef = doc(db, 'owners', uid);
-      const renterDocRef = doc(db, 'renters', uid);
+      const ownerDocRef = doc(db, 'owner', uid);
+      const renterDocRef = doc(db, 'renter', uid);
 
       const [ownerSnap, renterSnap] = await Promise.all([
         getDoc(ownerDocRef),
@@ -105,8 +105,8 @@ const handleGoogleSignIn = async () => {
     const uid = userCredential.user.uid;
 
     // Проверка роли
-    const ownerDocRef = doc(db, 'owners', uid);
-    const renterDocRef = doc(db, 'renters', uid);
+    const ownerDocRef = doc(db, 'owner', uid);
+    const renterDocRef = doc(db, 'renter', uid);
 
     const [ownerSnap, renterSnap] = await Promise.all([
       getDoc(ownerDocRef),
