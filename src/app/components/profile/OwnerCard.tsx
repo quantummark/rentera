@@ -61,7 +61,7 @@ export default function OwnerCard({ owner }: OwnerCardProps) {
   };
 
   return (
-    <div className="max-w-6xl w-full mx-auto bg-card border border-muted rounded-2xl p-6 shadow-sm space-y-6 overflow-visible">
+    <div className="max-w-8xl w-full mx-auto bg-card border border-muted rounded-2xl p-6 shadow-sm space-y-6 overflow-visible">
       <div className="relative text-center">
         {isOwner && (
           <div className="absolute right-0 top-0">

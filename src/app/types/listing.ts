@@ -24,4 +24,12 @@ export interface Listing {
   photos: string[];
 
   createdAt: Date;
+
+  owner: {
+  avatar: string;
+  name: string;
+  rating: number;
+  id: string;
+}
+
 }

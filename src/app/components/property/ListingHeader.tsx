@@ -1,10 +1,11 @@
-// components/listing/ListingHeader.tsx
 'use client';
 
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { MapPin, Home, Ruler, DoorOpen, Mail, Calendar } from 'lucide-react';
+import { MapPin, Home, Ruler, DoorOpen, ShieldCheck, CreditCard, MessageCircle } from 'lucide-react';
+import ListingGallery from './ListingGallery'; // ✅ импорт галереи
+import MapLinkButton from './MapLinkButton'; // ✅ импорт кнопки карты
 
 interface ListingHeaderProps {
   listing: {
@@ -12,10 +13,16 @@ interface ListingHeaderProps {
     city: string;
     district: string;
     address: string;
-    type: string;
-    area: number;
-    rooms: number;
     photos: string[];
+    price: number;
+    useInsurance: boolean;
+    onlinePayment: boolean;
+    owner?: {
+      avatar: string;
+      name: string;
+      rating: number;
+      id: string;
+    };
   };
 }
 
@@ -24,51 +31,74 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
 
   return (
     <div className="flex flex-col md:flex-row gap-6 items-start">
-      {/* Карусель фото */}
-      <div className="w-full md:w-2/3 aspect-video relative rounded-2xl overflow-hidden shadow-md">
-        <Image
-          src={listing.photos?.[0] || '/placeholder.png'}
-          alt={listing.title}
-          fill
-          className="object-cover"
-        />
+      {/* Галерея слева */}
+      <div className="w-full md:w-2/3">
+        <ListingGallery photos={listing.photos} title={listing.title} />
       </div>
 
-      {/* Информация и кнопки */}
-      <div className="w-full md:w-1/3 bg-card p-4 rounded-2xl shadow-sm space-y-4">
-        <h1 className="text-xl font-semibold text-foreground leading-tight">
-          {listing.title}
-        </h1>
+      {/* Инфо-карточка */}
+      <div className="w-full md:w-1/3 bg-card p-5 border rounded-2xl shadow-sm space-y-4">
+        {/* Заголовок */}
+        <h1 className="text-2xl font-semibold text-foreground leading-tight">{listing.title}</h1>
 
-        <div className="text-sm text-muted-foreground space-y-1">
+        {/* Адрес */}
+        <div className="flex items-center gap-2 text-base text-muted-foreground">
+          <MapPin className="w-4 h-4 text-blue-500" />
+          <span>{listing.city}, {listing.district}, {listing.address}</span>
+        </div>
+
+        {/* Кнопка карты */}
+        <MapLinkButton address={listing.address} />
+
+        {/* Цена и условия */}
+        <div className="space-y-2 text-base text-foreground pt-4">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-blue-500" />
-            <span>
-              {listing.city}, {listing.district}, {listing.address}
-            </span>
+            <span className="text-xl font-bold text-primary">💰 {listing.price} ₴ / мес</span>
           </div>
           <div className="flex items-center gap-2">
-            <Home className="w-4 h-4 text-green-500" />
-            <span>{t('listing.type', 'Тип')}: {listing.type}</span>
+            <ShieldCheck className="w-4 h-4 text-green-600" />
+            {listing.useInsurance
+              ? t('listing.insuranceEnabled', 'Страхование включено')
+              : t('listing.insuranceDisabled', 'Без страхования')}
           </div>
           <div className="flex items-center gap-2">
-            <Ruler className="w-4 h-4 text-purple-500" />
-            <span>{t('listing.area', 'Площадь')}: {listing.area} м²</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <DoorOpen className="w-4 h-4 text-orange-500" />
-            <span>{t('listing.rooms', 'Комнат')}: {listing.rooms}</span>
+            <CreditCard className="w-4 h-4 text-indigo-500" />
+            {listing.onlinePayment
+              ? t('listing.onlinePaymentEnabled', 'Онлайн-оплата доступна')
+              : t('listing.onlinePaymentDisabled', 'Оплата только наличными')}
           </div>
         </div>
 
-        <div className="pt-3 flex flex-col gap-3">
-          <Button className="bg-primary text-white hover:bg-primary/90 rounded-full px-6 py-2">
+        {/* Кнопки */}
+        <div className="pt-4 flex flex-col gap-2">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full rounded-full">
             💰 {t('listing.rentOnline', 'Арендовать онлайн')}
           </Button>
-          <Button variant="outline" className="rounded-full px-6 py-2">
-            💬 {t('listing.contactOwner', 'Написать владельцу')}
+          <Button variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
+            <MessageCircle className="w-4 h-4" />
+            {t('listing.contactOwner', 'Написать владельцу')}
           </Button>
         </div>
+
+        {/* Владелец */}
+        {listing.owner && (
+          <div className="flex items-center gap-4 border-t pt-4">
+            <Image
+              src={listing.owner.avatar || '/avatar-placeholder.png'}
+              alt={listing.owner.name}
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
+            <div>
+              <p className="text-sm font-medium">{listing.owner.name}</p>
+              <p className="text-xs text-muted-foreground">⭐ {listing.owner.rating?.toFixed(1)} / 5</p>
+            </div>
+            <Button variant="ghost" className="ml-auto text-sm text-primary px-2">
+              {t('listing.viewOwnerProfile', 'Смотреть профиль')}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

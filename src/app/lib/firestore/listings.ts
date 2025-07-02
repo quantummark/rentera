@@ -27,6 +27,14 @@ export interface Listing {
   ownerId: string;
   createdAt: Date;
   updatedAt: Date;
+
+  owner: {
+  avatar: string;
+  name: string;
+  rating: number;
+  id: string;
+}
+
 }
 
 // Получить один объект по ID
@@ -52,24 +60,49 @@ export async function getListingById(listingId: string): Promise<Listing | null>
   }
 }
 
-// Получить все объекты пользователя
-export async function getListingsByOwner(ownerId: string): Promise<Listing[]> {
+// Получить все объекты пользователя с деталями владельца
+export async function getListingByIdWithOwner(listingId: string): Promise<Listing | null> {
   try {
-    const q = query(collection(db, 'listings'), where('ownerId', '==', ownerId));
-    const querySnap = await getDocs(q);
+    const ref = doc(db, 'listings', listingId);
+    const snap = await getDoc(ref);
 
-    return querySnap.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        availableFrom: data.availableFrom?.toDate?.() || null,
-        createdAt: data.createdAt.toDate(),
-        updatedAt: data.updatedAt.toDate(),
-      } as Listing;
-    });
+    if (!snap.exists()) return null;
+
+    const data = snap.data();
+
+    // Загружаем владельца по его ID
+    let owner = {
+      avatar: '',
+      name: '',
+      rating: 0,
+      id: data.ownerId || '',
+    };
+
+    if (data.ownerId) {
+      const ownerRef = doc(db, 'owner', data.ownerId);
+      const ownerSnap = await getDoc(ownerRef);
+
+      if (ownerSnap.exists()) {
+        const ownerData = ownerSnap.data();
+        owner = {
+          avatar: ownerData.profileImageUrl || '',
+          name: ownerData.fullName || '',
+          rating: ownerData.rating || 0,
+          id: data.ownerId,
+        };
+      }
+    }
+
+    return {
+      id: snap.id,
+      ...data,
+      availableFrom: data.availableFrom?.toDate?.() || null,
+      createdAt: data.createdAt.toDate(),
+      updatedAt: data.updatedAt.toDate(),
+      owner, // 👈 теперь поле owner всегда есть
+    } as Listing;
   } catch (error) {
-    console.error('Ошибка при загрузке объектов владельца:', error);
-    return [];
+    console.error('Ошибка при получении объекта:', error);
+    return null;
   }
 }

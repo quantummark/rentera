@@ -39,44 +39,60 @@ function ListingFormInner() {
   };
 
   const handlePublish = async () => {
-    if (loading) {
-      alert(t('listing.authLoading', 'Подождите, идёт загрузка профиля...'));
+  if (loading) {
+    alert(t('listing.authLoading', 'Подождите, идёт загрузка профиля...'));
+    return;
+  }
+
+  if (!user) {
+    alert(t('listing.authRequired', 'Вы должны быть авторизованы, чтобы опубликовать объект.'));
+    return;
+  }
+
+  try {
+    const storage = getStorage();
+    const uploadPromises = data.photos.map(async (file, idx) => {
+      const fileName = `${user.uid}/${Date.now()}_${idx}_${file.name}`;
+      const fileRef = storageRef(storage, `listings/${fileName}`);
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+      return url;
+    });
+
+    const photoURLs = await Promise.all(uploadPromises);
+
+    // 🧑‍💼 Подгружаем данные владельца из Firestore
+    const ownerRef = collection(db, 'owner');
+    const ownerDocSnap = await (await import('firebase/firestore')).getDoc(
+      (await import('firebase/firestore')).doc(ownerRef, user.uid)
+    );
+
+    if (!ownerDocSnap.exists()) {
+      alert('Профиль владельца не найден');
       return;
     }
 
-    if (!user) {
-      alert(t('listing.authRequired', 'Вы должны быть авторизованы, чтобы опубликовать объект.'));
-      return;
-    }
+    const ownerData = ownerDocSnap.data();
 
-    try {
-      const storage = getStorage();
-      const uploadPromises = data.photos.map(async (file, idx) => {
-        const fileName = `${user.uid}/${Date.now()}_${idx}_${file.name}`;
-        const fileRef = storageRef(storage, `listings/${fileName}`);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        return url;
-      });
+    const listingRef = collection(db, 'listings');
+    const docRef = await addDoc(listingRef, {
+      ...data,
+      photos: photoURLs,
+      ownerId: user.uid,
+      ownerName: ownerData.fullName || '',
+      ownerAvatar: ownerData.profileImageUrl || '',
+      ownerRating: ownerData.rating || 5,
+      createdAt: serverTimestamp(),
+    });
 
-      const photoURLs = await Promise.all(uploadPromises);
-
-      const listingRef = collection(db, 'listings');
-      const docRef = await addDoc(listingRef, {
-        ...data,
-        photos: photoURLs,
-        ownerId: user.uid,
-        createdAt: serverTimestamp(),
-      });
-
-      alert(t('listing.successMessage', 'Объект успешно опубликован!'));
-      resetData();
-      router.push(`/listing/${docRef.id}`);
-    } catch (error) {
-      console.error('Ошибка при сохранении:', error);
-      alert(t('listing.errorMessage', 'Произошла ошибка при публикации. Попробуйте позже.'));
-    }
-  };
+    alert(t('listing.successMessage', 'Объект успешно опубликован!'));
+    resetData();
+    router.push(`/listing/${docRef.id}`);
+  } catch (error) {
+    console.error('Ошибка при сохранении:', error);
+    alert(t('listing.errorMessage', 'Произошла ошибка при публикации. Попробуйте позже.'));
+  }
+};
 
   if (loading) {
     return <div className="text-center py-10">Загрузка...</div>;

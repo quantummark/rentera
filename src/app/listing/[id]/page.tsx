@@ -37,17 +37,16 @@ export default function ListingPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 space-y-10">
+    <div className="max-w-8xl mx-auto px-4 md:px-8 py-8 space-y-10">
       <ListingHeader listing={listing} />
-      <Separator />
+      <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <ListingRentConditions listing={listing} />
-      <Separator />
+      <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <ListingDescription listing={listing} />
-      <Separator />
+      <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <ListingAmenities listing={listing} />
-      <Separator />
+      <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <div>
-        <h2 className="text-xl font-semibold mb-4">{t('comments.title', 'Комментарии об объекте')}</h2>
         <CommentSection
           contextType="listings"
           contextId={listingId}

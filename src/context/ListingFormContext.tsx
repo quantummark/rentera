@@ -25,6 +25,12 @@ export type ListingFormData = {
   amenities: string[];
 
   photos: File[];
+
+  // 🧑‍💼 Данные владельца
+  ownerId: string;
+  ownerName: string;
+  ownerAvatar: string;
+  ownerRating: number;
 };
 
 const defaultData: ListingFormData = {
@@ -50,6 +56,12 @@ const defaultData: ListingFormData = {
   amenities: [],
 
   photos: [],
+
+  // 🧑‍💼 Владелец по умолчанию
+  ownerId: '',
+  ownerName: '',
+  ownerAvatar: '',
+  ownerRating: 5, // можно задать стартовый рейтинг
 };
 
 type ListingFormContextType = {
