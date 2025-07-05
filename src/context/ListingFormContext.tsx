@@ -31,6 +31,7 @@ export type ListingFormData = {
   ownerName: string;
   ownerAvatar: string;
   ownerRating: number;
+  ownerCity?: string; // Опционально, если нужно
 };
 
 const defaultData: ListingFormData = {
@@ -62,6 +63,7 @@ const defaultData: ListingFormData = {
   ownerName: '',
   ownerAvatar: '',
   ownerRating: 5, // можно задать стартовый рейтинг
+  ownerCity: '', // Опционально, если нужно
 };
 
 type ListingFormContextType = {

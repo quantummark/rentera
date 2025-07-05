@@ -37,7 +37,7 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
       </div>
 
       {/* Инфо-карточка */}
-      <div className="w-full md:w-1/3 bg-card p-5 border rounded-2xl shadow-sm space-y-4">
+      <div className="w-full md:w-1/3 bg-card p-5 border rounded-2xl shadow-sm space-y-3">
         {/* Заголовок */}
         <h1 className="text-2xl font-semibold text-foreground leading-tight">{listing.title}</h1>
 
@@ -48,6 +48,7 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
         </div>
 
         {/* Кнопка карты */}
+        
         <MapLinkButton address={listing.address} />
 
         {/* Цена и условия */}

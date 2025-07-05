@@ -76,14 +76,16 @@ function ListingFormInner() {
 
     const listingRef = collection(db, 'listings');
     const docRef = await addDoc(listingRef, {
-      ...data,
-      photos: photoURLs,
-      ownerId: user.uid,
-      ownerName: ownerData.fullName || '',
-      ownerAvatar: ownerData.profileImageUrl || '',
-      ownerRating: ownerData.rating || 5,
-      createdAt: serverTimestamp(),
-    });
+    ...data,
+    photos: photoURLs,
+    ownerId: user.uid,
+    ownerName: ownerData.fullName || '',
+    ownerAvatar: ownerData.profileImageUrl || '',
+    ownerRating: ownerData.metrics?.averageRating || 0,
+    ownerCity: ownerData.city || '',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
 
     alert(t('listing.successMessage', 'Объект успешно опубликован!'));
     resetData();

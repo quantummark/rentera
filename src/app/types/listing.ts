@@ -24,12 +24,14 @@ export interface Listing {
   photos: string[];
 
   createdAt: Date;
+  ownerId: string;
 
   owner: {
   avatar: string;
   name: string;
   rating: number;
   id: string;
-}
+  city?: string; // Опционально, если нужно
+  };
 
 }

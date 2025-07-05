@@ -14,6 +14,7 @@ import { db, storage } from '@/app/firebase/firebase';
 import { setDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '@/hooks/useAuth'; // предполагаем, что у тебя есть этот хук
+import { useRouter } from 'next/navigation';
 
 export default function RenterSetupPage() {
   const { t } = useTranslation();
@@ -29,7 +30,10 @@ export default function RenterSetupPage() {
   const [duration, setDuration] = useState('');
   const [pets, setPets] = useState('');
   const [kids, setKids] = useState('');
+  const [smoking, setSmoking] = useState('')
   const [job, setJob] = useState('');
+  const router = useRouter();
+  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,17 +44,20 @@ export default function RenterSetupPage() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      alert('Вы не авторизованы');
-      return;
-    }
+  e.preventDefault();
+
+  if (!user) {
+    alert('Вы не авторизованы');
+    return;
+  }
+
+  
 
     try {
       let photoURL = '';
 
       if (profileImage) {
-        const imageRef = ref(storage, `renterProfileImages/${user.uid}`);
+        const imageRef = ref(storage, `renterAvatars/${user.uid}`);
         await uploadBytes(imageRef, profileImage);
         photoURL = await getDownloadURL(imageRef);
       }
@@ -62,6 +69,7 @@ export default function RenterSetupPage() {
         rentDuration: duration,
         hasPets: pets,
         hasKids: kids,
+        smoking, 
         occupation: job,
         budgetFrom: budget[0],
         budgetTo: budget[1],
@@ -70,6 +78,8 @@ export default function RenterSetupPage() {
       });
 
       alert('Профиль успешно сохранён!');
+      // ✅ Уверены, что user есть — значит можно безопасно использовать user.uid
+      router.push(`/profile/renter/${user.uid}`);
     } catch (err) {
       console.error('Ошибка сохранения:', err);
       alert('Не удалось сохранить профиль.');
@@ -105,7 +115,13 @@ export default function RenterSetupPage() {
 
         <div className="space-y-2">
           <Label htmlFor="name">{t('renter.setup.name', 'Имя или ник')}</Label>
-          <Input id="name" placeholder="Андрей, Марина, айтишница..." required />
+          <Input
+  id="name"
+  placeholder="Андрей, Марина, айтишница..."
+  value={fullName}
+  onChange={(e) => setFullName(e.target.value)}
+  required
+/>
         </div>
 
         <div className="space-y-2">
@@ -122,7 +138,13 @@ export default function RenterSetupPage() {
 
         <div className="space-y-2">
           <Label htmlFor="city">{t('renter.setup.city', 'Город, где ищете жильё')}</Label>
-          <Input id="city" placeholder="Киев, Львов и т.д." required />
+          <Input
+  id="city"
+  placeholder="Киев, Львов и т.д."
+  value={city}
+  onChange={(e) => setCity(e.target.value)}
+  required
+/>
         </div>
 
         <div className="space-y-2">
@@ -180,6 +202,19 @@ export default function RenterSetupPage() {
             </SelectContent>
           </Select>
         </div>
+
+        <div className="space-y-2">
+  <Label>{t('renter.setup.smoking', 'Курение')}</Label>
+  <Select onValueChange={setSmoking}>
+    <SelectTrigger>
+      <SelectValue placeholder={t('renter.setup.smokingPlaceholder', 'Курите ли вы?')} />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="no">{t('renter.setup.smokingNo', 'Нет')}</SelectItem>
+      <SelectItem value="yes">{t('renter.setup.smokingYes', 'Да')}</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
 
         <div className="space-y-2">
           <Label htmlFor="job">{t('renter.setup.job', 'Работа / занятость')}</Label>

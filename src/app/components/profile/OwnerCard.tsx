@@ -1,11 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/app/firebase/firebase';
-import { Mail, MapPin, Phone, Instagram, Send, Info, LogOut, Trash2, Edit, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { signOut, getAuth } from 'firebase/auth';
+import { Mail, MapPin, Phone, Instagram, Send, LogOut, Trash2, Edit, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
@@ -33,23 +31,13 @@ interface OwnerProfile {
 
 interface OwnerCardProps {
   owner: OwnerProfile;
+  isCurrentUser: boolean; // 👈 Новый проп
 }
 
-export default function OwnerCard({ owner }: OwnerCardProps) {
+export default function OwnerCard({ owner, isCurrentUser }: OwnerCardProps) {
   const { t } = useTranslation();
-  const [uid, setUid] = useState<string | null>(null);
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) setUid(user.uid);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const isOwner = !!uid;
 
   const formatDate = (timestamp: any) => {
     if (!timestamp?.toDate) return '';
@@ -63,24 +51,28 @@ export default function OwnerCard({ owner }: OwnerCardProps) {
   return (
     <div className="max-w-8xl w-full mx-auto bg-card border border-muted rounded-2xl p-6 shadow-sm space-y-6 overflow-visible">
       <div className="relative text-center">
-        {isOwner && (
+        {isCurrentUser && (
           <div className="absolute right-0 top-0">
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => setShowMenu(!showMenu)}
-            >
+            <Button size="icon" variant="ghost" onClick={() => setShowMenu(!showMenu)}>
               <Settings className="relative z-50" />
             </Button>
             {showMenu && (
-              <div className="absolute right-0 mt-2 w-56 max-w-[90vw] bg-white shadow-md rounded-lg p-3 z-50 space-y-2">
-                <Button className="w-full justify-start text-sm" variant="ghost" onClick={() => router.push('/owner-edit')}>
+              <div className="absolute right-0 mt-2 w-56 max-w-[90vw] bg-white shadow-md rounded-lg p-3 z-50 space-y-2 dark:bg-background">
+                <Button
+                  className="w-full justify-start text-sm"
+                  variant="ghost"
+                  onClick={() => router.push('/owner-edit')}
+                >
                   <Edit className="w-4 h-4 mr-2" /> {t('ownerCard.editProfile', 'Редактировать профиль')}
                 </Button>
                 <Button className="w-full justify-start text-sm text-red-500" variant="ghost">
                   <Trash2 className="w-4 h-4 mr-2" /> {t('ownerCard.deleteProfile', 'Удалить профиль')}
                 </Button>
-                <Button className="w-full justify-start text-sm text-muted-foreground" variant="ghost" onClick={() => signOut(getAuth())}>
+                <Button
+                  className="w-full justify-start text-sm text-muted-foreground"
+                  variant="ghost"
+                  onClick={() => signOut(getAuth())}
+                >
                   <LogOut className="w-4 h-4 mr-2" /> {t('ownerCard.logout', 'Выйти')}
                 </Button>
               </div>
@@ -102,7 +94,9 @@ export default function OwnerCard({ owner }: OwnerCardProps) {
               {owner.fullName?.slice(0, 2).toUpperCase()}
             </div>
           )}
+
           <h2 className="text-2xl font-semibold text-foreground">{owner.fullName}</h2>
+
           <p className="text-gray-500 text-sm flex items-center gap-1">
             <MapPin className="w-4 h-4 text-orange-500" /> г. {owner.city} · с нами с {formatDate(owner.createdAt)}
           </p>
