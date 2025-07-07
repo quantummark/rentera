@@ -4,6 +4,7 @@ import "./globals.css"; // Импортируем глобальные стил�
 import { ThemeProvider } from "@/app/components/providers/ThemeProvider"; // Импортируем провайдер темы
 import ClientRoot from '@/app/components/ClientRoot'; // Импортируем i18n для локализации
 
+
 // Подключаем шрифты
 const geistSans = Geist({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
+    
       <body className="bg-background text-foreground min-h-screen antialiased">
   <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
     <ClientRoot>

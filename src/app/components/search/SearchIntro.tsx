@@ -10,7 +10,7 @@ export default function SearchIntro() {
     <div className={cn(
       'text-center text-white space-y-4 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'
     )}>
-      <h1 className="text-xl sm:text-4xl font-bold tracking-tight">
+      <h1 className="text-xl sm:text-3xl font-bold tracking-tight">
         {t('search.hero.title', 'Мы собрали самые передовые технологии, чтобы вы смогли арендовать жильё совершенно по-новому')}
       </h1>
       <p className="text-base sm:text-lg text-white/80">

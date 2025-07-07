@@ -20,9 +20,11 @@
 @layer base {
   html {
     font-family: var(--font-geist-sans), sans-serif;
+    scrollbar-gutter: stable;
   }
   body {
     @apply font-sans bg-background text-foreground min-h-screen antialiased;
     padding: 1rem;
+    overflow-y: scroll;
   }
 }
