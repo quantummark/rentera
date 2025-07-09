@@ -6,21 +6,10 @@ import SearchCard from './SearchCard';
 
 export default function Hero() {
   return (
-    <section className="relative 
-    w-full 
-    max-w-screen-xl
-    mx-auto
-    px-4 sm:px-6 md:px-8
-    min-h-[120vh] 
-    py-10 
-    flex 
-    items-center 
-    justify-center 
-    overflow-hidden 
-    rounded-2xl">
+    <section className="relative w-full mx-auto px-4 sm:px-6 md:px-8 min-h-[120vh] py-10 flex items-center justify-center overflow-hidden rounded-2xl">
       {/* Фоновое изображение */}
       <Image
-        src="/images/Hero.webp"
+        src="/images/Hero3.webp"
         alt="Hero Background"
         fill
         priority
