@@ -1,41 +1,55 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import BackgroundParticles from '@/app/components/BackgroundParticles';
 
 export default function Action() {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <section
       className={cn(
-        'mt-16 rounded-2xl py-10 px-6 md:px-12 text-center space-y-6 shadow-md transition-colors',
+        'relative mt-16 overflow-hidden rounded-2xl py-10 px-6 md:px-12 text-center space-y-6 shadow-md transition-colors',
         theme === 'dark' ? 'bg-zinc-900/50' : 'bg-orange-50'
       )}
     >
-      <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-        Сдаёте жильё? Или ищете аренду?
-      </h2>
+      {/* Particles — фон под контентом */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <BackgroundParticles />
+      </div>
 
-      <p className="text-muted-foreground text-lg">
-        Присоединяйтесь к Rentera — создайте профиль арендатора или зарегистрируйтесь как владелец.
-      </p>
+      {/* Контент — поверх */}
+      <div className="relative z-10 space-y-6">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+          {t('action.title', 'Сдаёте жильё? Или ищете аренду?')}
+        </h2>
 
-      <div className="flex flex-col md:flex-row justify-center gap-4">
-        <Link
-          href="/login"
-          className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-6 py-3 rounded-xl transition"
-        >
-          Создать профиль владельца
-        </Link>
+        <p className="text-muted-foreground text-lg">
+          {t(
+            'action.subtitle',
+            'Присоединяйтесь к Rentera — создайте профиль арендатора или зарегистрируйтесь как владелец.'
+          )}
+        </p>
 
-        <Link
-          href="/login"
-          className="bg-white dark:bg-zinc-800 border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
-        >
-          Создать профиль арендатора
-        </Link>
+        <div className="flex flex-col md:flex-row justify-center gap-4">
+          <Link
+            href="/login"
+            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-6 py-3 rounded-xl transition"
+          >
+            {t('action.owner', 'Создать профиль владельца')}
+          </Link>
+
+          <Link
+            href="/login"
+            className=" dark:bg-zinc-800 border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
+          >
+            {t('action.renter', 'Создать профиль арендатора')}
+          </Link>
+        </div>
       </div>
     </section>
   );

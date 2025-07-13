@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";   // Импортируе�
 import "./globals.css"; // Импортируем глобальные стили
 import { ThemeProvider } from "@/app/components/providers/ThemeProvider"; // Импортируем провайдер темы
 import ClientRoot from '@/app/components/ClientRoot'; // Импортируем i18n для локализации
+import Header from '@/app/components/layout/Header';
+import Footer from '@/app/components/layout/Footer';
 
 
 // Подключаем шрифты
@@ -36,11 +38,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
-    
+      
       <body className="bg-background text-foreground min-h-screen antialiased">
   <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
     <ClientRoot>
+      <Header />
+      {/* Контейнер для контента */}
+      {/* Здесь будет отображаться основной контент страницы */}
+      {/* Используем класс container для центрирования контента */}
+      {/* Можно добавить дополнительные стили для отступов и выравнивания */}
       <div className="container mx-auto py-8 px-4">{children}</div>
+      <Footer />
     </ClientRoot>
   </ThemeProvider>
 </body>

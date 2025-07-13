@@ -14,11 +14,11 @@ import { db, storage } from '@/app/firebase/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-export default function OwnerSetupPage() {
-  const { t } = useTranslation();
-  const { user } = useAuth();
+   export default function OwnerSetupPage() {
+   const { t } = useTranslation();
+   const { user } = useAuth();
 
-  const [formData, setFormData] = useState({
+   const [formData, setFormData] = useState({
     fullName: '',
     bio: '',
     city: '',
@@ -28,60 +28,68 @@ export default function OwnerSetupPage() {
       instagram: '',
       telegram: '',
     },
-  });
+   });
 
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
+   const [profileImage, setProfileImage] = useState<File | null>(null);
+   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  if (!user) return;
+   const handleSubmit = async (e: React.FormEvent) => {
+   e.preventDefault();
+   if (!user) return;
 
-  setIsSubmitting(true);
+   setIsSubmitting(true);
 
-  let profileImageUrl = '';
+   let profileImageUrl = '';
 
-  try {
-    // Загружаем фото, если есть
-    if (profileImage) {
-      const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
-      await uploadBytes(imageRef, profileImage);
-      profileImageUrl = await getDownloadURL(imageRef);
-    }
-
-    // Собираем данные
-    const ownerProfile = {
-      ...formData,
-      profileImageUrl: profileImageUrl || '',
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-
-      // Стартовые метрики (можно потом обновить из админки)
-      metrics: {
-        listingsCount: 0,
-        completedRentals: 0,
-        averageRating: 0,
-        responseTime: '1 день',
-      },
-    };
-
-    // Сохраняем в Firestore (Единообразно: 'owner')
-    await setDoc(doc(db, 'owner', user.uid), ownerProfile);
-
-    // Уведомление и переход
-    alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
-    router.push('/profile/owner');
-  } catch (error) {
-    console.error('Ошибка при сохранении профиля:', error);
-    alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
-  } finally {
-    setIsSubmitting(false);
+   try {
+  // Загружаем фото, если есть
+  if (profileImage) {
+    const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
+    await uploadBytes(imageRef, profileImage);
+    profileImageUrl = await getDownloadURL(imageRef);
   }
-};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Собираем данные
+  const ownerProfile = {
+    ...formData,
+    profileImageUrl: profileImageUrl || '',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+
+    // Стартовые метрики (можно потом обновить из админки)
+    metrics: {
+      listingsCount: 0,
+      completedRentals: 0,
+      averageRating: 0,
+      responseTime: '30 минут',
+    },
+  };
+
+  // Сохраняем в Firestore
+  await setDoc(doc(db, 'owner', user.uid), ownerProfile);
+
+  // Уведомление и переход
+  alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
+
+  if (user?.uid) {
+    router.push(`/profile/owner/${user.uid}`);
+  } else {
+    console.error('UID пользователя не найден');
+    alert(t('ownerSetup.errorMessage', 'Ошибка: не удалось определить пользователя.'));
+  }
+} catch (error) {
+  console.error('Ошибка при сохранении профиля:', error);
+  alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
+} finally {
+  setIsSubmitting(false);
+}
+
+    
+   };
+
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     // Handle nested socialLinks fields
     if (name === 'instagram' || name === 'telegram') {

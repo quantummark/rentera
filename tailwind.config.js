@@ -1,11 +1,12 @@
 import { fontFamily } from 'tailwindcss/defaultTheme'
 
+
 export default {
   darkMode: ['class'],
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './components/ui/**/*.{js,ts,jsx,tsx}', // добавляем shadcn ui
+    './components/ui/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     container: {
@@ -25,7 +26,7 @@ export default {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         primary: { DEFAULT: 'var(--primary)', foreground: 'var(--primary-foreground)' },
-        // ... остальные цвета
+        // ... другие цвета
       },
     },
   },
@@ -33,4 +34,4 @@ export default {
     require('@tailwindcss/forms'),
     require('tw-animate-css'),
   ],
-};
+}

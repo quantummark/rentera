@@ -10,7 +10,7 @@ export function useAuth(options?: { redirectTo?: string; requireAuth?: boolean }
   const [user, loading, error] = useAuthState(auth) as [User | null, boolean, Error | undefined];
   const router = useRouter();
 
-  const requireAuth = options?.requireAuth ?? true;
+  const requireAuth = options?.requireAuth ?? false; // ✅ По умолчанию не требует авторизации
   const redirectTo = options?.redirectTo ?? '/login';
 
   useEffect(() => {
@@ -21,3 +21,5 @@ export function useAuth(options?: { redirectTo?: string; requireAuth?: boolean }
 
   return { user, loading, error };
 }
+// This hook provides authentication state management using Firebase.
+// It handles user state, loading status, and redirects based on authentication requirements.

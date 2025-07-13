@@ -19,7 +19,7 @@ interface RenterProfile {
   occupation: string;
   budgetFrom: number;
   budgetTo: number;
-  photoURL?: string;
+  profileImageUrl?: string;
   createdAt: any;
 }
 
@@ -52,9 +52,9 @@ export default function RenterCard({ renter }: RenterCardProps) {
     <div className="max-w-8xl w-full mx-auto bg-card border border-muted rounded-2xl p-6 shadow-sm space-y-6 overflow-visible">
       <div className="text-center">
         <div className="flex flex-col items-center space-y-3">
-          {renter.photoURL ? (
+          {renter.profileImageUrl ? (
             <Image
-              src={renter.photoURL}
+              src={renter.profileImageUrl}
               alt={renter.fullName}
               width={120}
               height={120}

@@ -73,7 +73,7 @@ export default function RenterSetupPage() {
         occupation: job,
         budgetFrom: budget[0],
         budgetTo: budget[1],
-        photoURL,
+        profileImageUrl: photoURL || '', // если нет фото, сохраняем пустую строку
         createdAt: new Date(),
       });
 

@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
+import { useUserTypeWithProfile } from '@/hooks/useUserType';
 
 type Language = 'ru' | 'en' | 'ua';
 
@@ -30,6 +31,7 @@ export const AuthForm = ({ language }: AuthFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [userType, profile, loading] = useUserTypeWithProfile();
 
   const texts = {
     ru: {
@@ -69,27 +71,25 @@ export const AuthForm = ({ language }: AuthFormProps) => {
   try {
     if (isRegistering) {
       await createUserWithEmailAndPassword(auth, email, password);
-      // Только после регистрации — выбор роли
       router.push('/select-role');
     } else {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
 
-      // Проверка роли: owner или renter
       const ownerDocRef = doc(db, 'owner', uid);
       const renterDocRef = doc(db, 'renter', uid);
-
       const [ownerSnap, renterSnap] = await Promise.all([
         getDoc(ownerDocRef),
         getDoc(renterDocRef),
       ]);
 
       if (ownerSnap.exists()) {
-        router.push('/profile/owner');
+        
+        router.push(`/profile/owner/${uid}`);
       } else if (renterSnap.exists()) {
-        router.push('/profile/renter');
+        
+        router.push(`/profile/renter/${uid}`);
       } else {
-        // fallback (если что-то пошло не так)
         router.push('/select-role');
       }
     }
@@ -104,21 +104,20 @@ const handleGoogleSignIn = async () => {
     const userCredential = await signInWithPopup(auth, provider);
     const uid = userCredential.user.uid;
 
-    // Проверка роли
     const ownerDocRef = doc(db, 'owner', uid);
     const renterDocRef = doc(db, 'renter', uid);
-
     const [ownerSnap, renterSnap] = await Promise.all([
       getDoc(ownerDocRef),
       getDoc(renterDocRef),
     ]);
 
     if (ownerSnap.exists()) {
-      router.push('/profile/owner');
+      
+      router.push(`/profile/owner/${uid}`);
     } else if (renterSnap.exists()) {
-      router.push('/profile/renter');
+      
+      router.push(`/profile/renter/${uid}`);
     } else {
-      // Если это новый пользователь
       router.push('/select-role');
     }
   } catch (err: any) {

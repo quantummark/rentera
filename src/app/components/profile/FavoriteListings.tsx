@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Heart, HeartPlus } from 'lucide-react';
+import { Heart, FolderHeart } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { db } from '@/app/firebase/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -47,7 +47,7 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
     <div className="space-y-6">
       {favorites.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-3">
-          <HeartPlus className="w-12 h-12 text-muted-foreground" />
+          <FolderHeart className="w-12 h-12 text-muted-foreground" />
           <p className="text-base">{t('favorites.empty', 'У вас ещё нет избранных. Находите то, что нравится — нажимайте ❤️, и они появятся здесь.')}</p>
         </div>
       ) : (
