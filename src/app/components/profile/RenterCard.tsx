@@ -7,8 +7,10 @@ import {
   Wallet, Cigarette
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 interface RenterProfile {
+  uid: string;
   fullName: string;
   bio?: string;
   city: string;
@@ -25,11 +27,15 @@ interface RenterProfile {
 
 interface RenterCardProps {
   renter: RenterProfile;
+  renterId: string; // 🔑 ID текущего пользователя
   isCurrentUser?: boolean;
 }
 
 export default function RenterCard({ renter }: RenterCardProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const renterId = renter?.uid || ''; // 🔑 ID арендатора профиля
+  
 
   const formatDate = (timestamp: any) => {
     if (!timestamp?.toDate) return '';
@@ -93,10 +99,13 @@ export default function RenterCard({ renter }: RenterCardProps) {
 </div>
 
           <div className="pt-6">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium">
-              💬 {t('renterCard.contact', 'Написать')}
-            </Button>
-          </div>
+    <Button
+      onClick={() => router.push(`/messages?userId=${renter.uid}`)}
+      className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium"
+    >
+      💬 {t('renterCard.contact', 'Написать')}
+    </Button>
+  </div>
         </div>
       </div>
     </div>

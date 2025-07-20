@@ -15,6 +15,8 @@ export default function RenterProfilePage() {
   const { user } = useAuth();
   const [renter, setRenter] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const renterId = user?.uid || ''; // 🔑 ID текущего пользовател
+  
 
   useEffect(() => {
     const fetchRenter = async () => {
@@ -47,17 +49,17 @@ export default function RenterProfilePage() {
     return <p className="text-center mt-10 text-destructive">Профиль не найден</p>;
   }
 
+  const isrenter = user?.uid === id; // Проверяем, является ли текущий пользователь владельцем профиля
+
   return (
     <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-      <RenterCard renter={renter} isCurrentUser={user?.uid === id} />
+      <RenterCard renter={renter} renterId={renterId} isCurrentUser={isrenter} />
       <Separator className="my-4" />
       <FavoriteListings userId={String(id)} />
       <Separator className="my-4" />
       <CommentSection
-        userRole="renter"
-        currentUserId={user?.uid ?? ''}
         contextType="renter"
-        contextId={String(id)}
+        contextId={typeof id === 'string' ? id : ''}
       />
     </div>
   );

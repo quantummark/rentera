@@ -16,6 +16,7 @@ export default function OwnerProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const { id } = useParams(); // ⚡ получаем [id] из URL
   const [owner, setOwner] = useState<any | null>(null);
+  const ownerId = user?.uid || ''; // 🔑 ID текущего пользователя
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,13 +56,11 @@ export default function OwnerProfilePage() {
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-      <OwnerCard owner={owner} isCurrentUser={isOwner} />
+      <OwnerCard owner={owner} ownerId={ownerId} isCurrentUser={isOwner} />
       <Separator className="my-4" />
       <OwnerListings ownerId={typeof id === 'string' ? id : ''} currentUserId={user?.uid ?? ''} />
       <Separator className="my-4" />
       <CommentSection
-        userRole="owner"
-        currentUserId={user?.uid ?? ''}
         contextType="owner"
         contextId={typeof id === 'string' ? id : ''}
       />

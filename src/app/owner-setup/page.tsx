@@ -53,6 +53,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
   // Собираем данные
   const ownerProfile = {
+    uid: user.uid,
     ...formData,
     profileImageUrl: profileImageUrl || '',
     createdAt: serverTimestamp(),

@@ -63,6 +63,7 @@ export default function RenterSetupPage() {
       }
 
       await setDoc(doc(db, 'renter', user.uid), {
+        uid: user.uid,
         fullName,
         bio,
         city,

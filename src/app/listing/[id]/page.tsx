@@ -50,8 +50,6 @@ export default function ListingPage() {
         <CommentSection
           contextType="listings"
           contextId={listingId}
-          currentUserId={user?.uid ?? ''}
-          userRole="renter" // ❗ можно сделать динамически, если надо
         />
       </div>
     </div>
