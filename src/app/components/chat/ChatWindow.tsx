@@ -1,85 +1,131 @@
+// components/chat/ChatWindow.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/app/firebase/firebase';
 import { Loader2, MessageCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+
+import { ChatHeader } from '@/app/components/chat/ChatHeader';
+import { MessageBubble } from '@/app/components/chat/MessageBubble';
+import { ChatInput } from '@/app/components/chat/ChatInput';
 
 interface ChatWindowProps {
   otherUserId: string;
   otherUserName?: string;
   otherUserAvatar?: string;
+  onBack?: () => void; // функция для возврата назад
 }
 
-export default function ChatWindow({ otherUserId, otherUserName = 'Пользователь', otherUserAvatar }: ChatWindowProps) {
+export function ChatWindow({
+  otherUserId,
+  otherUserName = 'Пользователь',
+  otherUserAvatar,
+  onBack,
+}: ChatWindowProps) {
+  const router = useRouter();
   const { user } = useAuth();
-  const [newMessage, setNewMessage] = useState('');
   const { messages, isLoading, sendMessage } = useChat(user?.uid || '', otherUserId);
 
+  const [profile, setProfile] = useState<any>(null);
+  const [newMsg, setNewMsg] = useState('');
+  const [sending, setSending] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 1) загрузка профиля
+  useEffect(() => {
+    const load = async () => {
+      const rRef = doc(db, 'renter', otherUserId);
+      const rs = await getDoc(rRef);
+      if (rs.exists()) setProfile(rs.data());
+      else {
+        const oRef = doc(db, 'owner', otherUserId);
+        const os = await getDoc(oRef);
+        if (os.exists()) setProfile(os.data());
+      }
+    };
+    if (otherUserId) load();
+  }, [otherUserId]);
+
+  // 2) автоскролл
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [messages]);
+
+  // 3) отправка
   const handleSend = async () => {
-    if (!newMessage.trim()) return;
-    await sendMessage(newMessage.trim());
-    setNewMessage('');
+    if (!newMsg.trim() || sending) return;
+    setSending(true);
+    await sendMessage(newMsg.trim());
+    setNewMsg('');
+    setSending(false);
   };
 
-  return (
-    <div className="flex flex-col h-[500px] md:h-[600px] w-full max-w-2xl border border-muted rounded-2xl overflow-hidden shadow-md bg-card">
-      {/* Верхняя панель */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-muted bg-muted/30">
-        <Avatar className="w-8 h-8">
-          <AvatarImage src={otherUserAvatar || ''} alt={otherUserName} />
-          <AvatarFallback>{otherUserName[0]}</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-semibold text-foreground">{otherUserName}</span>
-      </div>
+  // 4) удаление чата
+  const handleDeleteChat = async () => {
+    const chatId = [user?.uid, otherUserId].sort().join('_');
+    await deleteDoc(doc(db, 'chats', chatId));
+    router.back();
+  };
 
-      {/* Сообщения */}
-      <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+  
+
+  return (
+    <div className="flex flex-col h-[80vh] md:h-full w-full max-w-2xl mx-auto">
+      {/* Header в карточке */}
+      <ChatHeader
+        otherUserName={profile?.fullName || otherUserName}
+        otherUserAvatar={profile?.profileImageUrl || otherUserAvatar}
+        isOnline={!!profile?.isOnline}
+        onBack={onBack} 
+        onDeleteChat={handleDeleteChat}
+        onBlockUser={() => alert('Заблокировано')}
+        onReportUser={() => alert('Жалоба отправлена')}
+      />
+
+      {/* Body */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-transparent">
         {isLoading ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            <Loader2 className="animate-spin w-6 h-6" />
+          <div className="flex h-full items-center justify-center text-muted-foreground">
+            <Loader2 className="animate-spin w-8 h-8" />
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
             <MessageCircle className="w-8 h-8 opacity-30" />
-            <p>У вас пока что нет ни одного сообщения</p>
+            <p>У вас пока нет сообщений</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn(
-                'max-w-[80%] px-4 py-2 rounded-2xl text-sm shadow-md whitespace-pre-line break-words',
-                msg.senderId === user?.uid
-                  ? 'ml-auto bg-orange-500 text-white rounded-br-none'
-                  : 'mr-auto bg-muted rounded-bl-none'
-              )}
-            >
-              {msg.text}
-            </div>
-          ))
+          messages.map((msg, idx) => {
+            const isMine = msg.senderId === user?.uid;
+            const next = messages[idx + 1];
+            const showAvatar = !next || next.senderId !== msg.senderId;
+
+            return (
+              <MessageBubble
+                key={msg.id}
+                text={msg.text}
+                isMine={isMine}
+                showAvatar={showAvatar}
+                avatarUrl={isMine ? user?.photoURL || '' : profile?.profileImageUrl || ''}
+                userName={isMine ? user?.displayName || '' : profile?.fullName || ''}
+              />
+            );
+          })
         )}
       </div>
 
-      {/* Ввод сообщения */}
-      <div className="border-t border-muted bg-muted/20 p-3">
-        <div className="flex items-center gap-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Напишите сообщение..."
-            className="flex-1 text-sm"
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          />
-          <Button onClick={handleSend} disabled={!newMessage.trim()} className="bg-orange-500 hover:bg-orange-600 text-white">
-            Отправить
-          </Button>
-        </div>
-      </div>
+      {/* Input в карточке */}
+      <ChatInput
+        message={newMsg}
+        onMessageChange={setNewMsg}
+        onSend={handleSend}
+        onAttachFile={(f) => console.log('attach file', f)}
+        onAttachPhoto={(f) => console.log('attach photo', f)}
+        isSending={sending}
+      />
     </div>
   );
 }

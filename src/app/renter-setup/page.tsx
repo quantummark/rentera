@@ -1,237 +1,257 @@
 'use client';
 
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { UploadCloud } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { db, storage } from '@/app/firebase/firebase';
-import { setDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { useAuth } from '@/hooks/useAuth'; // предполагаем, что у тебя есть этот хук
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import { db, storage } from '@/app/firebase/firebase';
+import { useAuth } from '@/hooks/useAuth';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+
+// 1) Схема валидации и типы
+const renterSchema = z.object({
+  fullName: z.string().min(1, 'Введите имя'),
+  bio: z.string().max(300, 'Не более 300 символов'),
+  city: z.string().min(1, 'Введите город'),
+  rentDuration: z.enum(['1-3', '3-6', '6+', '12+']),
+  hasPets: z.enum(['no', 'cat', 'dog']),
+  hasKids: z.enum(['yes', 'no']),
+  smoking: z.enum(['yes', 'no']),
+  occupation: z.string().min(1, 'Укажите род деятельности'),
+  budgetFrom: z.number().min(100),
+  budgetTo: z.number().max(1500),
+  profileImage: z
+    .instanceof(File)
+    .optional()
+    .refine(f => !f || f.size <= 2e6, 'Макс. 2 МБ'),
+});
+
+type RenterFormValues = z.infer<typeof renterSchema>;
 
 export default function RenterSetupPage() {
-  const { t } = useTranslation();
-  const { user } = useAuth(); // получаем пользователя
-
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [budget, setBudget] = useState<[number, number]>([300, 500]);
-
-  const [fullName, setFullName] = useState('');
-  const [bio, setBio] = useState('');
-  const [city, setCity] = useState('');
-  const [duration, setDuration] = useState('');
-  const [pets, setPets] = useState('');
-  const [kids, setKids] = useState('');
-  const [smoking, setSmoking] = useState('')
-  const [job, setJob] = useState('');
+  const { user } = useAuth();
   const router = useRouter();
-  
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
+  // 2) Настраиваем React Hook Form с Zod
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<RenterFormValues>({
+    resolver: zodResolver(renterSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      fullName: '',
+      bio: '',
+      city: '',
+      rentDuration: '1-3',
+      hasPets: 'no',
+      hasKids: 'no',
+      smoking: 'no',
+      occupation: '',
+      budgetFrom: 300,
+      budgetTo: 500,
+      profileImage: undefined,
+    },
+  });
+
+  // Вспомогательный хук для загрузки картинки + записи профиля
+  const saveProfile = async (data: RenterFormValues) => {
+    if (!user) throw new Error('Неавторизован');
+
+    // 3) Загрузка фото, если есть
+    let profileImageUrl = '';
+    if (data.profileImage) {
+      const imageRef = ref(storage, `renterAvatars/${user.uid}`);
+      await uploadBytes(imageRef, data.profileImage);
+      profileImageUrl = await getDownloadURL(imageRef);
     }
+
+    // 4) Сохранение в Firestore с серверным таймстампом
+    await setDoc(doc(db, 'renter', user.uid), {
+      uid: user.uid,
+      fullName: data.fullName,
+      bio: data.bio,
+      city: data.city,
+      rentDuration: data.rentDuration,
+      hasPets: data.hasPets,
+      hasKids: data.hasKids,
+      smoking: data.smoking,
+      occupation: data.occupation,
+      budgetFrom: data.budgetFrom,
+      budgetTo: data.budgetTo,
+      profileImageUrl,
+      createdAt: serverTimestamp(),
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  if (!user) {
-    alert('Вы не авторизованы');
-    return;
-  }
-
-  
-
+  // 5) Обработчик сабмита
+  const onSubmit = async (data: RenterFormValues) => {
+    setGlobalError(null);
     try {
-      let photoURL = '';
-
-      if (profileImage) {
-        const imageRef = ref(storage, `renterAvatars/${user.uid}`);
-        await uploadBytes(imageRef, profileImage);
-        photoURL = await getDownloadURL(imageRef);
-      }
-
-      await setDoc(doc(db, 'renter', user.uid), {
-        uid: user.uid,
-        fullName,
-        bio,
-        city,
-        rentDuration: duration,
-        hasPets: pets,
-        hasKids: kids,
-        smoking, 
-        occupation: job,
-        budgetFrom: budget[0],
-        budgetTo: budget[1],
-        profileImageUrl: photoURL || '', // если нет фото, сохраняем пустую строку
-        createdAt: new Date(),
-      });
-
-      alert('Профиль успешно сохранён!');
-      // ✅ Уверены, что user есть — значит можно безопасно использовать user.uid
-      router.push(`/profile/renter/${user.uid}`);
-    } catch (err) {
-      console.error('Ошибка сохранения:', err);
-      alert('Не удалось сохранить профиль.');
+      await saveProfile(data);
+      router.push(`/profile/renter/${user?.uid}`);
+    } catch (err: any) {
+      console.error(err);
+      setGlobalError(err.message || 'Не удалось сохранить профиль');
     }
   };
+
+  // Для прелоада превью
+  const file = watch('profileImage') as File | undefined;
+  const previewUrl = file ? URL.createObjectURL(file) : null;
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4 flex justify-center items-start">
+    <div className="min-h-screen bg-background py-12 px-4 flex justify-center">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-2xl space-y-8 bg-card p-8 rounded-2xl shadow-md border"
       >
         <h1 className="text-2xl font-bold text-center">
-          {t('renter.setup.title', 'Настройка профиля арендатора')}
+          Настройка профиля арендатора
         </h1>
 
         {/* Фото профиля */}
-        <div className="flex flex-col items-center gap-4">
-          <Label>{t('renter.setup.photo', 'Фото профиля')}</Label>
-          <div className="w-32 h-32 rounded-full overflow-hidden border shadow">
+        <div className="flex flex-col items-center gap-2">
+          <Label>Фото профиля (макс 2 МБ)</Label>
+          <div className="w-32 h-32 rounded-full overflow-hidden border">
             {previewUrl ? (
-              <img src={previewUrl} alt="Аватар" className="w-full h-full object-cover" />
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                {t('renter.setup.noPhoto', 'Нет фото')}
+              <div className="w-full h-full bg-muted flex items-center justify-center text-sm">
+                Нет фото
               </div>
             )}
           </div>
-          <Input type="file" accept="image/*" onChange={handleImageChange} className="max-w-xs" />
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={e => setValue('profileImage', e.target.files?.[0]!)}
+          />
+          {errors.profileImage && (
+            <p className="text-destructive text-sm">
+              {errors.profileImage.message}
+            </p>
+          )}
         </div>
 
         <Separator />
 
-        <div className="space-y-2">
-          <Label htmlFor="name">{t('renter.setup.name', 'Имя или ник')}</Label>
-          <Input
-  id="name"
-  placeholder="Андрей, Марина, айтишница..."
-  value={fullName}
-  onChange={(e) => setFullName(e.target.value)}
-  required
-/>
-        </div>
+        {/* Поля профиля */}
+        {[
+          { id: 'fullName', label: 'Имя или ник', type: 'input' },
+          { id: 'bio', label: 'О себе', type: 'textarea' },
+          { id: 'city', label: 'Город', type: 'input' },
+        ].map(({ id, label, type }) => (
+          <div key={id} className="space-y-1">
+            <Label htmlFor={id}>{label}</Label>
+            {type === 'input' ? (
+              <Input id={id} {...register(id as any)} />
+            ) : (
+              <Textarea id={id} {...register(id as any)} rows={4} />
+            )}
+            {errors[id as keyof RenterFormValues] && (
+              <p className="text-destructive text-sm">
+                {(errors[id as keyof RenterFormValues]?.message as string) ||
+                  ''}
+              </p>
+            )}
+          </div>
+        ))}
 
-        <div className="space-y-2">
-          <Label htmlFor="bio">{t('renter.setup.bio', 'О себе / Кто вы?')}</Label>
-          <Textarea
-  id="bio"
-  maxLength={300}
-  value={bio}
-  onChange={(e) => setBio(e.target.value)} // ← вот он
-  placeholder="Работаю дизайнером, тихий, без животных. Ищу жильё на 6 месяцев."
-  required
-/>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="city">{t('renter.setup.city', 'Город, где ищете жильё')}</Label>
-          <Input
-  id="city"
-  placeholder="Киев, Львов и т.д."
-  value={city}
-  onChange={(e) => setCity(e.target.value)}
-  required
-/>
-        </div>
-
-        <div className="space-y-2">
-          <Label>{t('renter.setup.budget', 'Бюджет в месяц ($)')}</Label>
+        <div className="space-y-4">
+          <Label>Бюджет ($/мес)</Label>
           <Slider
             min={100}
             max={1500}
             step={50}
-            defaultValue={budget}
-            onValueChange={(val) => setBudget(val as [number, number])}
+            defaultValue={[300, 500]}
+            onValueChange={([from, to]) => {
+              setValue('budgetFrom', from);
+              setValue('budgetTo', to);
+            }}
           />
           <div className="text-sm text-muted-foreground">
-            {t('renter.setup.budgetRange', 'От')} {budget[0]}$ {t('renter.setup.to', 'до')} {budget[1]}$
+            От {watch('budgetFrom')}$ до {watch('budgetTo')}$
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>{t('renter.setup.duration', 'Желаемый срок аренды')}</Label>
-          <Select onValueChange={setDuration}>
-            <SelectTrigger>
-              <SelectValue placeholder={t('renter.setup.durationPlaceholder', 'Выберите срок аренды')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1-3">1–3 месяца</SelectItem>
-              <SelectItem value="3-6">3–6 месяцев</SelectItem>
-              <SelectItem value="6+">6+ месяцев</SelectItem>
-              <SelectItem value="12+">Год и больше</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { name: 'rentDuration', label: 'Срок аренды', options: ['1-3','3-6','6+','12+'] },
+            { name: 'hasPets', label: 'Животные', options: ['no','cat','dog'] },
+            { name: 'hasKids', label: 'Дети', options: ['no','yes'] },
+            { name: 'smoking', label: 'Курение', options: ['no','yes'] },
+          ].map(({ name, label, options }) => (
+            <div key={name} className="space-y-1">
+              <Label>{label}</Label>
+              <Select onValueChange={val => setValue(name as any, val as any)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Выберите..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {options.map(opt => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt === 'no' ? 'Нет' : opt === 'yes' ? 'Да' : opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors[name as keyof RenterFormValues] && (
+                <p className="text-destructive text-sm">
+                  {(
+                    errors[name as keyof RenterFormValues]?.message as string
+                  ) || ''}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
 
-        <div className="space-y-2">
-          <Label>{t('renter.setup.pets', 'Животные')}</Label>
-          <Select onValueChange={setPets}>
-            <SelectTrigger>
-              <SelectValue placeholder={t('renter.setup.petsPlaceholder', 'Есть ли у вас животные?')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="no">Нет</SelectItem>
-              <SelectItem value="cat">Кошка</SelectItem>
-              <SelectItem value="dog">Собака</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="space-y-1">
+          <Label htmlFor="occupation">Работа / занятость</Label>
+          <Input id="occupation" {...register('occupation')} />
+          {errors.occupation && (
+            <p className="text-destructive text-sm">
+              {errors.occupation.message}
+            </p>
+          )}
         </div>
 
-        <div className="space-y-2">
-          <Label>{t('renter.setup.kids', 'Дети')}</Label>
-          <Select onValueChange={setKids}>
-            <SelectTrigger>
-              <SelectValue placeholder={t('renter.setup.kidsPlaceholder', 'Есть ли у вас дети?')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="no">Нет</SelectItem>
-              <SelectItem value="yes">Да</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-  <Label>{t('renter.setup.smoking', 'Курение')}</Label>
-  <Select onValueChange={setSmoking}>
-    <SelectTrigger>
-      <SelectValue placeholder={t('renter.setup.smokingPlaceholder', 'Курите ли вы?')} />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="no">{t('renter.setup.smokingNo', 'Нет')}</SelectItem>
-      <SelectItem value="yes">{t('renter.setup.smokingYes', 'Да')}</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
-
-        <div className="space-y-2">
-          <Label htmlFor="job">{t('renter.setup.job', 'Работа / занятость')}</Label>
-          <Input
-            id="job"
-            value={job}
-            onChange={(e) => setJob(e.target.value)}
-            placeholder="Фрилансер, студент, разработчик..."
-          />
-        </div>
+        {/* Общая ошибка */}
+        {globalError && (
+          <p className="text-center text-destructive">{globalError}</p>
+        )}
 
         <Button
           type="submit"
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-base py-6 rounded-xl mt-4 transition"
+          disabled={!isValid || isSubmitting}
+          className="w-full py-4"
         >
-          {t('renter.setup.save', 'Сохранить и продолжить')}
+          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
         </Button>
       </form>
     </div>

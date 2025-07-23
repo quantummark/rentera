@@ -1,4 +1,5 @@
-// hooks/useChat.ts
+'use client';
+
 import { useEffect, useState, useCallback } from 'react';
 import { db } from '@/app/firebase/firebase';
 import {
@@ -9,7 +10,6 @@ import {
   onSnapshot,
   addDoc,
   query,
-  where,
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -59,7 +59,7 @@ export function useChat(currentUserId: string, otherUserId: string) {
     const messagesRef = collection(db, 'chats', id, 'messages');
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
 
-    return onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       const msgs: Message[] = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...(doc.data() as Message),
@@ -67,6 +67,8 @@ export function useChat(currentUserId: string, otherUserId: string) {
       setMessages(msgs);
       setIsLoading(false);
     });
+
+    return unsubscribe; // Возвращаем функцию отписки
   }, [currentUserId, otherUserId, generateChatId]);
 
   // ✉️ Отправка сообщения
@@ -80,24 +82,35 @@ export function useChat(currentUserId: string, otherUserId: string) {
       read: false,
     };
 
-    await addDoc(collection(db, 'chats', chatId, 'messages'), message);
-    await setDoc(
-      doc(db, 'chats', chatId),
-      {
-        lastMessage: text,
-        lastUpdated: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    try {
+      await addDoc(collection(db, 'chats', chatId, 'messages'), message);
+      await setDoc(
+        doc(db, 'chats', chatId),
+        {
+          lastMessage: text,
+          lastUpdated: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error('Ошибка при отправке сообщения:', error);
+    }
   };
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
     if (currentUserId && otherUserId) {
-      const unsubscribe = initChat();
-      return () => {
-        unsubscribe?.then((u) => u());
-      };
+      initChat().then((unsub) => {
+        unsubscribe = unsub;
+      });
     }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe(); // Отписываемся от подписки при размонтировании компонента
+      }
+    };
   }, [initChat, currentUserId, otherUserId]);
 
   return {

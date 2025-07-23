@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next"; // Импортируем типы для метаданных из Next.js
 import { Geist, Geist_Mono } from "next/font/google";   // Импортируем шрифты Geist и Geist Mono из Google Fonts
 import "./globals.css"; // Импортируем глобальные стили
@@ -5,6 +6,10 @@ import { ThemeProvider } from "@/app/components/providers/ThemeProvider"; // И�
 import ClientRoot from '@/app/components/ClientRoot'; // Импортируем i18n для локализации
 import Header from '@/app/components/layout/Header';
 import Footer from '@/app/components/layout/Footer';
+import QueryClientWrapper from '@/app/components/query-client-wrapper';
+
+
+
 
 
 // Подключаем шрифты
@@ -36,22 +41,22 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} font-sans`}
+      className={`${geistSans.variable} ${geistMono.variable} font-sans dark`}
     >
-      
       <body className="bg-background text-foreground min-h-screen antialiased">
-  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-    <ClientRoot>
-      <Header />
-      {/* Контейнер для контента */}
-      {/* Здесь будет отображаться основной контент страницы */}
-      {/* Используем класс container для центрирования контента */}
-      {/* Можно добавить дополнительные стили для отступов и выравнивания */}
-      <div className="container mx-auto py-8 px-4">{children}</div>
-      <Footer />
-    </ClientRoot>
-  </ThemeProvider>
-</body>
+        {/* Оборачиваем приложение в QueryClientWrapper */}
+        <QueryClientWrapper>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <ClientRoot>
+              {/* Компонент Header */}
+              <Header />
+              {/* Контейнер для контента */}
+              <div className="container mx-auto py-8 px-4">{children}</div>
+              <Footer />
+            </ClientRoot>
+          </ThemeProvider>
+        </QueryClientWrapper>
+      </body>
     </html>
   );
 }

@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
+
 interface RenterProfile {
   uid: string;
   fullName: string;
@@ -27,14 +28,15 @@ interface RenterProfile {
 
 interface RenterCardProps {
   renter: RenterProfile;
-  renterId: string; // 🔑 ID текущего пользователя
-  isCurrentUser?: boolean;
+  renterId: string;
+  isCurrentUser: boolean;
 }
 
 export default function RenterCard({ renter }: RenterCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const renterId = renter?.uid || ''; // 🔑 ID арендатора профиля
+  
   
 
   const formatDate = (timestamp: any) => {

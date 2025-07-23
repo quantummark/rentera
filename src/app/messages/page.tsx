@@ -2,91 +2,90 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import ChatWindow from '@/app/components/chat/ChatWindow';
-import ChatList from '@/app/components/chat/ChatList';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
 
+import ChatList from '@/app/components/chat/ChatList';
+import { ChatWindow } from '@/app/components/chat/ChatWindow';
 
 export default function MessagesPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const searchParams = useSearchParams();
   const targetUserId = searchParams.get('userId');
-  const initialUid = searchParams.get('uid');
 
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(initialUid);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUserName, setSelectedUserName] = useState<string>('');
   const [selectedUserAvatar, setSelectedUserAvatar] = useState<string>('');
-  const { user } = useAuth();
 
+  // Открыть чат по ?userId
   useEffect(() => {
-  const ensureChatExists = async () => {
-    if (!user?.uid || !targetUserId || user.uid === targetUserId) return;
-
-    const chatId = [user.uid, targetUserId].sort().join('_');
-    const chatRef = doc(db, 'chats', chatId);
-    const chatSnap = await getDoc(chatRef);
-
-    if (!chatSnap.exists()) {
-      await setDoc(chatRef, {
-        participants: [user.uid, targetUserId],
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        lastMessage: '',
-      });
-
-      // создаём ссылку в сабколлекциях для быстрого списка чатов
-      const myChatRef = doc(db, 'users', user.uid, 'chats', chatId);
-      const theirChatRef = doc(db, 'users', targetUserId, 'chats', chatId);
-
-      await Promise.all([
-        setDoc(myChatRef, {
-          participants: [user.uid, targetUserId],
-          lastMessage: '',
-          updatedAt: serverTimestamp(),
-        }),
-        setDoc(theirChatRef, {
-          participants: [user.uid, targetUserId],
-          lastMessage: '',
-          updatedAt: serverTimestamp(),
-        }),
-      ]);
+    if (targetUserId && user?.uid && targetUserId !== user.uid) {
+      setSelectedUserId(targetUserId);
     }
+  }, [targetUserId, user?.uid]);
 
-    setSelectedUserId(targetUserId);
-  };
-
-  ensureChatExists();
-}, [targetUserId, user?.uid]);
+  // Убедиться, что чат существует
+  useEffect(() => {
+    const ensureChat = async () => {
+      if (!user?.uid || !selectedUserId) return;
+      const chatId = [user.uid, selectedUserId].sort().join('_');
+      const ref = doc(db, 'chats', chatId);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          participants: [user.uid, selectedUserId],
+          lastMessage: '',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        // также создаём сабколлекции users/.../chats
+      }
+    };
+    ensureChat();
+  }, [selectedUserId, user?.uid]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-80px)]">
-      {/* Левая колонка — список чатов */}
-      <div className="w-full md:w-1/3 bg-background">
+    <div className="flex flex-col md:flex-row h-[90vh]">
+      {/* Список чатов */}
+      <div
+        className={`
+          ${selectedUserId ? 'hidden' : 'block'}
+          w-full md:block md:w-1/3
+          bg-background overflow-auto
+        `}
+      >
         <ChatList
-          onSelect={(userId: string, userName?: string, userAvatar?: string) => {
-            setSelectedUserId(userId);
-            setSelectedUserName(userName || 'Пользователь');
-            setSelectedUserAvatar(userAvatar || '');
+          selectedUserId={selectedUserId}
+          onSelect={(id, name, avatar) => {
+            setSelectedUserId(id);
+            setSelectedUserName(name || '');
+            setSelectedUserAvatar(avatar || '');
           }}
         />
       </div>
 
-      {/* Правая колонка — окно чата */}
-      <div className="flex-1 ml-8 bg-background">
+      {/* Окно чата */}
+      <div
+        className={`
+          ${selectedUserId ? 'block' : 'hidden'}
+          w-full md:block md:flex-1
+          bg-background
+        `}
+      >
         {selectedUserId ? (
           <ChatWindow
             otherUserId={selectedUserId}
             otherUserName={selectedUserName}
             otherUserAvatar={selectedUserAvatar}
+            onBack={() => setSelectedUserId(null)}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-base gap-2">
-            <p>{t('messages.selectChat', 'Выберите чат, чтобы начать общение')}</p>
+          <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
+            {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
           </div>
         )}
       </div>

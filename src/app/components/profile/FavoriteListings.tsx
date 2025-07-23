@@ -23,8 +23,11 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
       if (!user) return;
 
       try {
-        const favRef = collection(db, 'favorites');
-        const q = query(favRef, where('userId', '==', user.uid));
+        // Получаем ссылку на подколлекцию "favorites" в документе "renter"
+        const favRef = collection(db, 'renter', user.uid, 'favorites'); // Это подколлекция "favorites" для конкретного арендатора
+
+        // Запрос к подколлекции "favorites"
+        const q = query(favRef, where('userId', '==', user.uid)); // Дополнительно можно фильтровать по userId, если требуется
         const snapshot = await getDocs(q);
 
         const favListings = snapshot.docs.map((doc) => doc.data().listing);

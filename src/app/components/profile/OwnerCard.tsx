@@ -33,7 +33,7 @@ interface OwnerProfile {
 interface OwnerCardProps {
   owner: OwnerProfile;
   ownerId: string;
-  isCurrentUser: boolean; // 👈 Новый проп
+  isCurrentUser: boolean;
 }
 
 export default function OwnerCard({ owner, isCurrentUser }: OwnerCardProps) {
