@@ -116,7 +116,7 @@ function InfoCard({
   value,
   color
 }: {
-  icon: React.ComponentType<any>;  // Используем компонент иконки как тип
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
   value: string | number;
   color: string;
