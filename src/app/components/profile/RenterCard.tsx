@@ -9,7 +9,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
-
 interface RenterProfile {
   uid: string;
   fullName: string;
@@ -28,16 +27,12 @@ interface RenterProfile {
 
 interface RenterCardProps {
   renter: RenterProfile;
-  renterId: string;
   isCurrentUser: boolean;
 }
 
 export default function RenterCard({ renter }: RenterCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const renterId = renter?.uid || ''; // 🔑 ID арендатора профиля
-  
-  
 
   const formatDate = (timestamp: any) => {
     if (!timestamp?.toDate) return '';
@@ -88,26 +83,26 @@ export default function RenterCard({ renter }: RenterCardProps) {
           </div>
 
           <h3 className="text-base font-semibold text-foreground pt-6 mb-2 text-center w-full">
-  🧾 {t('renterCard.parameters', 'Параметры арендатора')}
-</h3>
+            🧾 {t('renterCard.parameters', 'Параметры арендатора')}
+          </h3>
 
-<div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
-  <InfoCard icon={Calendar} label={t('renterCard.rentDuration', 'Срок аренды')} value={renter.rentDuration} color="text-indigo-500" />
-  <InfoCard icon={Wallet} label={t('renterCard.budget', 'Бюджет')} value={`$${renter.budgetFrom}–${renter.budgetTo}`} color="text-emerald-500" />
-  <InfoCard icon={Briefcase} label={t('renterCard.occupation', 'Занятость')} value={renter.occupation} color="text-blue-500" />
-  <InfoCard icon={PawPrint} label={t('renterCard.pets', 'Животные')} value={getPetsText()} color="text-amber-500" />
-  <InfoCard icon={Baby} label={t('renterCard.kids', 'Дети')} value={renter.hasKids === 'yes' ? t('yes', 'Да') : t('no', 'Нет')} color="text-pink-500" />
-  <InfoCard icon={Cigarette} label={t('renterCard.smoking', 'Курение')} value={renter.smoking === 'yes' ? t('yes', 'Да') : t('no', 'Нет')} color="text-red-500" />
-</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-center">
+            <InfoCard icon={Calendar} label={t('renterCard.rentDuration', 'Срок аренды')} value={renter.rentDuration} color="text-indigo-500" />
+            <InfoCard icon={Wallet} label={t('renterCard.budget', 'Бюджет')} value={`$${renter.budgetFrom}–${renter.budgetTo}`} color="text-emerald-500" />
+            <InfoCard icon={Briefcase} label={t('renterCard.occupation', 'Занятость')} value={renter.occupation} color="text-blue-500" />
+            <InfoCard icon={PawPrint} label={t('renterCard.pets', 'Животные')} value={getPetsText()} color="text-amber-500" />
+            <InfoCard icon={Baby} label={t('renterCard.kids', 'Дети')} value={renter.hasKids === 'yes' ? t('yes', 'Да') : t('no', 'Нет')} color="text-pink-500" />
+            <InfoCard icon={Cigarette} label={t('renterCard.smoking', 'Курение')} value={renter.smoking === 'yes' ? t('yes', 'Да') : t('no', 'Нет')} color="text-red-500" />
+          </div>
 
           <div className="pt-6">
-    <Button
-      onClick={() => router.push(`/messages?userId=${renter.uid}`)}
-      className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium"
-    >
-      💬 {t('renterCard.contact', 'Написать')}
-    </Button>
-  </div>
+            <Button
+              onClick={() => router.push(`/messages?userId=${renter.uid}`)}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium"
+            >
+              💬 {t('renterCard.contact', 'Написать')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -120,7 +115,7 @@ function InfoCard({
   value,
   color
 }: {
-  icon: any;
+  icon: React.ComponentType<any>;  // Используем компонент иконки как тип
   label: string;
   value: string | number;
   color: string;

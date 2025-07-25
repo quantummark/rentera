@@ -32,7 +32,6 @@ interface OwnerProfile {
 
 interface OwnerCardProps {
   owner: OwnerProfile;
-  ownerId: string;
   isCurrentUser: boolean;
 }
 
@@ -40,7 +39,6 @@ export default function OwnerCard({ owner, isCurrentUser }: OwnerCardProps) {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
-  const ownerId = owner?.uid || ''; // 🔑 ID владельца профиля
 
   const formatDate = (timestamp: any) => {
     if (!timestamp?.toDate) return '';
@@ -143,13 +141,13 @@ export default function OwnerCard({ owner, isCurrentUser }: OwnerCardProps) {
           )}
 
           <div className="pt-6">
-  <Button
-    onClick={() => router.push(`/messages?userId=${owner.uid}`)}
-    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium"
-  >
-    💬 {t('ownerCard.contact', 'Написать')}
-  </Button>
-</div>
+            <Button
+              onClick={() => router.push(`/messages?userId=${owner.uid}`)}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium"
+            >
+              💬 {t('ownerCard.contact', 'Написать')}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

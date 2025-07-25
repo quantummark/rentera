@@ -1,5 +1,3 @@
-// app/profile/owner/[id]/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -12,11 +10,33 @@ import OwnerListings from '@/app/components/profile/OwnerListings';
 import { Separator } from '@/components/ui/separator';
 import CommentSection from '@/app/components/comments/CommentSection';
 
+// Определение интерфейса для данных владельца
+interface OwnerProfile {
+  uid: string;
+  fullName: string;
+  bio: string;
+  city: string;
+  contactPhone: string;
+  contactEmail: string;
+  profileImageUrl: string;
+  socialLinks: {
+    instagram: string;
+    telegram: string;
+  };
+  createdAt: any;
+  updatedAt: any;
+  metrics?: {
+    listingsCount: number;
+    completedRentals: number;
+    averageRating: number;
+    responseTime: string;
+  };
+}
+
 export default function OwnerProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const { id } = useParams(); // ⚡ получаем [id] из URL
-  const [owner, setOwner] = useState<any | null>(null);
-  const ownerId = user?.uid || ''; // 🔑 ID текущего пользователя
+  const [owner, setOwner] = useState<OwnerProfile | null>(null); // Используем тип OwnerProfile
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +48,7 @@ export default function OwnerProfilePage() {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setOwner(docSnap.data());
+          setOwner(docSnap.data() as OwnerProfile); // Приводим данные к типу OwnerProfile
         } else {
           console.warn('Профиль владельца не найден');
         }
@@ -56,7 +76,7 @@ export default function OwnerProfilePage() {
 
   return (
     <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-      <OwnerCard owner={owner} ownerId={ownerId} isCurrentUser={isOwner} />
+      <OwnerCard owner={owner} isCurrentUser={isOwner} />
       <Separator className="my-4" />
       <OwnerListings ownerId={typeof id === 'string' ? id : ''} currentUserId={user?.uid ?? ''} />
       <Separator className="my-4" />

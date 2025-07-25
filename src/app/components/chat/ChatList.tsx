@@ -1,15 +1,21 @@
-// components/chat/ChatList.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, getDoc, doc } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Users as UsersIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Определим интерфейс для профиля пользователя
+interface UserProfile {
+  fullName: string;
+  profileImageUrl: string;
+}
+
+// Определим интерфейс для чата
 interface Chat {
   id: string;
   participants: string[];
@@ -27,7 +33,7 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [chats, setChats] = useState<Chat[]>([]);
-  const [profiles, setProfiles] = useState<Record<string, any>>({});
+  const [profiles, setProfiles] = useState<Record<string, UserProfile>>({});
   const [loading, setLoading] = useState(true);
 
   // 1. Подписка на чаты
@@ -38,7 +44,7 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
       orderBy('updatedAt', 'desc')
     );
     const unsub = onSnapshot(q, snap => {
-      setChats(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })));
+      setChats(snap.docs.map(d => ({ ...(d.data() as Chat), id: d.id })));
       setLoading(false);
     });
     return unsub;
@@ -47,15 +53,15 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
   // 2. Загрузка профилей собеседников
   useEffect(() => {
     if (loading) return;
-    ;(async () => {
-      const cache: Record<string, any> = {};
+    (async () => {
+      const cache: Record<string, UserProfile> = {};
       for (const chat of chats) {
         const otherId = chat.participants.find(id => id !== user?.uid)!;
         if (!cache[otherId]) {
           const { doc, getDoc } = await import('firebase/firestore');
           let snap = await getDoc(doc(db, 'renter', otherId));
           if (!snap.exists()) snap = await getDoc(doc(db, 'owner', otherId));
-          cache[otherId] = snap.exists() ? snap.data() : null;
+          cache[otherId] = snap.exists() ? snap.data() as UserProfile : { fullName: '', profileImageUrl: '' };
         }
       }
       setProfiles(cache);
@@ -71,57 +77,49 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
   }
 
   return (
-    <div
-  className="
-    bg-card               /* светлая тема */
-    dark:bg-gray-900      /* тёмная тема */
-    border border-gray-200
-    dark:border-gray-700
-    rounded-2xl shadow-sm
-    p-4 h-[80vh] md:h-full
-    flex flex-col
-  "
->
-  {/* Заголовок */}
-  <div className="flex items-center mb-4">
-    <UsersIcon className="w-6 h-6 text-foreground mr-2" />
-    <h2 className="text-lg font-semibold text-foreground">
-      {t('chat.list.title', 'Ваши чаты')}
-    </h2>
-  </div>
+    <div className="bg-card dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 h-[80vh] md:h-full flex flex-col">
+      {/* Заголовок */}
+      <div className="flex items-center mb-4">
+        <UsersIcon className="w-6 h-6 text-foreground mr-2" />
+        <h2 className="text-lg font-semibold text-foreground dark:text-foreground">
+          {t('chat.list.title', 'Ваши чаты')}
+        </h2>
+      </div>
 
-  {/* Список чатов */}
-  <ul className="overflow-y-auto space-y-2 flex-1">
-    {chats.map(chat => {
-      const otherId = chat.participants.find(id => id !== user!.uid)!;
-      const isSelected = otherId === selectedUserId;
+      {/* Список чатов */}
+      <ul className="overflow-y-auto space-y-2 flex-1">
+        {chats.map((chat) => {
+          const otherId = chat.participants.find((id) => id !== user!.uid)!;
+          const isSelected = otherId === selectedUserId;
 
-      return (
-        <li
-          key={chat.id}
-          onClick={() => onSelect(otherId, profiles[otherId]?.fullName, profiles[otherId]?.profileImageUrl)}
-          className={cn(
-            'flex items-center gap-3 p-3 rounded-xl transition cursor-pointer',
-            'bg-card hover:bg-muted/10 dark:bg-gray-800 dark:hover:bg-gray-700',
-            isSelected && 'bg-muted/20 dark:bg-gray-700'
-          )}
-        >
-          <Avatar className="w-10 h-10">
-            <AvatarImage src={profiles[otherId]?.profileImageUrl} alt="avatar" />
-            <AvatarFallback>{profiles[otherId]?.fullName[0]}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">
-              {profiles[otherId]?.fullName}
-            </p>
-            <p className="text-xs text-muted-foreground truncate">
-              {chat.lastMessage || t('chat.noMessages', 'Нет сообщений')}  
-            </p>
-          </div>
-        </li>
-      );
-    })}
-  </ul>
-</div>
+          // Получаем профиль собеседника из списка профилей
+          const userProfile = profiles[otherId];
+          const name = userProfile?.fullName || t('chat.unknownUser', 'Пользователь');
+          const avatar = userProfile?.profileImageUrl || '';
+          const preview = chat.lastMessage?.trim() ? chat.lastMessage : t('chat.noMessages', 'Нет сообщений');
+
+          return (
+            <li
+              key={chat.id}
+              onClick={() => onSelect(otherId, name, avatar)}
+              className={cn(
+                'flex items-center gap-3 p-3 rounded-xl transition cursor-pointer',
+                'bg-card hover:bg-muted/10 dark:bg-gray-800 dark:hover:bg-gray-700',
+                isSelected && 'bg-muted/20 dark:bg-gray-700'
+              )}
+            >
+              <Avatar className="w-10 h-10">
+                <AvatarImage src={avatar} alt={name} />
+                <AvatarFallback>{name[0]}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground dark:text-foreground">{name}</p>
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground truncate">{preview}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

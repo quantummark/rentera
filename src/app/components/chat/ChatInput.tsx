@@ -1,11 +1,10 @@
-// components/chat/ChatInput.tsx
 'use client';
 
 import { useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
-import { Paperclip, Image, Send } from 'lucide-react';
+import { Paperclip, Image as ImageIcon, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChatInputProps {
@@ -34,6 +33,7 @@ export function ChatInput({
     if (f) onAttachFile(f);
     e.target.value = '';
   };
+
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) onAttachPhoto(f);
@@ -55,7 +55,7 @@ export function ChatInput({
         className="p-2 rounded-full hover:bg-muted/20"
         aria-label={t('chat.input.attachFile', 'Attach file')}
       >
-        <Paperclip className="w-5 h-5 text-foreground" />
+        <Paperclip className="w-5 h-5 text-foreground" aria-label="Attach file" />
       </button>
       <input
         ref={fileInputRef}
@@ -71,7 +71,7 @@ export function ChatInput({
         className="p-2 rounded-full hover:bg-muted/20"
         aria-label={t('chat.input.attachPhoto', 'Attach photo')}
       >
-        <Image className="w-5 h-5 text-foreground" />
+        <ImageIcon className="w-5 h-5 text-foreground" aria-label="Attach photo" />
       </button>
       <input
         ref={photoInputRef}

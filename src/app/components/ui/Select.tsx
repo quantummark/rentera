@@ -1,7 +1,6 @@
 'use client';
 
 import { FC, ChangeEvent } from 'react';
-import { SelectItem } from './SelectItem';
 
 type Option = {
   value: string;

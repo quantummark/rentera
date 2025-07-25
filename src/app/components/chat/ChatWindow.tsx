@@ -1,4 +1,3 @@
-// components/chat/ChatWindow.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -20,6 +19,13 @@ interface ChatWindowProps {
   onBack?: () => void; // функция для возврата назад
 }
 
+// Интерфейс для профиля пользователя
+interface UserProfile {
+  fullName: string;
+  profileImageUrl: string;
+  isOnline?: boolean;
+}
+
 export function ChatWindow({
   otherUserId,
   otherUserName = 'Пользователь',
@@ -30,7 +36,7 @@ export function ChatWindow({
   const { user } = useAuth();
   const { messages, isLoading, sendMessage } = useChat(user?.uid || '', otherUserId);
 
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null); // Теперь используем правильный тип
   const [newMsg, setNewMsg] = useState('');
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -40,11 +46,11 @@ export function ChatWindow({
     const load = async () => {
       const rRef = doc(db, 'renter', otherUserId);
       const rs = await getDoc(rRef);
-      if (rs.exists()) setProfile(rs.data());
+      if (rs.exists()) setProfile(rs.data() as UserProfile); // Теперь правильный тип
       else {
         const oRef = doc(db, 'owner', otherUserId);
         const os = await getDoc(oRef);
-        if (os.exists()) setProfile(os.data());
+        if (os.exists()) setProfile(os.data() as UserProfile); // Теперь правильный тип
       }
     };
     if (otherUserId) load();
@@ -71,8 +77,6 @@ export function ChatWindow({
     router.back();
   };
 
-  
-
   return (
     <div className="flex flex-col h-[80vh] md:h-full w-full max-w-2xl mx-auto">
       {/* Header в карточке */}
@@ -80,7 +84,7 @@ export function ChatWindow({
         otherUserName={profile?.fullName || otherUserName}
         otherUserAvatar={profile?.profileImageUrl || otherUserAvatar}
         isOnline={!!profile?.isOnline}
-        onBack={onBack} 
+        onBack={onBack}
         onDeleteChat={handleDeleteChat}
         onBlockUser={() => alert('Заблокировано')}
         onReportUser={() => alert('Жалоба отправлена')}

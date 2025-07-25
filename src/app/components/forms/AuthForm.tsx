@@ -31,7 +31,6 @@ export const AuthForm = ({ language }: AuthFormProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [userType, profile, loading] = useUserTypeWithProfile();
 
   const texts = {
     ru: {
@@ -66,14 +65,40 @@ export const AuthForm = ({ language }: AuthFormProps) => {
   const t = texts[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
-  try {
-    if (isRegistering) {
-      await createUserWithEmailAndPassword(auth, email, password);
-      router.push('/select-role');
-    } else {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    e.preventDefault();
+    setError('');
+    try {
+      if (isRegistering) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        router.push('/select-role');
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
+
+        const ownerDocRef = doc(db, 'owner', uid);
+        const renterDocRef = doc(db, 'renter', uid);
+        const [ownerSnap, renterSnap] = await Promise.all([
+          getDoc(ownerDocRef),
+          getDoc(renterDocRef),
+        ]);
+
+        if (ownerSnap.exists()) {
+          router.push(`/profile/owner/${uid}`);
+        } else if (renterSnap.exists()) {
+          router.push(`/profile/renter/${uid}`);
+        } else {
+          router.push('/select-role');
+        }
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
       const uid = userCredential.user.uid;
 
       const ownerDocRef = doc(db, 'owner', uid);
@@ -84,46 +109,16 @@ export const AuthForm = ({ language }: AuthFormProps) => {
       ]);
 
       if (ownerSnap.exists()) {
-        
         router.push(`/profile/owner/${uid}`);
       } else if (renterSnap.exists()) {
-        
         router.push(`/profile/renter/${uid}`);
       } else {
         router.push('/select-role');
       }
+    } catch (err: any) {
+      setError(err.message);
     }
-  } catch (err: any) {
-    setError(err.message);
-  }
-};
-
-const handleGoogleSignIn = async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const userCredential = await signInWithPopup(auth, provider);
-    const uid = userCredential.user.uid;
-
-    const ownerDocRef = doc(db, 'owner', uid);
-    const renterDocRef = doc(db, 'renter', uid);
-    const [ownerSnap, renterSnap] = await Promise.all([
-      getDoc(ownerDocRef),
-      getDoc(renterDocRef),
-    ]);
-
-    if (ownerSnap.exists()) {
-      
-      router.push(`/profile/owner/${uid}`);
-    } else if (renterSnap.exists()) {
-      
-      router.push(`/profile/renter/${uid}`);
-    } else {
-      router.push('/select-role');
-    }
-  } catch (err: any) {
-    setError(err.message);
-  }
-};
+  };
 
   return (
     <div className="bg-card p-6 rounded-xl shadow-md space-y-6 w-full">

@@ -33,7 +33,7 @@ export default function SearchCard() {
   const [allowKids, setAllowKids] = useState(false);
   const [allowPets, setAllowPets] = useState(false);
   const [allowSmoking, setAllowSmoking] = useState(false);
-  const { search, results, loading } = useListingsSearch();
+  const { search, loading } = useListingsSearch();
 
   // Загрузка из localStorage при монтировании
   useEffect(() => {

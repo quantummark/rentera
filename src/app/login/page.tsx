@@ -2,7 +2,6 @@
 
 import ModeToggle from '@/app/components/ui/ThemeToggle';
 import { AuthForm } from '@/app/components/forms/AuthForm';
-import { LanguageSwitcher } from '@/app/components/ui/LanguageSwitcher'
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 

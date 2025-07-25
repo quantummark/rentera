@@ -4,12 +4,9 @@ import React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import { cn } from '@/lib/utils';
 
-export interface SliderProps
-  extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {}
-
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
-  SliderProps
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
 >(({ className, value, defaultValue, ...props }, ref) => {
   // массив точек: либо контролируемое значение, либо defaultValue, либо пустой массив
   const values = value ?? defaultValue ?? [];

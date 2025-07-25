@@ -7,10 +7,48 @@ import { db } from '@/app/firebase/firebase';
 
 type UserType = 'owner' | 'renter' | null;
 
-export function useUserTypeWithProfile(): [UserType, any | null, boolean] {
+interface OwnerProfile {
+  fullName: string;
+  bio: string;
+  city: string;
+  contactPhone: string;
+  contactEmail: string;
+  profileImageUrl: string;
+  socialLinks: {
+    instagram: string;
+    telegram: string;
+  };
+  createdAt: any;
+  updatedAt: any;
+  metrics?: {
+    listingsCount: number;
+    completedRentals: number;
+    averageRating: number;
+    responseTime: string;
+  };
+}
+
+interface RenterProfile {
+  fullName: string;
+  bio?: string;
+  city: string;
+  rentDuration: string;
+  hasPets: 'no' | 'cat' | 'dog';
+  hasKids: 'yes' | 'no';
+  smoking: 'yes' | 'no';
+  occupation: string;
+  budgetFrom: number;
+  budgetTo: number;
+  profileImageUrl?: string;
+  createdAt: any;
+}
+
+type UserProfile = OwnerProfile | RenterProfile | null;
+
+export function useUserTypeWithProfile(): [UserType, UserProfile, boolean] {
   const { user } = useAuth();
   const [type, setType] = useState<UserType>(null);
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<UserProfile>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,12 +65,12 @@ export function useUserTypeWithProfile(): [UserType, any | null, boolean] {
       const ownerDoc = await getDoc(doc(db, 'owner', uid));
       if (ownerDoc.exists()) {
         setType('owner');
-        setProfile(ownerDoc.data());
+        setProfile(ownerDoc.data() as OwnerProfile);
       } else {
         const renterDoc = await getDoc(doc(db, 'renter', uid));
         if (renterDoc.exists()) {
           setType('renter');
-          setProfile(renterDoc.data());
+          setProfile(renterDoc.data() as RenterProfile);
         } else {
           setType(null);
           setProfile(null);

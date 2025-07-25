@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { MapPin, Home, Ruler, DoorOpen, ShieldCheck, CreditCard, MessageCircle } from 'lucide-react';
+import { MapPin, ShieldCheck, CreditCard, MessageCircle } from 'lucide-react';
 import ListingGallery from './ListingGallery'; // ✅ импорт галереи
 import MapLinkButton from './MapLinkButton'; // ✅ импорт кнопки карты
 

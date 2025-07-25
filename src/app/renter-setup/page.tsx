@@ -23,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import Image from 'next/image';
 
 // 1) Схема валидации и типы
 const renterSchema = z.object({
@@ -135,10 +136,12 @@ export default function RenterSetupPage() {
           <Label>Фото профиля (макс 2 МБ)</Label>
           <div className="w-32 h-32 rounded-full overflow-hidden border">
             {previewUrl ? (
-              <img
+              <Image
                 src={previewUrl}
                 alt="Preview"
                 className="w-full h-full object-cover"
+                width={128}
+                height={128}
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-sm">
@@ -175,8 +178,7 @@ export default function RenterSetupPage() {
             )}
             {errors[id as keyof RenterFormValues] && (
               <p className="text-destructive text-sm">
-                {(errors[id as keyof RenterFormValues]?.message as string) ||
-                  ''}
+                {(errors[id as keyof RenterFormValues]?.message as string) || ''}
               </p>
             )}
           </div>
@@ -195,7 +197,7 @@ export default function RenterSetupPage() {
             }}
           />
           <div className="text-sm text-muted-foreground">
-            От {watch('budgetFrom')}$ до {watch('budgetTo')}$
+            От {watch('budgetFrom')}$ до {watch('budgetTo')}$ 
           </div>
         </div>
 

@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import Image from 'next/image'; // Импортируем Image из next/image
 
 export default function OwnerEditPage() {
   const { t } = useTranslation();
@@ -127,7 +128,13 @@ export default function OwnerEditPage() {
           <Label>{t('ownerEdit.photo', 'Фото профиля')}</Label>
           <div className="w-32 h-32 rounded-full overflow-hidden border shadow">
             {previewUrl ? (
-              <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+              <Image
+                src={previewUrl}
+                alt="Avatar"
+                width={120}
+                height={120}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
                 {t('ownerEdit.noPhoto', 'Нет фото')}

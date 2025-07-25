@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useListingForm } from '@/context/ListingFormContext';
+import Image from 'next/image'; // Импортируем Image
 
 export default function StepPhotos() {
   const { t } = useTranslation();
@@ -13,8 +14,9 @@ export default function StepPhotos() {
 
   // Очистка object URLs при размонтировании
   useEffect(() => {
+    const urls = data.photos.map((file) => URL.createObjectURL(file));
     return () => {
-      data.photos.forEach((file) => URL.revokeObjectURL(file as any));
+      urls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [data.photos]);
 
@@ -60,10 +62,11 @@ export default function StepPhotos() {
               key={index}
               className="relative w-full aspect-square rounded-xl overflow-hidden shadow bg-muted"
             >
-              <img
+              <Image
                 src={url}
                 alt={`${t('listing.photos.alt', 'Фото')} ${index + 1}`}
                 className="object-cover w-full h-full"
+                layout="fill"
               />
               <button
                 type="button"

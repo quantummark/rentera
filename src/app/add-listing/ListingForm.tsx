@@ -24,7 +24,7 @@ const steps = [
 
 function ListingFormInner() {
   const [step, setStep] = useState(0);
-  const { updateData, resetData, data } = useListingForm();
+  const { resetData, data } = useListingForm();
   const { user, loading } = useAuth(); // ✅ хук из hooks/useAuth
   const { t } = useTranslation();
   const router = useRouter();

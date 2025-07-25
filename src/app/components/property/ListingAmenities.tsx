@@ -1,6 +1,5 @@
 'use client';
 
-import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';

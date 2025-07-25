@@ -7,14 +7,17 @@ import { db } from '@/app/firebase/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import ListingCard from '@/app/components/property/ListingCard';
 import { useTranslation } from 'react-i18next';
+import { Listing } from '@/app/types/listing';
+import React from 'react';
 
+// Добавляем тип для пропсов
 interface FavoriteListingsProps {
-  userId: string;
+  userId: string;  // Добавляем свойство userId
 }
 
 export default function FavoriteListings({ userId }: FavoriteListingsProps) {
   const { user } = useAuth();
-  const [favorites, setFavorites] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<Listing[]>([]); // Используем тип Listing вместо any
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
 
@@ -24,12 +27,13 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
 
       try {
         // Получаем ссылку на подколлекцию "favorites" в документе "renter"
-        const favRef = collection(db, 'renter', user.uid, 'favorites'); // Это подколлекция "favorites" для конкретного арендатора
+        const favRef = collection(db, 'renter', userId, 'favorites'); // Используем userId
 
         // Запрос к подколлекции "favorites"
-        const q = query(favRef, where('userId', '==', user.uid)); // Дополнительно можно фильтровать по userId, если требуется
+        const q = query(favRef, where('userId', '==', userId)); // Фильтрация по userId
         const snapshot = await getDocs(q);
 
+        // Извлекаем данные и устанавливаем их в состояние
         const favListings = snapshot.docs.map((doc) => doc.data().listing);
         setFavorites(favListings);
       } catch (error) {
@@ -40,7 +44,7 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
     };
 
     fetchFavorites();
-  }, [user]);
+  }, [user, userId]); // Зависимость от user и userId
 
   if (loading) {
     return <p className="text-muted-foreground text-center py-10">{t('favorites.loading', 'Загрузка избранных...')}</p>;
@@ -60,7 +64,7 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
             <h2 className="text-xl font-semibold text-foreground">{t('favorites.myFavorites', 'Мои избранные')}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {favorites.map((listing: any) => (
+            {favorites.map((listing) => (
               <ListingCard
                 key={listing.id}
                 listing={listing}

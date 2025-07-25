@@ -1,8 +1,7 @@
-// app/renter-profile/page.tsx
 'use client'; // Этот компонент будет клиентским
 
 import { useQuery } from '@tanstack/react-query'; // Импортируем React Query
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import RenterCard from '@/app/components/profile/RenterCard';
@@ -10,7 +9,7 @@ import FavoriteListings from '@/app/components/profile/FavoriteListings';
 import CommentSection from '@/app/components/comments/CommentSection';
 import { Separator } from '@/components/ui/separator';
 import { useParams } from 'next/navigation'; // Используем useParams для получения параметров URL
- // Импортируем QueryClientWrapper
+// Импортируем QueryClientWrapper
 
 interface RenterProfile {
   uid: string;
@@ -25,7 +24,7 @@ interface RenterProfile {
   budgetFrom: number;
   budgetTo: number;
   profileImageUrl?: string;
-  createdAt: any;
+  createdAt: Timestamp; // Указываем тип для createdAt как Timestamp из Firestore
 }
 
 // Функция для получения данных арендатора
@@ -69,7 +68,7 @@ export default function RenterProfilePage() {
 
   return (
       <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-        <RenterCard renter={renter} renterId={user?.uid || ''} isCurrentUser={isrenter} />
+        <RenterCard renter={renter} isCurrentUser={isrenter} />
         <Separator className="my-4" />
         <FavoriteListings userId={String(id)} />
         <Separator className="my-4" />

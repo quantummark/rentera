@@ -8,16 +8,16 @@ import { useTranslation } from 'react-i18next';
 
 export default function ListingsGrid() {
   const { t } = useTranslation();
-  const { results, loading, search } = useListingsSearch(); // ⬅️ добавили search
+  const { results, search } = useListingsSearch(); // Убрали неиспользуемую переменную `loading`
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<'new' | 'cheap' | 'expensive'>('new');
 
   const itemsPerPage = 9;
 
-  // ⬇️ Вызов поиска при загрузке компонента
+  // Вызов поиска при загрузке компонента
   useEffect(() => {
     search({});
-  }, []);
+  }, [search]); // Добавили зависимость от search
 
   const sortedListings = useMemo(() => {
     const sorted = [...results];

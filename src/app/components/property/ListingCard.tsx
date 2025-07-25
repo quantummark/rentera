@@ -22,11 +22,6 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import OwnerListingControls from './OwnerListingControls';
-import { cn } from '@/lib/utils';
-
-interface ListingCardProps {
-  listing: Listing;
-}
 
 interface ListingCardProps {
   listing: Listing;

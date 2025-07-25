@@ -20,7 +20,7 @@ export default function ListingPage() {
 
   const [listing, setListing] = useState<Listing | null>(null);
 
-  const { user, loading } = useAuth(); // 🔥 заменили getAuth
+  const { loading } = useAuth(); // 🔥 заменили getAuth
 
   useEffect(() => {
     const fetchListing = async () => {

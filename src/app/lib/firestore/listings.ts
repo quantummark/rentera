@@ -1,7 +1,7 @@
 // lib/firestore/listings.ts
 
 import { db } from '@/app/firebase/firebase';
-import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 export interface Listing {
   id: string;

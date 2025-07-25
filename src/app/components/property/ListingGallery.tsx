@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 
 interface ListingGalleryProps {
@@ -40,7 +40,7 @@ export default function ListingGallery({ photos, title }: ListingGalleryProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, nextImage, prevImage]); // Добавлены зависимости nextImage и prevImage
 
   return (
     <div className="w-full">

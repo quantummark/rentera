@@ -43,38 +43,40 @@ export default function CommentSection({ contextType, contextId }: CommentSectio
   const [userType, profile, loading] = useUserTypeWithProfile();
   const { user } = useAuth();
 
+  // Загрузка комментариев
   useEffect(() => {
     const q = query(
-  collection(db, 'comments'),
-  where('targetType', '==', contextType),
-  where('targetId', '==', contextId),
-  orderBy('createdAt', 'asc')
-);
+      collection(db, 'comments'),
+      where('targetType', '==', contextType),
+      where('targetId', '==', contextId),
+      orderBy('createdAt', 'asc')
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const fetched: CommentType[] = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      } as CommentType));
+      }) as CommentType);
       setComments(fetched);
     });
 
     return () => unsubscribe();
   }, [contextType, contextId]);
 
+  // Отправка нового комментария
   const handleSubmit = async () => {
     if (!newComment.trim() || !profile || !userType) return;
 
     await addDoc(collection(db, 'comments'), {
-  content: newComment,
-  createdAt: serverTimestamp(),
-  authorId: user?.uid,
-  authorName: user?.displayName || profile?.fullName || 'Пользователь',
-  authorPhotoUrl: profile?.profileImageUrl || '',
-  targetType: contextType,         // 🚨 поле переименовано
-  targetId: contextId,             // это может быть uid владельца/арендатора или id объекта
-  authorRole: userType,            // 🚨 новое поле
-});
+      content: newComment,
+      createdAt: serverTimestamp(),
+      authorId: user?.uid,
+      authorName: user?.displayName || profile?.fullName || 'Пользователь',
+      authorPhotoUrl: profile?.profileImageUrl || '',
+      targetType: contextType,         // 🚨 поле переименовано
+      targetId: contextId,             // это может быть uid владельца/арендатора или id объекта
+      authorRole: userType,            // 🚨 новое поле
+    });
 
     setNewComment('');
   };
@@ -97,45 +99,43 @@ export default function CommentSection({ contextType, contextId }: CommentSectio
             <CommentItem
               key={comment.id}
               comment={comment}
-              currentUserId={profile?.uid || ''}
               userRole={userType as 'owner' | 'renter'}
               contextType={contextType}
-              contextId={contextId}
             />
           ))}
         </div>
       )}
 
       {canAddComment && (
-  <div className="flex items-start gap-3">
-    {/* Аватар текущего пользователя */}
-    <Avatar className="w-9 h-9 mt-1">
-      <AvatarImage src={profile?.profileImageUrl || ''} alt="avatar" />
-      <AvatarFallback>{profile?.fullName?.[0] || 'U'}</AvatarFallback>
-    </Avatar>
+        <div className="flex items-start gap-3">
+          {/* Аватар текущего пользователя */}
+          <Avatar className="w-9 h-9 mt-1">
+            <AvatarImage src={profile?.profileImageUrl || ''} alt="avatar" />
+            <AvatarFallback>{profile?.fullName?.[0] || 'U'}</AvatarFallback>
+          </Avatar>
 
-    {/* Область ввода + кнопка */}
-    <div className="bg-muted rounded-2xl px-4 py-3 max-w-xl w-full shadow-lg transition-colors">
-      <Textarea
-        placeholder={t('comments.addPlaceholder', 'Напишите комментарий...')}
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
-        className="resize-none text-sm border-none focus:ring-0 focus:outline-none bg-transparent placeholder:text-muted-foreground"
-        rows={3}
-      />
+          {/* Область ввода + кнопка */}
+          <div className="bg-muted rounded-2xl px-4 py-3 max-w-xl w-full shadow-lg transition-colors">
+            <Textarea
+              placeholder={t('comments.addPlaceholder', 'Напишите комментарий...')}
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="resize-none text-sm border-none focus:ring-0 focus:outline-none bg-transparent placeholder:text-muted-foreground"
+              rows={3}
+            />
 
-      <div className="flex justify-end mt-2">
-        <Button
-          onClick={handleSubmit}
-          disabled={!newComment.trim()}
-          className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded-md"
-        >
-          {t('comments.send', 'Отправить')}
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="flex justify-end mt-2">
+              <Button
+                onClick={handleSubmit}
+                disabled={!newComment.trim()}
+                className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-4 py-1.5 rounded-md"
+              >
+                {t('comments.send', 'Отправить')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,12 +13,13 @@ import {
   orderBy,
   serverTimestamp,
 } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore'; // Импортируем Timestamp из Firebase
 
 type Message = {
   id?: string;
   text: string;
   senderId: string;
-  timestamp: any;
+  timestamp: Timestamp; // Используем тип Timestamp
   read: boolean;
 };
 
@@ -26,7 +27,7 @@ type Chat = {
   id: string;
   participants: string[];
   lastMessage?: string;
-  lastUpdated?: any;
+  lastUpdated?: Timestamp; // Используем тип Timestamp
 };
 
 export function useChat(currentUserId: string, otherUserId: string) {

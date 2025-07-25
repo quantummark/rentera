@@ -10,24 +10,19 @@ import { replyToComment } from '@/app/lib/firestore/comments';
 
 interface CommentItemProps {
   comment: CommentType;
-  currentUserId: string;
   userRole: 'owner' | 'renter';
   contextType: 'owner' | 'renter' | 'listings';
-  contextId: string;
 }
 
 export default function CommentItem({
   comment,
-  currentUserId,
   userRole,
   contextType,
-  contextId,
 }: CommentItemProps) {
   const { t } = useTranslation();
   const [showReply, setShowReply] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(false);
-  
 
   const canReply =
     (userRole === 'owner' && contextType === 'owner') ||
@@ -63,13 +58,13 @@ export default function CommentItem({
         <p className="text-sm font-semibold">{comment.authorName}</p>
         <p className="text-sm text-foreground whitespace-pre-line mt-1">{comment.content}</p>
         <p className="text-xs text-muted-foreground mt-2">
-         {comment.createdAt
-        ? new Date(comment.createdAt.toDate()).toLocaleDateString('ru-RU', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-})
-        : t('commentItem.noDate', 'Дата неизвестна')}
+          {comment.createdAt
+            ? new Date(comment.createdAt.toDate()).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })
+            : t('commentItem.noDate', 'Дата неизвестна')}
         </p>
 
         {/* Ответ от владельца или арендатора */}

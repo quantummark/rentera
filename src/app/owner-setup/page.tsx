@@ -13,12 +13,13 @@ import { useRouter } from 'next/navigation';
 import { db, storage } from '@/app/firebase/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Image from 'next/image'; // Импортируем Image из next/image
 
-   export default function OwnerSetupPage() {
-   const { t } = useTranslation();
-   const { user } = useAuth();
+export default function OwnerSetupPage() {
+  const { t } = useTranslation();
+  const { user } = useAuth();
 
-   const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     fullName: '',
     bio: '',
     city: '',
@@ -28,69 +29,67 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
       instagram: '',
       telegram: '',
     },
-   });
+  });
 
-   const [profileImage, setProfileImage] = useState<File | null>(null);
-   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-   const [isSubmitting, setIsSubmitting] = useState(false);
-   const router = useRouter();
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
-   const handleSubmit = async (e: React.FormEvent) => {
-   e.preventDefault();
-   if (!user) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
 
-   setIsSubmitting(true);
+    setIsSubmitting(true);
 
-   let profileImageUrl = '';
+    let profileImageUrl = '';
 
-   try {
-  // Загружаем фото, если есть
-  if (profileImage) {
-    const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
-    await uploadBytes(imageRef, profileImage);
-    profileImageUrl = await getDownloadURL(imageRef);
-  }
+    try {
+      // Загружаем фото, если есть
+      if (profileImage) {
+        const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
+        await uploadBytes(imageRef, profileImage);
+        profileImageUrl = await getDownloadURL(imageRef);
+      }
 
-  // Собираем данные
-  const ownerProfile = {
-    uid: user.uid,
-    ...formData,
-    profileImageUrl: profileImageUrl || '',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
+      // Собираем данные
+      const ownerProfile = {
+        uid: user.uid,
+        ...formData,
+        profileImageUrl: profileImageUrl || '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
 
-    // Стартовые метрики (можно потом обновить из админки)
-    metrics: {
-      listingsCount: 0,
-      completedRentals: 0,
-      averageRating: 0,
-      responseTime: '30 минут',
-    },
+        // Стартовые метрики (можно потом обновить из админки)
+        metrics: {
+          listingsCount: 0,
+          completedRentals: 0,
+          averageRating: 0,
+          responseTime: '30 минут',
+        },
+      };
+
+      // Сохраняем в Firestore
+      await setDoc(doc(db, 'owner', user.uid), ownerProfile);
+
+      // Уведомление и переход
+      alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
+
+      if (user?.uid) {
+        router.push(`/profile/owner/${user.uid}`);
+      } else {
+        console.error('UID пользователя не найден');
+        alert(t('ownerSetup.errorMessage', 'Ошибка: не удалось определить пользователя.'));
+      }
+    } catch (error) {
+      console.error('Ошибка при сохранении профиля:', error);
+      alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Сохраняем в Firestore
-  await setDoc(doc(db, 'owner', user.uid), ownerProfile);
-
-  // Уведомление и переход
-  alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
-
-  if (user?.uid) {
-    router.push(`/profile/owner/${user.uid}`);
-  } else {
-    console.error('UID пользователя не найден');
-    alert(t('ownerSetup.errorMessage', 'Ошибка: не удалось определить пользователя.'));
-  }
-} catch (error) {
-  console.error('Ошибка при сохранении профиля:', error);
-  alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
-} finally {
-  setIsSubmitting(false);
-}
-
-    
-   };
-
-   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     // Handle nested socialLinks fields
     if (name === 'instagram' || name === 'telegram') {
@@ -139,7 +138,13 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
           <Label>{t('ownerSetup.photo', 'Фото профиля')}</Label>
           <div className="w-32 h-32 rounded-full overflow-hidden border shadow">
             {previewUrl ? (
-              <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+              <Image
+                src={previewUrl}
+                alt="Avatar"
+                width={120}
+                height={120}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
                 {t('ownerSetup.noPhoto', 'Нет фото')}
