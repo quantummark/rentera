@@ -1,8 +1,7 @@
-// app/messages/page.tsx
 'use client';
 
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
@@ -49,46 +48,44 @@ export default function MessagesPage() {
   }, [selectedUserId, user?.uid]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[90vh]">
-      {/* Список чатов */}
-      <div
-        className={`
-          ${selectedUserId ? 'hidden' : 'block'}
-          w-full md:block md:w-1/3
-          bg-background overflow-auto
-        `}
-      >
-        <ChatList
-          selectedUserId={selectedUserId}
-          onSelect={(id, name, avatar) => {
-            setSelectedUserId(id);
-            setSelectedUserName(name || '');
-            setSelectedUserAvatar(avatar || '');
-          }}
-        />
-      </div>
-
-      {/* Окно чата */}
-      <div
-        className={`
-          ${selectedUserId ? 'block' : 'hidden'}
-          w-full md:block md:flex-1
-          bg-background
-        `}
-      >
-        {selectedUserId ? (
-          <ChatWindow
-            otherUserId={selectedUserId}
-            otherUserName={selectedUserName}
-            otherUserAvatar={selectedUserAvatar}
-            onBack={() => setSelectedUserId(null)}
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="flex flex-col md:flex-row h-[90vh]">
+        {/* Список чатов */}
+        <div
+          className={`${
+            selectedUserId ? 'hidden' : 'block'
+          } w-full md:block md:w-1/3 bg-background overflow-auto`}
+        >
+          <ChatList
+            selectedUserId={selectedUserId}
+            onSelect={(id, name, avatar) => {
+              setSelectedUserId(id);
+              setSelectedUserName(name || '');
+              setSelectedUserAvatar(avatar || '');
+            }}
           />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
-            {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
-          </div>
-        )}
+        </div>
+
+        {/* Окно чата */}
+        <div
+          className={`${
+            selectedUserId ? 'block' : 'hidden'
+          } w-full md:block md:flex-1 bg-background`}
+        >
+          {selectedUserId ? (
+            <ChatWindow
+              otherUserId={selectedUserId}
+              otherUserName={selectedUserName}
+              otherUserAvatar={selectedUserAvatar}
+              onBack={() => setSelectedUserId(null)}
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
+              {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Suspense>
   );
 }
