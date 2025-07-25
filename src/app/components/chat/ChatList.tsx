@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-import { collection, onSnapshot, query, orderBy, getDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Users as UsersIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Timestamp } from 'firebase/firestore';
 
 // Определим интерфейс для профиля пользователя
 interface UserProfile {
@@ -20,7 +21,7 @@ interface Chat {
   id: string;
   participants: string[];
   lastMessage: string;
-  updatedAt: any;
+  updatedAt: Timestamp;  // Заменили any на Timestamp
 }
 
 interface ChatListProps {
@@ -58,7 +59,7 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
       for (const chat of chats) {
         const otherId = chat.participants.find(id => id !== user?.uid)!;
         if (!cache[otherId]) {
-          const { doc, getDoc } = await import('firebase/firestore');
+          const { getDoc, doc } = await import('firebase/firestore');
           let snap = await getDoc(doc(db, 'renter', otherId));
           if (!snap.exists()) snap = await getDoc(doc(db, 'owner', otherId));
           cache[otherId] = snap.exists() ? snap.data() as UserProfile : { fullName: '', profileImageUrl: '' };

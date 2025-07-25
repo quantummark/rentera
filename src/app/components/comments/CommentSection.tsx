@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Timestamp } from 'firebase/firestore';
 
 interface CommentType {
   id: string;
@@ -25,7 +26,7 @@ interface CommentType {
   authorName: string;
   authorPhotoUrl: string;
   content: string;
-  createdAt: any;
+  createdAt: Timestamp;
   contextType: 'owner' | 'renter' | 'listings';
   contextId: string;
   replyTo?: string;

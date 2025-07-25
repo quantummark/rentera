@@ -21,13 +21,8 @@ type Message = {
   senderId: string;
   timestamp: Timestamp; // Используем тип Timestamp
   read: boolean;
-};
-
-type Chat = {
-  id: string;
-  participants: string[];
   lastMessage?: string;
-  lastUpdated?: Timestamp; // Используем тип Timestamp
+  lastUpdated?: Timestamp; // Используем тип Timestamp для последнего обновления
 };
 
 export function useChat(currentUserId: string, otherUserId: string) {

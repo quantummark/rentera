@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from './useAuth';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
+import { Timestamp } from 'firebase/firestore';
 
 type UserType = 'owner' | 'renter' | null;
 
@@ -18,8 +19,8 @@ interface OwnerProfile {
     instagram: string;
     telegram: string;
   };
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   metrics?: {
     listingsCount: number;
     completedRentals: number;
@@ -40,7 +41,7 @@ interface RenterProfile {
   budgetFrom: number;
   budgetTo: number;
   profileImageUrl?: string;
-  createdAt: any;
+  createdAt: Timestamp;
 }
 
 type UserProfile = OwnerProfile | RenterProfile | null;

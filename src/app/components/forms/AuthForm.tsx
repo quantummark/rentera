@@ -16,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
-import { useUserTypeWithProfile } from '@/hooks/useUserType';
 
 type Language = 'ru' | 'en' | 'ua';
 
@@ -90,8 +89,12 @@ export const AuthForm = ({ language }: AuthFormProps) => {
           router.push('/select-role');
         }
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
 
@@ -115,8 +118,12 @@ export const AuthForm = ({ language }: AuthFormProps) => {
       } else {
         router.push('/select-role');
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
 

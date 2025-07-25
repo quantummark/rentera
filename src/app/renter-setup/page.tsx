@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, Path, PathValue } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -75,11 +75,48 @@ export default function RenterSetupPage() {
     },
   });
 
-  // Вспомогательный хук для загрузки картинки + записи профиля
+  // Утилита для типобезопасного setValue
+  const setTypedValue = <K extends Path<RenterFormValues>>(
+    field: K,
+    value: PathValue<RenterFormValues, K>
+  ) => {
+    setValue(field, value);
+  };
+
+  // Вспомогательные описания полей
+  const textFields = [
+    { id: 'fullName', label: 'Имя или ник', type: 'input' },
+    { id: 'bio', label: 'О себе', type: 'textarea' },
+    { id: 'city', label: 'Город', type: 'input' },
+  ] as const;
+
+  const selectFields = [
+    {
+      name: 'rentDuration',
+      label: 'Срок аренды',
+      options: ['1-3', '3-6', '6+', '12+'] as RenterFormValues['rentDuration'][],
+    },
+    {
+      name: 'hasPets',
+      label: 'Животные',
+      options: ['no', 'cat', 'dog'] as RenterFormValues['hasPets'][],
+    },
+    {
+      name: 'hasKids',
+      label: 'Дети',
+      options: ['no', 'yes'] as RenterFormValues['hasKids'][],
+    },
+    {
+      name: 'smoking',
+      label: 'Курение',
+      options: ['no', 'yes'] as RenterFormValues['smoking'][],
+    },
+  ] as const;
+
+  // 3) Загрузка фото и запись профиля
   const saveProfile = async (data: RenterFormValues) => {
     if (!user) throw new Error('Неавторизован');
 
-    // 3) Загрузка фото, если есть
     let profileImageUrl = '';
     if (data.profileImage) {
       const imageRef = ref(storage, `renterAvatars/${user.uid}`);
@@ -87,7 +124,6 @@ export default function RenterSetupPage() {
       profileImageUrl = await getDownloadURL(imageRef);
     }
 
-    // 4) Сохранение в Firestore с серверным таймстампом
     await setDoc(doc(db, 'renter', user.uid), {
       uid: user.uid,
       fullName: data.fullName,
@@ -105,20 +141,26 @@ export default function RenterSetupPage() {
     });
   };
 
-  // 5) Обработчик сабмита
+  // 4) Обработчик сабмита
   const onSubmit = async (data: RenterFormValues) => {
     setGlobalError(null);
     try {
       await saveProfile(data);
-      router.push(`/profile/renter/${user?.uid}`);
-    } catch (err: any) {
+      if (!user) {
+        setGlobalError('Неавторизован');
+        return;
+      }
+      router.push(`/profile/renter/${user.uid}`);
+    } catch (err) {
       console.error(err);
-      setGlobalError(err.message || 'Не удалось сохранить профиль');
+      const message =
+        err instanceof Error ? err.message : 'Не удалось сохранить профиль';
+      setGlobalError(message);
     }
   };
 
-  // Для прелоада превью
-  const file = watch('profileImage') as File | undefined;
+  // Для превью загруженного файла
+  const file = watch('profileImage');
   const previewUrl = file ? URL.createObjectURL(file) : null;
 
   return (
@@ -152,7 +194,10 @@ export default function RenterSetupPage() {
           <Input
             type="file"
             accept="image/*"
-            onChange={e => setValue('profileImage', e.target.files?.[0]!)}
+            onChange={e => {
+              const f = e.target.files?.[0];
+              if (f) setValue('profileImage', f);
+            }}
           />
           {errors.profileImage && (
             <p className="text-destructive text-sm">
@@ -163,27 +208,28 @@ export default function RenterSetupPage() {
 
         <Separator />
 
-        {/* Поля профиля */}
-        {[
-          { id: 'fullName', label: 'Имя или ник', type: 'input' },
-          { id: 'bio', label: 'О себе', type: 'textarea' },
-          { id: 'city', label: 'Город', type: 'input' },
-        ].map(({ id, label, type }) => (
+        {/* Текстовые поля */}
+        {textFields.map(({ id, label, type }) => (
           <div key={id} className="space-y-1">
             <Label htmlFor={id}>{label}</Label>
             {type === 'input' ? (
-              <Input id={id} {...register(id as any)} />
+              <Input id={id} {...register(id as Path<RenterFormValues>)} />
             ) : (
-              <Textarea id={id} {...register(id as any)} rows={4} />
+              <Textarea
+                id={id}
+                {...register(id as Path<RenterFormValues>)}
+                rows={4}
+              />
             )}
-            {errors[id as keyof RenterFormValues] && (
+            {errors[id] && (
               <p className="text-destructive text-sm">
-                {(errors[id as keyof RenterFormValues]?.message as string) || ''}
+                {errors[id]?.message}
               </p>
             )}
           </div>
         ))}
 
+        {/* Слайдер бюджета */}
         <div className="space-y-4">
           <Label>Бюджет ($/мес)</Label>
           <Slider
@@ -192,47 +238,46 @@ export default function RenterSetupPage() {
             step={50}
             defaultValue={[300, 500]}
             onValueChange={([from, to]) => {
-              setValue('budgetFrom', from);
-              setValue('budgetTo', to);
+              setTypedValue('budgetFrom', from);
+              setTypedValue('budgetTo', to);
             }}
           />
           <div className="text-sm text-muted-foreground">
-            От {watch('budgetFrom')}$ до {watch('budgetTo')}$ 
+            От {watch('budgetFrom')}$ до {watch('budgetTo')}$
           </div>
         </div>
 
+        {/* Селекты */}
         <div className="grid grid-cols-2 gap-4">
-          {[
-            { name: 'rentDuration', label: 'Срок аренды', options: ['1-3','3-6','6+','12+'] },
-            { name: 'hasPets', label: 'Животные', options: ['no','cat','dog'] },
-            { name: 'hasKids', label: 'Дети', options: ['no','yes'] },
-            { name: 'smoking', label: 'Курение', options: ['no','yes'] },
-          ].map(({ name, label, options }) => (
+          {selectFields.map(({ name, label, options }) => (
             <div key={name} className="space-y-1">
               <Label>{label}</Label>
-              <Select onValueChange={val => setValue(name as any, val as any)}>
+              <Select onValueChange={val => setTypedValue(name, val as (typeof options)[number])}>
                 <SelectTrigger>
                   <SelectValue placeholder="Выберите..." />
                 </SelectTrigger>
                 <SelectContent>
                   {options.map(opt => (
                     <SelectItem key={opt} value={opt}>
-                      {opt === 'no' ? 'Нет' : opt === 'yes' ? 'Да' : opt}
+                      {opt === 'no'
+                        ? 'Нет'
+                        : opt === 'yes'
+                        ? 'Да'
+                        : opt}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors[name as keyof RenterFormValues] && (
+              {errors[name] && (
                 <p className="text-destructive text-sm">
-                  {(
-                    errors[name as keyof RenterFormValues]?.message as string
-                  ) || ''}
+                  {errors[name]?.message}
                 </p>
               )}
             </div>
           ))}
         </div>
 
+        {/* Профессия */}
         <div className="space-y-1">
           <Label htmlFor="occupation">Работа / занятость</Label>
           <Input id="occupation" {...register('occupation')} />

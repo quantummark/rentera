@@ -7,6 +7,7 @@ import { Mail, MapPin, Phone, Instagram, Send, LogOut, Trash2, Edit, Settings } 
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
+import { Timestamp } from 'firebase/firestore';
 
 interface OwnerProfile {
   uid: string;
@@ -20,8 +21,8 @@ interface OwnerProfile {
     instagram: string;
     telegram: string;
   };
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   metrics?: {
     listingsCount: number;
     completedRentals: number;
@@ -40,7 +41,7 @@ export default function OwnerCard({ owner, isCurrentUser }: OwnerCardProps) {
   const [showMenu, setShowMenu] = useState(false);
   const router = useRouter();
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: Timestamp) => {
     if (!timestamp?.toDate) return '';
     const date = timestamp.toDate();
     return new Intl.DateTimeFormat('ru-RU', {

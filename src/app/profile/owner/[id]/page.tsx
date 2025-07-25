@@ -9,6 +9,7 @@ import OwnerCard from '@/app/components/profile/OwnerCard';
 import OwnerListings from '@/app/components/profile/OwnerListings';
 import { Separator } from '@/components/ui/separator';
 import CommentSection from '@/app/components/comments/CommentSection';
+import { Timestamp } from 'firebase/firestore';
 
 // Определение интерфейса для данных владельца
 interface OwnerProfile {
@@ -23,8 +24,8 @@ interface OwnerProfile {
     instagram: string;
     telegram: string;
   };
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   metrics?: {
     listingsCount: number;
     completedRentals: number;

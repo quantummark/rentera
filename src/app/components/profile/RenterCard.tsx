@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { Timestamp } from 'firebase/firestore';
 
 interface RenterProfile {
   uid: string;
@@ -22,7 +23,7 @@ interface RenterProfile {
   budgetFrom: number;
   budgetTo: number;
   profileImageUrl?: string;
-  createdAt: any;
+  createdAt: Timestamp;
 }
 
 interface RenterCardProps {
@@ -34,7 +35,7 @@ export default function RenterCard({ renter }: RenterCardProps) {
   const { t } = useTranslation();
   const router = useRouter();
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: Timestamp) => {
     if (!timestamp?.toDate) return '';
     const date = timestamp.toDate();
     return new Intl.DateTimeFormat('ru-RU', {
