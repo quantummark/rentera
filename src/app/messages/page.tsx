@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -10,7 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import ChatList from '@/app/components/chat/ChatList';
 import { ChatWindow } from '@/app/components/chat/ChatWindow';
 
-export default function MessagesClient() {
+export default function MessagesPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const searchParams = useSearchParams();
@@ -20,12 +20,14 @@ export default function MessagesClient() {
   const [selectedUserName, setSelectedUserName] = useState<string>('');
   const [selectedUserAvatar, setSelectedUserAvatar] = useState<string>('');
 
+  // Открыть чат по ?userId
   useEffect(() => {
     if (targetUserId && user?.uid && targetUserId !== user.uid) {
       setSelectedUserId(targetUserId);
     }
   }, [targetUserId, user?.uid]);
 
+  // Убедиться, что чат существует
   useEffect(() => {
     const ensureChat = async () => {
       if (!user?.uid || !selectedUserId) return;
@@ -44,34 +46,55 @@ export default function MessagesClient() {
     ensureChat();
   }, [selectedUserId, user?.uid]);
 
+  // Ленивая загрузка компонента ChatList и ChatWindow
+  const ChatListWithSuspense = () => (
+    <Suspense fallback={<div>Loading Chat List...</div>}>
+      <ChatList
+        selectedUserId={selectedUserId}
+        onSelect={(id, name, avatar) => {
+          setSelectedUserId(id);
+          setSelectedUserName(name || '');
+          setSelectedUserAvatar(avatar || '');
+        }}
+      />
+    </Suspense>
+  );
+
+  const ChatWindowWithSuspense = () => (
+    <Suspense fallback={<div>Loading Chat Window...</div>}>
+      {selectedUserId ? (
+        <ChatWindow
+          otherUserId={selectedUserId}
+          otherUserName={selectedUserName}
+          otherUserAvatar={selectedUserAvatar}
+          onBack={() => setSelectedUserId(null)}
+        />
+      ) : (
+        <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
+          {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
+        </div>
+      )}
+    </Suspense>
+  );
+
   return (
     <div className="flex flex-col md:flex-row h-[90vh]">
       {/* Список чатов */}
-      <div className={`${selectedUserId ? 'hidden' : 'block'} w-full md:block md:w-1/3 bg-background overflow-auto`}>
-        <ChatList
-          selectedUserId={selectedUserId}
-          onSelect={(id, name, avatar) => {
-            setSelectedUserId(id);
-            setSelectedUserName(name || '');
-            setSelectedUserAvatar(avatar || '');
-          }}
-        />
+      <div
+        className={`${
+          selectedUserId ? 'hidden' : 'block'
+        } w-full md:block md:w-1/3 bg-background overflow-auto`}
+      >
+        <ChatListWithSuspense />
       </div>
 
       {/* Окно чата */}
-      <div className={`${selectedUserId ? 'block' : 'hidden'} w-full md:block md:flex-1 bg-background`}>
-        {selectedUserId ? (
-          <ChatWindow
-            otherUserId={selectedUserId}
-            otherUserName={selectedUserName}
-            otherUserAvatar={selectedUserAvatar}
-            onBack={() => setSelectedUserId(null)}
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
-            {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
-          </div>
-        )}
+      <div
+        className={`${
+          selectedUserId ? 'block' : 'hidden'
+        } w-full md:block md:flex-1 bg-background`}
+      >
+        <ChatWindowWithSuspense />
       </div>
     </div>
   );
