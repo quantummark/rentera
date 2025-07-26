@@ -1,5 +1,4 @@
 'use client';
-export const dynamic = 'force-dynamic';
 
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -21,33 +20,37 @@ export default function MessagesPage() {
   const [selectedUserName, setSelectedUserName] = useState<string>('');
   const [selectedUserAvatar, setSelectedUserAvatar] = useState<string>('');
 
+  // Открыть чат по ?userId
   useEffect(() => {
     if (targetUserId && user?.uid && targetUserId !== user.uid) {
       setSelectedUserId(targetUserId);
     }
   }, [targetUserId, user?.uid]);
 
+  // Убедиться, что чат существует
   useEffect(() => {
     const ensureChat = async () => {
       if (!user?.uid || !selectedUserId) return;
       const chatId = [user.uid, selectedUserId].sort().join('_');
-      const refDoc = doc(db, 'chats', chatId);
-      const snap = await getDoc(refDoc);
+      const ref = doc(db, 'chats', chatId);
+      const snap = await getDoc(ref);
       if (!snap.exists()) {
-        await setDoc(refDoc, {
+        await setDoc(ref, {
           participants: [user.uid, selectedUserId],
           lastMessage: '',
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
+        // также создаём сабколлекции users/.../chats
       }
     };
     ensureChat();
   }, [selectedUserId, user?.uid]);
 
   return (
-    <Suspense fallback={<div className="p-4">Загрузка чатов…</div>}>
+    <Suspense fallback={<div>Загрузка...</div>}>
       <div className="flex flex-col md:flex-row h-[90vh]">
+        {/* Список чатов */}
         <div
           className={`${
             selectedUserId ? 'hidden' : 'block'
@@ -63,6 +66,7 @@ export default function MessagesPage() {
           />
         </div>
 
+        {/* Окно чата */}
         <div
           className={`${
             selectedUserId ? 'block' : 'hidden'
