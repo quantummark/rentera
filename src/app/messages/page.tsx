@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'; // Используем хук здесь
 import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
@@ -13,6 +13,8 @@ import { ChatWindow } from '@/app/components/chat/ChatWindow';
 export default function MessagesPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
+
+  // Получаем параметры запроса сразу внутри компонента
   const searchParams = useSearchParams();
   const targetUserId = searchParams.get('userId');
 
@@ -20,7 +22,7 @@ export default function MessagesPage() {
   const [selectedUserName, setSelectedUserName] = useState<string>('');
   const [selectedUserAvatar, setSelectedUserAvatar] = useState<string>('');
 
-  // Открыть чат по ?userId
+  // Открыть чат по ?userId (параметры URL)
   useEffect(() => {
     if (targetUserId && user?.uid && targetUserId !== user.uid) {
       setSelectedUserId(targetUserId);
@@ -41,7 +43,7 @@ export default function MessagesPage() {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
-        // также создаём сабколлекции users/.../chats
+        // Также создаём сабколлекции users/.../chats
       }
     };
     ensureChat();
