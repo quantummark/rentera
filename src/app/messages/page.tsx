@@ -1,12 +1,13 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
+
+// Динамическая загрузка компонента, который использует useRouter
+import dynamic from 'next/dynamic';
 
 interface ChatWindowProps {
   otherUserId: string;
@@ -15,16 +16,8 @@ interface ChatWindowProps {
   onBack?: () => void; // функция для возврата назад
 }
 
-// Динамические импорты компонентов
-const ChatList = dynamic(
-  () => import('@/app/components/chat/ChatList'),
-  {
-    ssr: false,
-    // Можно оставить Suspense вместо loading, но здесь покажем простой лоадер
-    loading: () => <div className="p-4 text-center">Загрузка списка…</div>,
-  }
-);
-
+// Динамически загружаем компоненты, которые используют useRouter
+const ChatList = dynamic(() => import('@/app/components/chat/ChatList'), { ssr: false });
 const ChatWindow = dynamic<ChatWindowProps>(
   () =>
     import('@/app/components/chat/ChatWindow')
@@ -38,21 +31,26 @@ const ChatWindow = dynamic<ChatWindowProps>(
 export default function MessagesPage() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const searchParams = useSearchParams();
-  const targetUserId = searchParams.get('userId');
+  const [isClient, setIsClient] = useState(false); // Проверка на клиентский рендеринг
 
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUserName, setSelectedUserName] = useState<string>('');
   const [selectedUserAvatar, setSelectedUserAvatar] = useState<string>('');
 
-  // Открыть чат по ?userId
+  // Используем useEffect для проверки того, что компонент уже смонтирован
   useEffect(() => {
+    setIsClient(true); // После монтирования компонента включаем клиентский рендер
+  }, []);
+
+  // Открытие чата по query параметру userId
+  useEffect(() => {
+    const targetUserId = new URLSearchParams(window.location.search).get('userId');
     if (targetUserId && user?.uid && targetUserId !== user.uid) {
       setSelectedUserId(targetUserId);
     }
-  }, [targetUserId, user?.uid]);
+  }, [user?.uid]);
 
-  // Создать чат в Firestore, если ещё не существует
+  // Проверяем, существует ли чат
   useEffect(() => {
     const ensureChat = async () => {
       if (!user?.uid || !selectedUserId) return;
@@ -71,57 +69,47 @@ export default function MessagesPage() {
     ensureChat();
   }, [selectedUserId, user?.uid]);
 
-  return (
-    <Suspense fallback={<div className="p-4 text-center">Загрузка...</div>}>
-  <div className="flex flex-col md:flex-row h-[90vh]">
-    {/* Список чатов: скрываем только на мобильных, на md+ — всегда показываем */}
-    <div
-      className={`
-        ${selectedUserId ? 'hidden' : 'block'}  // на мобилке
-        w-full
-        md:block                              // на md+ всегда block
-        md:w-1/3
-        bg-background
-        overflow-auto
-      `}
-    >
-      <ChatList
-        selectedUserId={selectedUserId}
-        onSelect={(userId: string, userName?: string, userAvatar?: string) => {
-          setSelectedUserId(userId);
-          setSelectedUserName(userName || '');
-          setSelectedUserAvatar(userAvatar || '');
-        }}
-      />
-    </div>
+  if (!isClient) {
+    return <div>Loading...</div>; // Пока не смонтирован, показываем "Загрузка..."
+  }
 
-    {/* Окно чата: тоже скрываем только на мобилке */}
-    <div
-      className={`
-        ${selectedUserId ? 'block' : 'hidden'}  // на мобилке
-        w-full
-        md:block                                // на md+ всегда block
-        md:flex-1
-        bg-background
-      `}
-    >
-      {selectedUserId ? (
-        <ChatWindow
-          otherUserId={selectedUserId}
-          otherUserName={selectedUserName}
-          otherUserAvatar={selectedUserAvatar}
-          onBack={() => setSelectedUserId(null)}
+  return (
+    <div className="flex flex-col md:flex-row h-[90vh]">
+      {/* Список чатов */}
+      <div
+        className={`${
+          selectedUserId ? 'hidden' : 'block'
+        } w-full md:block md:w-1/3 bg-background overflow-auto`}
+      >
+        <ChatList
+          selectedUserId={selectedUserId}
+          onSelect={(id, name, avatar) => {
+            setSelectedUserId(id);
+            setSelectedUserName(name || '');
+            setSelectedUserAvatar(avatar || '');
+          }}
         />
-      ) : (
-        <div className="p-4 text-center text-muted-foreground">
-          {t(
-            'messages.emptyChatPlaceholder',
-            'Выберите чат для общения или начните новый диалог, нажав кнопку «Написать».'
-          )}
-        </div>
-      )}
+      </div>
+
+      {/* Окно чата */}
+      <div
+        className={`${
+          selectedUserId ? 'block' : 'hidden'
+        } w-full md:block md:flex-1 bg-background`}
+      >
+        {selectedUserId ? (
+          <ChatWindow
+            otherUserId={selectedUserId}
+            otherUserName={selectedUserName}
+            otherUserAvatar={selectedUserAvatar}
+            onBack={() => setSelectedUserId(null)}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
+            {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-</Suspense>
   );
 }
