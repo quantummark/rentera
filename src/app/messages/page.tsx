@@ -114,7 +114,10 @@ export default function MessagesPage() {
         />
       ) : (
         <div className="p-4 text-center text-muted-foreground">
-          Выберите чат для общения или начните новый диалог, нажав кнопку «Написать».
+          {t(
+            'messages.emptyChatPlaceholder',
+            'Выберите чат для общения или начните новый диалог, нажав кнопку «Написать».'
+          )}
         </div>
       )}
     </div>
