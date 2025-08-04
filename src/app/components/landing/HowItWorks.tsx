@@ -72,29 +72,31 @@ export default function HowItWorks() {
           )}
         </p>
         <div className="space-y-12">
-          {steps.map(({ icon: Icon, number, title, description, bg, color }, idx) => (
-            <div key={idx} className="relative mb-12">
-              <div className="flex items-start gap-6 bg-card border border-muted rounded-2xl p-6 shadow-sm transition-all">
-                <div className={`flex items-center justify-center w-16 h-16 rounded-full ${bg}`}>
-                  <div className={`w-8 h-8 flex items-center justify-center ${color} font-bold`}>
-                    {number}
-                  </div>
-                </div>
-                <div className="space-y-2 flex-1">
-                  <h3 className="text-xl font-semibold">{title}</h3>
-                  <p className="text-base text-muted-foreground dark:text-muted-foreground">
-                    {description}
-                  </p>
-                </div>
-              </div>
-              {idx < steps.length - 1 && (
-                <ArrowDown
-                  className="absolute left-1/2 -bottom-9 transform -translate-x-1/2
-                             w-6 h-6 text-muted-foreground dark:text-muted-foreground"
-                />
-              )}
-            </div>
-          ))}
+          {steps.map(({ number, title, description, bg, color }, idx) => (
+  <div key={idx} className="relative mb-12">
+    <div className="flex items-start gap-6 bg-card border border-muted rounded-2xl p-6 shadow-sm transition-all">
+      <div className={`flex items-center justify-center w-16 h-16 rounded-full ${bg}`}>
+        <div className={`w-8 h-8 flex items-center justify-center ${color} font-bold`}>
+          {number}
+        </div>
+      </div>
+
+      <div className="space-y-2 flex-1">
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-base text-muted-foreground dark:text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </div>
+
+    {idx < steps.length - 1 && (
+      <ArrowDown
+        className="absolute left-1/2 -bottom-9 transform -translate-x-1/2
+                   w-6 h-6 text-muted-foreground dark:text-muted-foreground"
+      />
+    )}
+  </div>
+))}
         </div>
       </div>
     </section>
