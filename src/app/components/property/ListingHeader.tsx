@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { MapPin, ShieldCheck, CreditCard, MessageCircle } from 'lucide-react';
 import ListingGallery from './ListingGallery'; // ✅ импорт галереи
 import MapLinkButton from './MapLinkButton'; // ✅ импорт кнопки карты
+import { useRouter } from 'next/navigation';
 
 interface ListingHeaderProps {
   listing: {
+    ownerId: string;
     title: string;
     city: string;
     district: string;
@@ -28,6 +30,7 @@ interface ListingHeaderProps {
 
 export default function ListingHeader({ listing }: ListingHeaderProps) {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -75,7 +78,9 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
           <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full rounded-full">
             💰 {t('listing.rentOnline', 'Арендовать онлайн')}
           </Button>
-          <Button variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
+          <Button 
+          onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
+          variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
             <MessageCircle className="w-4 h-4" />
             {t('listing.contactOwner', 'Написать владельцу')}
           </Button>

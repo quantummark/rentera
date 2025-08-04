@@ -11,14 +11,8 @@ export default function SearchIntro() {
       'text-center text-white space-y-4 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8'
     )}>
       <h1 className="text-xl sm:text-3xl font-bold tracking-tight">
-        {t('search.hero.title', 'Мы собрали самые передовые технологии, чтобы вы смогли арендовать жильё совершенно по-новому')}
+        {t('search.hero.title', 'Для подбора подходящего жилья заполните, пожалуйста, форму ниже. Укажите ваши предпочтения, и мы найдём для вас оптимальные варианты.')}
       </h1>
-      <p className="text-base sm:text-lg text-white/80">
-        {t(
-          'search.hero.description',
-          'Мы убрали всё лишнее, оставили только технологии и удобство. Так арендуют те, кто не привык к посредственности.'
-        )}
-      </p>
     </div>
   );
 }
