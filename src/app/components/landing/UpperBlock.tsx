@@ -26,23 +26,23 @@ export default function Hero() {
       {t('landing.subtitle', 'Арендуйте жильё напрямую от владельцев, без агентств, риелторов и скрытых комиссий.')}
     </p>
     
-    <div className="mt-6 space-x-4">
-      {/* Кнопка "Начать поиск" */}
-      <Link
-        href="/search"
-        className="px-8 py-3 text-lg font-semibold bg-orange-500 text-white rounded-full shadow-lg hover:bg-orange-600 transition-all inline-flex items-center justify-center"
-      >
-        {t('landing.startSearch', 'Начать поиск')}
-      </Link>
-      
-      {/* Кнопка "Сдать жильё" */}
-      <Link
-        href="/login"
-        className="px-8 py-3 text-lg font-semibold bg-transparent border-2 border-orange-500 text-orange-500 rounded-full shadow-lg hover:bg-orange-50 transition-all inline-flex items-center justify-center"
-      >
-        {t('landing.startRenting', 'Сдать жильё')}
-      </Link>
-    </div>
+    <div className="mt-6 flex flex-col gap-4 md:flex-row md:space-x-4">
+  {/* Кнопка "Начать поиск" */}
+  <Link
+    href="/search"
+    className="px-8 py-3 text-lg font-semibold bg-orange-500 text-white rounded-full shadow-lg hover:bg-orange-600 transition-all inline-flex items-center justify-center w-full md:w-auto"
+  >
+    {t('landing.startSearch', 'Начать поиск')}
+  </Link>
+  
+  {/* Кнопка "Сдать жильё" */}
+  <Link
+    href="/login"
+    className="px-8 py-3 text-lg font-semibold bg-transparent border-2 border-orange-500 text-orange-500 rounded-full shadow-lg hover:bg-orange-50 transition-all inline-flex items-center justify-center w-full md:w-auto"
+  >
+    {t('landing.startRenting', 'Сдать жильё')}
+  </Link>
+</div>
   </div>
 </section>
   );
