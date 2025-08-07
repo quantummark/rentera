@@ -26,7 +26,7 @@ export default function Hero() {
       {t('landing.subtitle', 'Арендуйте жильё напрямую от владельцев, без агентств, риелторов и скрытых комиссий.')}
     </p>
     
-    <div className="mt-6 flex flex-col gap-4 md:flex-row md:space-x-4">
+    <div className="mt-6 flex flex-col gap-4 md:flex-row md:gap-4 justify-center">
   {/* Кнопка "Начать поиск" */}
   <Link
     href="/search"
