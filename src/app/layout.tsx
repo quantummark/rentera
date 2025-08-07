@@ -46,7 +46,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground min-h-screen antialiased">
         {/* Оборачиваем приложение в QueryClientWrapper */}
         <QueryClientWrapper>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" enableColorScheme={true} disableTransitionOnChange>
             <ClientRoot>
               {/* Компонент Header */}
               <Header />
