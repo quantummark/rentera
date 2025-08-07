@@ -60,7 +60,7 @@ const QuickContractForm: React.FC = () => {
             // Здесь можно отправить данные на сервер или создать PDF
           }}
         >
-          {({ isValid, touched }) => (
+          {({ isValid }) => (
             <Form>
               <h2 className="text-lg sm:text-xl">{t('contractTitle', 'ДОГОВОР АРЕНДЫ НЕДВИЖИМОСТИ')}</h2>
 
