@@ -60,9 +60,9 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-background dark:bg-gray-900">
+    <section className="py-12 md:py-16 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-white">
+        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-foreground-dark">
           {t('howItWorks.title', 'Как это работает?')}
         </h2>
         <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12">

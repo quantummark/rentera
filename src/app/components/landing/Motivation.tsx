@@ -40,9 +40,9 @@ export default function Motivation() {
   ];
 
   return (
-    <section className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-gray-900">
+    <section className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-white">
+        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-foreground-dark">
           {t('motivation.title', 'Строим экосистему аренды')}
         </h2>
         <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12">
