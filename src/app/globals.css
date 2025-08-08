@@ -1,30 +1,31 @@
 @import 'tailwindcss';
 
 :root {
-  --background: ...;
-  --foreground: ...;
-  /* остальные переменные */
+  --background: #ffffff; /* светлый фон */
+  --foreground: #000000; /* светлый текст */
+  /* другие переменные */
 }
 
 .dark {
-  --background: ...;
-  --foreground: ...;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  /* остальные переменные маппим */
+  --background: #1a202c; /* темный фон */
+  --foreground: #ffffff; /* светлый текст на темном фоне */
+  /* другие переменные */
 }
 
 @layer base {
   html {
     font-family: var(--font-geist-sans), sans-serif;
     scrollbar-gutter: stable;
-    color-scheme: only light;
+    color-scheme: light dark;
   }
+
   body {
-    @apply font-sans bg-background text-foreground min-h-screen antialiased;
+    font-family: var(--font-geist-sans), sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--background);
+    color: var(--foreground);
     padding: 1rem;
     overflow-y: scroll;
   }
