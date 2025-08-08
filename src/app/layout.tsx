@@ -44,9 +44,29 @@ export default function RootLayout({
       data-theme="light" // Устанавливаем тему по умолчанию
       className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
-      <body className="bg-background text-foreground min-h-screen antialiased">
-        {/* Оборачиваем приложение в QueryClientWrapper */}
-        <QueryClientWrapper>
+
+      <head>
+  <script
+    dangerouslySetInnerHTML={{
+      __html: `
+        (function() {
+          try {
+            var theme = localStorage.getItem('rentera-theme') || 'light';
+            var d = document.documentElement;
+            // Фиксируем класс темы ДО загрузки стилей
+            if (theme === 'dark') d.classList.add('dark'); else d.classList.remove('dark');
+            // Фиксируем отрисовку нативных контролов
+            d.style.colorScheme = theme;
+          } catch (e) {}
+        })();
+      `,
+    }}
+  />
+</head>
+
+<body className="bg-background text-foreground min-h-screen antialiased">
+  {/* Оборачиваем приложение в QueryClientWrapper */}
+  <QueryClientWrapper>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" disableTransitionOnChange={true}>
             <ClientRoot>
               {/* Компонент Header */}
