@@ -41,6 +41,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-theme="light" // Устанавливаем тему по умолчанию
       className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
       <body className="bg-background text-foreground min-h-screen antialiased">
