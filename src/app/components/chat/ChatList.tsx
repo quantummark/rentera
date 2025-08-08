@@ -78,11 +78,11 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
   }
 
   return (
-    <div className="bg-card dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 h-[80vh] md:h-full flex flex-col">
+    <div className="bg-card dark:bg-background-dark border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm p-4 h-[80vh] md:h-full flex flex-col">
       {/* Заголовок */}
       <div className="flex items-center mb-4">
         <UsersIcon className="w-6 h-6 text-foreground mr-2" />
-        <h2 className="text-lg font-semibold text-foreground dark:text-foreground">
+        <h2 className="text-lg font-semibold text-foreground dark:text-foreground-dark">
           {t('chat.list.title', 'Ваши чаты')}
         </h2>
       </div>

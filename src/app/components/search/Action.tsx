@@ -45,7 +45,7 @@ export default function Action() {
 
           <Link
             href="/login"
-            className=" dark:bg-zinc-800 border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
+            className="dark:bg-background-dark border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
           >
             {t('action.renter', 'Создать профиль арендатора')}
           </Link>
