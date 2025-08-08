@@ -11,8 +11,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       defaultTheme="light"        // стартуем всегда со светлой (или 'dark', как тебе нужно)
       enableSystem={false}        // полностью отключаем подстройку под систему
       storageKey="rentera-theme"  // свой ключ в localStorage, чтобы исключить конфликты
-      enableColorScheme={true}    // синхронизирует нативные контролы с текущей темой
-      disableTransitionOnChange   // чтобы не мигали переходы при смене темы
+      disableTransitionOnChange={true}   // чтобы не мигали переходы при смене темы
       {...props}
     >
       {children}

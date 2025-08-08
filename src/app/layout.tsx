@@ -41,12 +41,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} font-sans dark`}
+      className={`${geistSans.variable} ${geistMono.variable} font-sans`}
     >
       <body className="bg-background text-foreground min-h-screen antialiased">
         {/* Оборачиваем приложение в QueryClientWrapper */}
         <QueryClientWrapper>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" enableColorScheme={true} disableTransitionOnChange>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" disableTransitionOnChange={true}>
             <ClientRoot>
               {/* Компонент Header */}
               <Header />
