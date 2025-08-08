@@ -21,6 +21,7 @@
   html {
     font-family: var(--font-geist-sans), sans-serif;
     scrollbar-gutter: stable;
+    color-scheme: only light;
   }
   body {
     @apply font-sans bg-background text-foreground min-h-screen antialiased;
