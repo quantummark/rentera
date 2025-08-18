@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/ToastContext'; // твой toast компонент
+import { useToast } from '@/components/ui/ToastContext'; // твой toast контекст
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 
@@ -18,23 +18,29 @@ export default function RentRequestButton({ listingId, ownerId, renterId }: Rent
   const [status, setStatus] = useState<RequestStatus>('none');
   const [loading, setLoading] = useState(false);
 
+  const { addToast } = useToast();
+
   const requestDocRef = doc(db, 'contracts', `${listingId}_${renterId}`);
 
   // Проверка существующего запроса
   useEffect(() => {
     const fetchStatus = async () => {
-      const docSnap = await getDoc(requestDocRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setStatus(data.status);
+      try {
+        const docSnap = await getDoc(requestDocRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data?.status) setStatus(data.status as RequestStatus);
+        }
+      } catch (err) {
+        console.error('Ошибка при проверке статуса запроса:', err);
       }
     };
     fetchStatus();
-  }, [listingId, renterId]);
+  }, [requestDocRef]);
 
   const handleClick = async () => {
     if (status === 'pending') {
-      useToast().addToast({ title: 'Запрос уже отправлен', description: 'Ждите ответа владельца.' });
+      addToast({ title: 'Запрос уже отправлен', description: 'Ждите ответа владельца.' });
       return;
     }
 
@@ -49,10 +55,10 @@ export default function RentRequestButton({ listingId, ownerId, renterId }: Rent
       });
 
       setStatus('pending');
-      useToast().addToast({ title: 'Запрос отправлен', description: 'Вы можете отслеживать его на странице договоров.' });
+      addToast({ title: 'Запрос отправлен', description: 'Вы можете отслеживать его на странице договоров.' });
     } catch (err) {
-      console.error(err);
-      useToast().addToast({ title: 'Ошибка', description: 'Не удалось отправить запрос.' });
+      console.error('Ошибка при отправке запроса:', err);
+      addToast({ title: 'Ошибка', description: 'Не удалось отправить запрос.' });
     } finally {
       setLoading(false);
     }

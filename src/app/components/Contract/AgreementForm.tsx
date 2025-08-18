@@ -56,7 +56,7 @@ export default function AgreementForm({ onSubmit }: AgreementFormProps) {
           onSubmit(values, signatures);
         }}
       >
-        {({ values, setFieldValue }) => (
+        { (
           <Form className="space-y-4">
             {/* Даты аренды */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -11,7 +11,7 @@ interface AgreementTabsProps {
   
   agreementId: string;
   userType: "owner" | "renter";
-  onUpdateStatus: (status: any) => Promise<void>;
+  onUpdateStatus: (status: "pending" | "accepted" | "rejected") => Promise<void>;
 }
 
 export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
