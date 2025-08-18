@@ -7,9 +7,11 @@ import { MapPin, ShieldCheck, CreditCard, MessageCircle } from 'lucide-react';
 import ListingGallery from './ListingGallery'; // ✅ импорт галереи
 import MapLinkButton from './MapLinkButton'; // ✅ импорт кнопки карты
 import { useRouter } from 'next/navigation';
+import RentRequestButton from '@/app/components/Contract/RentRequestButton'; // ✅ импорт кнопки аренды
 
 interface ListingHeaderProps {
   listing: {
+    id: string;
     ownerId: string;
     title: string;
     city: string;
@@ -75,12 +77,10 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
 
         {/* Кнопки */}
         <div className="pt-4 flex flex-col gap-2">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full rounded-full">
-            💰 {t('listing.rentOnline', 'Арендовать онлайн')}
-          </Button>
-          <Button 
-          onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
-          variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
+          <RentRequestButton listingId={listing.id} ownerId={listing.ownerId} renterId={listing.ownerId} />
+          <Button
+            onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
+            variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
             <MessageCircle className="w-4 h-4" />
             {t('listing.contactOwner', 'Написать владельцу')}
           </Button>

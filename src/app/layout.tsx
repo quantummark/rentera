@@ -7,6 +7,7 @@ import ClientRoot from '@/app/components/ClientRoot'; // Импортируем 
 import Header from '@/app/components/layout/Header';
 import Footer from '@/app/components/layout/Footer';
 import QueryClientWrapper from '@/app/components/query-client-wrapper';
+import { ToastProvider } from '@/components/ui/ToastContext'; // Импортируем провайдер для тостов
 
 
 
@@ -38,34 +39,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      data-theme="light" // Устанавливаем тему по умолчанию
-      className={`${geistSans.variable} ${geistMono.variable} font-sans`}
-    >
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#ffffff" />
-        <meta name="color-scheme" content="light"></meta>
-      </head>
-<body className="bg-background text-foreground min-h-screen antialiased">
-  {/* Оборачиваем приложение в QueryClientWrapper */}
-  <QueryClientWrapper>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" disableTransitionOnChange={true}>
-            <ClientRoot>
-              {/* Компонент Header */}
-              <Header />
-              {/* Контейнер для контента */}
-              <div className="container mx-auto py-8 px-4">{children}</div>
-              <Footer />
-            </ClientRoot>
-          </ThemeProvider>
-        </QueryClientWrapper>
-      </body>
-    </html>
+    <ToastProvider>
+      <html
+        lang="en"
+        suppressHydrationWarning
+        data-theme="light" // Устанавливаем тему по умолчанию
+        className={`${geistSans.variable} ${geistMono.variable} font-sans`}
+      >
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/favicon.ico" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#ffffff" />
+          <meta name="color-scheme" content="light"></meta>
+        </head>
+        <body className="bg-background text-foreground min-h-screen antialiased">
+          {/* Оборачиваем приложение в QueryClientWrapper */}
+          <QueryClientWrapper>
+            {/* Оборачиваем приложение в ThemeProvider для поддержки темной и светлой темы */}
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" disableTransitionOnChange={true}>
+              <ClientRoot>
+                {/* Компонент Header */}
+                <Header />
+                {/* Контейнер для контента */}
+                <div className="container mx-auto py-8 px-4">{children}</div>
+                <Footer />
+              </ClientRoot>
+            </ThemeProvider>
+          </QueryClientWrapper>
+        </body>
+      </html>
+    </ToastProvider>
   );
 }

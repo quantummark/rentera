@@ -9,6 +9,7 @@ import { Timestamp } from 'firebase/firestore';
 type UserType = 'owner' | 'renter' | null;
 
 interface OwnerProfile {
+  uid: string;
   fullName: string;
   bio: string;
   city: string;
@@ -30,6 +31,7 @@ interface OwnerProfile {
 }
 
 interface RenterProfile {
+  uid: string;
   fullName: string;
   bio?: string;
   city: string;
