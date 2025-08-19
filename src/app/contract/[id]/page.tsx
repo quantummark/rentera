@@ -5,15 +5,11 @@ import { useAgreement } from '@/hooks/useAgreement';
 import AgreementTabs from '@/app/components/Contract/AgreementTabs';
 import { AgreementStatus } from '@/hooks/useAgreement';
 
-interface AgreementPageProps {
-  params: { id: string };
-}
-
-export default function AgreementPage({ params }: AgreementPageProps) {
+// Next.js App Router передает params прямо
+export default function AgreementPage({ params }: { params: { id: string } }) {
   const { id: agreementId } = params;
   const [userType] = useUserTypeWithProfile();
   const { agreement, loading, updateAgreement } = useAgreement(agreementId);
-  
 
   if (loading || !userType) return <div>Загрузка...</div>;
   if (!agreement) return <div>Договор не найден</div>;
