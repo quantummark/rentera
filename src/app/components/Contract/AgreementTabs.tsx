@@ -7,11 +7,13 @@ import AgreementDocuments from './AgreementDocuments';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 
+export type AgreementStatus = 'pending' | 'active' | 'declined';
+
 interface AgreementTabsProps {
   
   agreementId: string;
   userType: "owner" | "renter";
-  onUpdateStatus: (status: "pending" | "accepted" | "rejected") => Promise<void>;
+  onUpdateStatus: (status: AgreementStatus) => Promise<void>;
 }
 
 export default function AgreementTabs({ agreementId }: AgreementTabsProps) {

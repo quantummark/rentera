@@ -3,6 +3,7 @@
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useAgreement } from '@/hooks/useAgreement';
 import AgreementTabs from '@/app/components/Contract/AgreementTabs';
+import { AgreementStatus } from '@/hooks/useAgreement';
 
 interface AgreementPageProps {
   params: { id: string };
@@ -32,7 +33,7 @@ export default function AgreementPage({ params }: AgreementPageProps) {
       <AgreementTabs
         agreementId={agreementId}
         userType={userType}
-        onUpdateStatus={(status) => updateAgreement({ status }, 'updateStatus')}
+        onUpdateStatus={(status: AgreementStatus) => updateAgreement({ status }, 'updateStatus')}
       />
     </div>
   );
