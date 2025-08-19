@@ -11,7 +11,7 @@ import RentRequestButton from '@/app/components/Contract/RentRequestButton'; // 
 
 interface ListingHeaderProps {
   listing: {
-    id: string;
+    listingId: string;
     ownerId: string;
     title: string;
     city: string;
@@ -77,7 +77,7 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
 
         {/* Кнопки */}
         <div className="pt-4 flex flex-col gap-2">
-          <RentRequestButton listingId={listing.id} ownerId={listing.ownerId} renterId={listing.ownerId} />
+          <RentRequestButton listingId={listing.listingId} ownerId={listing.ownerId} renterId={listing.ownerId} />
           <Button
             onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
             variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">

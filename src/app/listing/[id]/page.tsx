@@ -35,10 +35,11 @@ export default function ListingPage() {
   if (!listing || loading) {
     return <p className="text-center py-10">{t('listing.loading', 'Загрузка объекта...')}</p>;
   }
+  
 
   return (
     <div className="max-w-8xl mx-auto px-4 md:px-8 py-8 space-y-10">
-      <ListingHeader listing={listing} />
+      <ListingHeader listing={{ ...listing, listingId }} />
       <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <ListingRentConditions listing={listing} />
       <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
