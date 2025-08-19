@@ -1,18 +1,16 @@
 'use client';
 
-// Define the type for route parameters manually
-type PageProps<T> = {
-  params: T;
-};
+import { useParams } from 'next/navigation';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useAgreement } from '@/hooks/useAgreement';
 import AgreementTabs from '@/app/components/Contract/AgreementTabs';
 import { AgreementStatus } from '@/hooks/useAgreement';
 
-export default function AgreementPage(
-  { params }: PageProps<{ id: string }>
-) {
-  const agreementId = params.id;
+export default function AgreementPage() {
+  // получаем id напрямую из URL
+  const params = useParams();
+  const agreementId = params?.id as string;
+
   const [userType] = useUserTypeWithProfile();
   const { agreement, loading, updateAgreement } = useAgreement(agreementId);
 
