@@ -5,7 +5,6 @@ import { useAgreement } from '@/hooks/useAgreement';
 import AgreementTabs from '@/app/components/Contract/AgreementTabs';
 import { AgreementStatus } from '@/hooks/useAgreement';
 
-// Next.js App Router передает params прямо
 export default function AgreementPage({ params }: { params: { id: string } }) {
   const { id: agreementId } = params;
   const [userType] = useUserTypeWithProfile();
