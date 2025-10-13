@@ -19,21 +19,25 @@ export default function AgreementPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 space-y-6">
-      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
-        <h1 className="text-2xl font-bold mb-2">
-          Онлайн-договор аренды
-        </h1>
-        <p>
-          На этой странице вы можете просмотреть, заполнить и подписать договор.
-        </p>
-      </div>
+      <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900">
+  <h1 className="text-2xl font-bold mb-2 text-foreground dark:text-white">
+    Онлайн-договор аренды
+  </h1>
+  <p className="text-foreground/70 dark:text-white/70">
+    На этой странице вы можете просмотреть, заполнить и подписать договор.
+  </p>
+</div>
 
       <AgreementTabs
         agreementId={agreementId}
         userType={userType}
-        onUpdateStatus={(status: AgreementStatus) =>
-          updateAgreement({ status }, 'updateStatus')
-        }
+        onUpdateStatus={async (status: AgreementStatus) => {
+          if (updateAgreement) {
+            await updateAgreement({ status }, 'updateStatus');
+          } else {
+            return Promise.resolve();
+          }
+        }}
       />
     </div>
   );

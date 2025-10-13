@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({
 
 // Метаданные сайта
 export const metadata: Metadata = {
-  title: "Rentera",
+  title: "Renterya",
   description: "Найди идеальное жильё — с комфортом отельного уровня",
 };
 

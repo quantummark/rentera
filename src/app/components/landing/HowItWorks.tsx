@@ -1,102 +1,94 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import {
-  Search,
-  Users,
-  FileText,
-  CheckCircle,
-  ArrowDown,
-} from 'lucide-react';
+import { CircleUser, Home, FileCheck, ClipboardPenLine } from 'lucide-react';
 
 export default function HowItWorks() {
   const { t } = useTranslation();
 
   const steps = [
     {
-      icon: Search,
+      icon: CircleUser,
       number: 1,
       title: t('howItWorks.step1.title', 'Регистрация'),
       description: t(
         'howItWorks.step1.description',
         'Создайте аккаунт как арендатор или владелец и заполните профиль.'
       ),
-      bg: 'bg-blue-100 dark:bg-blue-900/20',
-      color: 'text-blue-600 dark:text-blue-300',
+      gradientFrom: 'from-blue-400/30',
+      gradientTo: 'to-blue-600/30',
+      iconColor: 'text-blue-600 dark:text-blue-300',
     },
     {
-      icon: Users,
+      icon: Home,
       number: 2,
       title: t('howItWorks.step2.title', 'Поиск или добавление жилья'),
       description: t(
         'howItWorks.step2.description',
         'Начните искать жильё или добавьте собственное для аренды.'
       ),
-      bg: 'bg-green-100 dark:bg-green-900/20',
-      color: 'text-green-600 dark:text-green-300',
+      gradientFrom: 'from-green-400/30',
+      gradientTo: 'to-green-600/30',
+      iconColor: 'text-green-600 dark:text-green-300',
     },
     {
-      icon: FileText,
+      icon: FileCheck,
       number: 3,
       title: t('howItWorks.step3.title', 'Условия аренды'),
       description: t(
         'howItWorks.step3.description',
         'Согласуйте условия аренды через платформу — без лишних звонков и бумажной работы.'
       ),
-      bg: 'bg-yellow-100 dark:bg-yellow-900/20',
-      color: 'text-yellow-600 dark:text-yellow-300',
+      gradientFrom: 'from-yellow-400/30',
+      gradientTo: 'to-yellow-600/30',
+      iconColor: 'text-yellow-600 dark:text-yellow-300',
     },
     {
-      icon: CheckCircle,
+      icon: ClipboardPenLine,
       number: 4,
       title: t('howItWorks.step4.title', 'Подписание и оплата'),
       description: t(
         'howItWorks.step4.description',
         'Подпишите договор и оплатите аренду онлайн прямо через платформу.'
       ),
-      bg: 'bg-purple-100 dark:bg-purple-900/20',
-      color: 'text-purple-600 dark:text-purple-300',
+      gradientFrom: 'from-purple-400/30',
+      gradientTo: 'to-purple-600/30',
+      iconColor: 'text-purple-600 dark:text-purple-300',
     },
   ];
 
   return (
-    <section className="py-12 md:py-16 bg-background dark:bg-background-dark">
+    <section className="py-16 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-foreground-dark">
+        <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
           {t('howItWorks.title', 'Как это работает?')}
         </h2>
-        <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12">
+        <p className="text-lg md:text-2xl text-center text-muted-foreground dark:text-muted-foreground mb-16 max-w-3xl mx-auto leading-relaxed tracking-wide">
           {t(
             'howItWorks.subtitle',
-            'Rentera упрощает процесс аренды жилья, делая его быстрым для всех участников.'
+            'Renterya упрощает процесс аренды жилья, делая его быстрым и прозрачным для всех участников.'
           )}
         </p>
-        <div className="space-y-12">
-          {steps.map(({ number, title, description, bg, color }, idx) => (
-  <div key={idx} className="relative mb-12">
-    <div className="flex items-start gap-6 bg-card border border-muted rounded-2xl p-6 shadow-sm transition-all">
-      <div className={`flex items-center justify-center w-16 h-16 rounded-full ${bg}`}>
-        <div className={`w-8 h-8 flex items-center justify-center ${color} font-bold`}>
-          {number}
-        </div>
-      </div>
 
-      <div className="space-y-2 flex-1">
-        <h3 className="text-xl font-semibold">{title}</h3>
-        <p className="text-base text-muted-foreground dark:text-muted-foreground">
-          {description}
-        </p>
-      </div>
-    </div>
-
-    {idx < steps.length - 1 && (
-      <ArrowDown
-        className="absolute left-1/2 -bottom-9 transform -translate-x-1/2
-                   w-6 h-6 text-muted-foreground dark:text-muted-foreground"
-      />
-    )}
-  </div>
-))}
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          {steps.map(({ number, icon: Icon, title, description, gradientFrom, gradientTo, iconColor }, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col items-center text-center p-6 bg-card rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 hover:scale-105"
+            >
+              <div
+                className={`flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br ${gradientFrom} ${gradientTo} mb-4 shadow-md`}
+              >
+                <Icon className={`w-10 h-10 ${iconColor}`} />
+              </div>
+              <h3 className="text-2xl font-semibold mb-2 text-foreground dark:text-foreground-dark">
+                {title}
+              </h3>
+              <p className="text-base text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                {description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

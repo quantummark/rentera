@@ -28,12 +28,10 @@ export interface Listing {
   createdAt: Date;
   updatedAt: Date;
 
-  owner: {
-  avatar: string;
-  name: string;
-  rating: number;
-  id: string;
-}
+  ownerName: string;
+  ownerAvatar: string;
+  ownerRating: number;
+  ownerCity?: string; // если нужно
 
 }
 
@@ -95,11 +93,32 @@ export async function getListingByIdWithOwner(listingId: string): Promise<Listin
 
     return {
       id: snap.id,
-      ...data,
+      title: data.title || '',
+      city: data.city || '',
+      district: data.district || '',
+      address: data.address || '',
+      type: data.type || '',
+      area: data.area || 0,
+      rooms: data.rooms || 0,
+      price: data.price || 0,
+      onlinePayment: data.onlinePayment || false,
+      useInsurance: data.useInsurance || false,
+      deposit: data.deposit || 0,
+      rentDuration: data.rentDuration || '',
       availableFrom: data.availableFrom?.toDate?.() || null,
+      allowPets: data.allowPets || false,
+      allowKids: data.allowKids || false,
+      allowSmoking: data.allowSmoking || false,
+      description: data.description || '',
+      amenities: data.amenities || [],
+      photos: data.photos || [],
+      ownerId: data.ownerId || '',
       createdAt: data.createdAt.toDate(),
       updatedAt: data.updatedAt.toDate(),
-      owner, // 👈 теперь поле owner всегда есть
+      ownerName: owner.name,
+      ownerAvatar: owner.avatar,
+      ownerRating: owner.rating,
+      ownerCity: data.ownerCity || '',
     } as Listing;
   } catch (error) {
     console.error('Ошибка при получении объекта:', error);

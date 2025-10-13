@@ -35,6 +35,7 @@ interface RenterProfile {
   fullName: string;
   bio?: string;
   city: string;
+  contactPhone: string;
   rentDuration: string;
   hasPets: 'no' | 'cat' | 'dog';
   hasKids: 'yes' | 'no';

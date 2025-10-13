@@ -28,6 +28,7 @@ import {
   Building2,
   ShieldCheck,
   ConciergeBell,
+  Plus,
 } from 'lucide-react';
 
 interface ListingAmenitiesProps {
@@ -88,17 +89,22 @@ export default function ListingAmenities({ listing }: ListingAmenitiesProps) {
       </div>
 
       {fullList.length > 6 && (
-        <>
-          <Separator className="my-2" />
-          <div className="text-center">
-            <Button variant="secondary" onClick={() => setShowAll(!showAll)}>
-              {showAll
-                ? t('listing.showLess', 'Свернуть все удобства')
-                : t('listing.showAll', 'Показать все удобства')}
-            </Button>
-          </div>
-        </>
-      )}
+  <>
+    <Separator className="my-2" />
+    <div className="text-center">
+      <Button
+  variant="secondary"
+  onClick={() => setShowAll(!showAll)}
+  className="flex items-center justify-center text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100 rounded-lg mx-auto"
+>
+  <Plus className="w-4 h-4 mr-2" />
+  {showAll
+    ? t('listing.showLess', 'Свернуть все удобства')
+    : t('listing.showAll', 'Показать все удобства')}
+</Button>
+    </div>
+  </>
+)}
     </section>
   );
 }

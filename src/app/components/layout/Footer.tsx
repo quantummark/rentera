@@ -48,18 +48,18 @@ export default function Footer() {
           <h4 className="font-semibold mb-2 text-foreground">{t('footer.contacts', 'Контакты')}</h4>
           <ul className="space-y-1">
             <li>
-              <a href="mailto:support@rentera.com" className="hover:underline">
-                support@rentera.com
+              <a href="mailto:support@renterya.com" className="hover:underline">
+                support@renterya.com
               </a>
             </li>
             <li className="flex gap-4 mt-3 text-xl">
-              <Link href="https://t.me/rentera" target="_blank" aria-label="Telegram">
+              <Link href="https://t.me/renterya" target="_blank" aria-label="Telegram">
                 <FaTelegramPlane className="hover:text-primary transition" />
               </Link>
-              <Link href="https://instagram.com/rentera" target="_blank" aria-label="Instagram">
+              <Link href="https://instagram.com/renterya" target="_blank" aria-label="Instagram">
                 <FaInstagram className="hover:text-primary transition" />
               </Link>
-              <Link href="https://linkedin.com/company/rentera" target="_blank" aria-label="LinkedIn">
+              <Link href="https://linkedin.com/company/renterya" target="_blank" aria-label="LinkedIn">
                 <FaLinkedinIn className="hover:text-primary transition" />
               </Link>
             </li>
@@ -69,13 +69,13 @@ export default function Footer() {
         {/* Логотип и копирайт */}
         <div className="flex flex-col justify-between items-start">
           <Link href="/" className="text-xl font-bold text-primary tracking-wider">
-            RENTERA
+            RENTERYA
           </Link>
           <p className="mt-2 text-sm italic text-muted-foreground">
           Аренда без посредников — честно, удобно, надёжно.
           </p>
           <p className="mt-4 text-xs text-muted-foreground">
-            © 2025 Rentera. {t('footer.rights', 'Все права защищены.')}
+            © 2025 Renterya. {t('footer.rights', 'Все права защищены.')}
           </p>
         </div>
       </div>

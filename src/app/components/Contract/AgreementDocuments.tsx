@@ -1,75 +1,157 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { db } from '@/app/firebase/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
-import { Download } from 'lucide-react';
+import { db } from '@/app/firebase/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { Download, CreditCard } from 'lucide-react';
 
 interface AgreementDocument {
+  id: string;
   ownerId: string;
   renterId: string;
-  id: string;
   title: string;
-  createdAt: string;
+  lastUpdated: string;
   pdfUrl: string;
+  isPaid?: boolean;
 }
 
 export default function AgreementDocuments() {
-  const [userType, userProfile] = useUserTypeWithProfile();
+  // 1) Получаем тип и профиль пользователя
+  const [userType, userProfile, userLoading] = useUserTypeWithProfile();
+  const currentUid = userProfile?.uid || '';
+
+  // 2) Состояния для списка договоров
   const [documents, setDocuments] = useState<AgreementDocument[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingDocs, setLoadingDocs] = useState(true);
 
   useEffect(() => {
-    if (!userType || !userProfile) return;
-
     const fetchDocuments = async () => {
-      setLoading(true);
+      setLoadingDocs(true);
+
       try {
-        const docRef = collection(db, 'agreements');
-        const q = query(docRef, where(userType === 'owner' ? 'ownerId' : 'renterId', '==', userProfile?.uid));
-        const snapshot = await getDocs(q);
-        const docs: AgreementDocument[] = snapshot.docs
-          .filter((doc) => doc.data().status === 'signed' && doc.data().pdfUrl) // только подписанные с PDF
-          .map((doc) => ({
-            id: doc.id,
-            ownerId: doc.data().ownerId,
-            renterId: doc.data().renterId,
-            title: doc.data().title || 'Договор',
-            createdAt: doc.data().createdAt?.toDate().toLocaleDateString() || '',
-            pdfUrl: doc.data().pdfUrl,
-          }));
+        const snapshot = await getDocs(collection(db, 'contracts'));
+        const docs = snapshot.docs
+          .map(d => {
+            const data = d.data() as any;
+            return {
+              id: d.id,
+              ownerId: data.ownerId || '',
+              renterId: data.renterId || '',
+              title: data.title || 'Договор',
+              lastUpdated: data.lastUpdated
+                ? new Date(data.lastUpdated.seconds * 1000).toLocaleDateString()
+                : '',
+              pdfUrl: data.pdfUrl,
+              isPaid: data.isPaid || false,
+            };
+          })
+          .filter(d => Boolean(d.pdfUrl));
+
         setDocuments(docs);
       } catch (err) {
         console.error('Error fetching documents:', err);
+        setDocuments([]);
+      } finally {
+        setLoadingDocs(false);
       }
-      setLoading(false);
     };
 
     fetchDocuments();
-  }, [userType, userProfile]);
+  }, []);
 
-  if (loading) return <p className="text-center py-4">Загрузка документов...</p>;
+  // 3) Показываем лоадер пока грузятся профиль или документы
+  if (userLoading || loadingDocs) {
+    return <p className="text-center py-4">Загрузка документов...</p>;
+  }
 
-  if (!documents.length)
-    return <p className="text-center py-4 text-muted-foreground">Нет подписанных документов.</p>;
+  // 4) Если нет подходящих документов
+  if (documents.length === 0) {
+    return (
+      <p className="text-center py-4 text-muted-foreground">
+        У вас пока что нет ни одного PDF
+      </p>
+    );
+  }
 
+  // 5) Рендерим сетку карточек
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {documents.map((doc) => (
-        <div key={doc.id} className="bg-card p-4 rounded-xl shadow hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-foreground">{doc.title}</h3>
-          <p className="text-sm text-muted-foreground mt-1">Дата подписания: {doc.createdAt}</p>
-          <a
-            href={doc.pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-md px-4 py-2 font-medium hover:bg-primary/90 transition"
+      {documents.map(doc => {
+        const isOwner = doc.ownerId === currentUid;
+        const isRenter = doc.renterId === currentUid;
+        const isPaid = doc.isPaid ?? false;
+
+        return (
+          <div
+            key={doc.id}
+            className="bg-card dark:bg-card-dark p-6 rounded-xl shadow
+                       hover:shadow-lg transform hover:-translate-y-1
+                       transition duration-200"
           >
-            <Download className="w-4 h-4" /> Скачать PDF
-          </a>
-        </div>
-      ))}
+            {/* Заголовок и дата */}
+            <h3 className="text-xl font-semibold text-foreground dark:text-foreground-dark">
+              {doc.title}
+            </h3>
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground-dark mt-1">
+              Дата: {doc.lastUpdated}
+            </p>
+
+            {/* === Блок для владельца === */}
+            {isOwner && (
+              <div className="mt-6 flex flex-col items-center gap-4">
+                <a
+                  href={doc.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2
+                             bg-primary dark:bg-primary-dark
+                             text-primary-foreground dark:text-primary-foreground-dark
+                             rounded-md text-sm font-medium hover:opacity-90 transition"
+                >
+                  <Download className="w-5 h-5" /> Скачать PDF
+                </a>
+
+                <span
+                  className={`font-medium ${
+                    isPaid ? 'text-green-600' : 'text-red-500'
+                  }`}
+                >
+                  {isPaid ? 'Оплачено' : 'Ещё не оплачено'}
+                </span>
+              </div>
+            )}
+
+            {/* === Блок для арендатора === */}
+            {isRenter && (
+              <div className="mt-6 flex items-center justify-between">
+                <a
+                  href={doc.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm font-medium
+                             text-primary dark:text-primary-dark hover:underline"
+                >
+                  <Download className="w-5 h-5" /> Скачать PDF
+                </a>
+
+                {!isPaid ? (
+                  <button
+                    onClick={() => alert('Запускаем процесс оплаты…')}
+                    className="flex items-center gap-2 bg-orange-500 text-white
+                               px-4 py-2 rounded-md text-sm font-medium
+                               hover:bg-orange-600 transition"
+                  >
+                    <CreditCard className="w-4 h-4" /> Оплатить
+                  </button>
+                ) : (
+                  <span className="text-green-600 font-semibold">Оплачено</span>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

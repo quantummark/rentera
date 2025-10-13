@@ -14,8 +14,9 @@ export default function Motivation() {
         'motivation.belief1Desc',
         'Личные страницы с рейтингами, отзывами и верификацией создают прозрачность и доверие.'
       ),
-      bg: 'bg-blue-100 dark:bg-blue-900/20',
-      color: 'text-blue-600 dark:text-blue-300',
+      gradientFrom: 'from-blue-400/30',
+      gradientTo: 'to-blue-600/30',
+      iconColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: Globe,
@@ -24,46 +25,50 @@ export default function Motivation() {
         'motivation.belief2Desc',
         'Пользователи могут общаться, делиться опытом, писать посты и находить единомышленников.'
       ),
-      bg: 'bg-green-100 dark:bg-green-900/20',
-      color: 'text-green-600 dark:text-green-300',
+      gradientFrom: 'from-green-400/30',
+      gradientTo: 'to-green-600/30',
+      iconColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: Store,
       label: t('motivation.belief3', 'Маркетплейс “Услуги для жилья”'),
       description: t(
         'motivation.belief3Desc',
-        'Сборка мебели, клининг, сантехники, доставка и т.д. — всё для удобства арендаторов и владельцев.'
+        'Сборка мебели, клининг, сантехника, доставка и т.д. — всё для удобства арендаторов и владельцев.'
       ),
-      bg: 'bg-orange-100 dark:bg-orange-900/20',
-      color: 'text-orange-600 dark:text-orange-300',
+      gradientFrom: 'from-orange-400/30',
+      gradientTo: 'to-orange-600/30',
+      iconColor: 'text-orange-600 dark:text-orange-300',
     },
   ];
 
   return (
     <section className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-foreground-dark">
+        <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
           {t('motivation.title', 'Строим экосистему аренды')}
         </h2>
-        <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12">
+        <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12 max-w-3xl mx-auto leading-relaxed tracking-wide">
           {t(
             'motivation.subtitle',
-            'В Rentera вы можете не только найти и сдать жильё, но и получить доступ к проверенным профилям, общению с другими пользователями и даже заказать необходимые услуги для жилья. Всё, что вам нужно для комфортной аренды — на одной платформе.'
+            'Арендуйте и сдавайте жильё напрямую, общайтесь с проверенными пользователями и пользуйтесь сервисами для дома — всё удобно и прозрачно на Renterya.'
           )}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {beliefs.map(({ icon: Icon, label, description, bg, color }, idx) => (
+          {beliefs.map(({ icon: Icon, label, description, gradientFrom, gradientTo, iconColor }, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-4 bg-card border border-muted rounded-2xl p-6 shadow-sm transition-all"
+              className="flex items-start gap-4 p-6 bg-card rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 hover:scale-105"
             >
-              <div className={`p-2 rounded-xl ${bg}`}>
-                <Icon className={`w-8 h-8 ${color}`} />
+              <div
+                className={`w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-br ${gradientFrom} ${gradientTo} shadow-md aspect-square`}
+              >
+                <Icon className={`w-10 h-10 ${iconColor}`} />
               </div>
-              <div>
-                <h3 className="text-xl font-semibold">{label}</h3>
-                <p className="text-base text-muted-foreground dark:text-muted-foreground">{description}</p>
+              <div className="space-y-2">
+                <h3 className="text-xl font-semibold text-foreground dark:text-foreground-dark">{label}</h3>
+                <p className="text-base text-muted-foreground dark:text-muted-foreground leading-relaxed">{description}</p>
               </div>
             </div>
           ))}

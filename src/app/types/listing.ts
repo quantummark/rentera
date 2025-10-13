@@ -1,5 +1,6 @@
 export interface Listing {
   id?: string;
+  listingId: string; // уникальный идентификатор объявления
   title: string;
   city: string;
   district: string;
@@ -26,12 +27,8 @@ export interface Listing {
   createdAt: Date;
   ownerId: string;
 
-  owner: {
-  avatar: string;
-  name: string;
-  rating: number;
-  id: string;
-  city?: string; // Опционально, если нужно
-  };
-
+  ownerName: string;
+  ownerAvatar: string;
+  ownerRating: number;
+  ownerCity?: string; // если нужно
 }

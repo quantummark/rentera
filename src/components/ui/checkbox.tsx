@@ -2,39 +2,51 @@
 
 import * as React from 'react';
 import { Check } from 'lucide-react';
-import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-const checkboxVariants = cva(
-  'peer relative h-5 w-5 shrink-0 rounded border border-muted bg-transparent ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-  {
-    variants: {
-      checked: {
-        true: 'bg-primary text-primary-foreground',
-        false: '',
-      },
-    },
-  }
-);
+interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  /**
+   * Управление checked-состоянием извне.
+   * Когда true — фон становится оранжевым и рендерится галочка.
+   */
+  checked?: boolean;
+}
 
-const Checkbox = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, ...props }, ref) => (
-    <label className="inline-flex items-center space-x-2 cursor-pointer">
-      <input
-        type="checkbox"
-        ref={ref}
+const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ className, checked = false, children, ...props }, ref) => {
+    return (
+      <label
         className={cn(
-          checkboxVariants({ checked: props.checked }),
-          'hidden peer',
+          'inline-flex items-center space-x-2 cursor-pointer',
           className
         )}
-        {...props}
-      />
-      <div className="flex h-5 w-5 items-center justify-center rounded border border-input bg-background transition-all peer-checked:bg-orange-500 peer-checked:text-white">
-        <Check className="h-4 w-4 opacity-0 peer-checked:opacity-100" />
-      </div>
-    </label>
-  )
+      >
+        {/* input остаётся в DOM, но скрыт визуально */}
+        <input
+          type="checkbox"
+          ref={ref}
+          checked={checked}
+          className="sr-only"
+          {...props}
+        />
+
+        {/* квадрат-обёртка */}
+        <div
+          className={cn(
+            'flex h-5 w-5 items-center justify-center rounded border transition-colors',
+            checked
+              ? 'bg-orange-500 border-orange-500'
+              : 'bg-transparent border-gray-300'
+          )}
+        >
+          {/* рендерим галочку только когда checked === true */}
+          {checked && <Check className="h-4 w-4 text-white" />}
+        </div>
+
+        {children && <span>{children}</span>}
+      </label>
+    );
+  }
 );
 
 Checkbox.displayName = 'Checkbox';

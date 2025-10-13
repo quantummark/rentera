@@ -8,26 +8,13 @@ import ListingGallery from './ListingGallery'; // ✅ импорт галере�
 import MapLinkButton from './MapLinkButton'; // ✅ импорт кнопки карты
 import { useRouter } from 'next/navigation';
 import RentRequestButton from '@/app/components/Contract/RentRequestButton'; // ✅ импорт кнопки аренды
+import Link from 'next/link';
+import FavoriteToggle from '@/app/components/property/FavoriteToggle';
+
+import type { Listing } from '@/app/types/listing'; // Adjust the import path as needed
 
 interface ListingHeaderProps {
-  listing: {
-    listingId: string;
-    ownerId: string;
-    title: string;
-    city: string;
-    district: string;
-    address: string;
-    photos: string[];
-    price: number;
-    useInsurance: boolean;
-    onlinePayment: boolean;
-    owner?: {
-      avatar: string;
-      name: string;
-      rating: number;
-      id: string;
-    };
-  };
+  listing: Listing;
 }
 
 export default function ListingHeader({ listing }: ListingHeaderProps) {
@@ -44,7 +31,12 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
       {/* Инфо-карточка */}
       <div className="w-full md:w-1/3 bg-card p-5 border rounded-2xl shadow-sm space-y-3">
         {/* Заголовок */}
-        <h1 className="text-2xl font-semibold text-foreground leading-tight">{listing.title}</h1>
+        <div className="flex items-center justify-between">
+  <h1 className="text-2xl font-semibold text-foreground leading-tight">
+    {listing.title}
+  </h1>
+  <FavoriteToggle listing={listing} />
+</div>
 
         {/* Адрес */}
         <div className="flex items-center gap-2 text-base text-muted-foreground">
@@ -76,8 +68,8 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
         </div>
 
         {/* Кнопки */}
-        <div className="pt-4 flex flex-col gap-2">
-          <RentRequestButton listingId={listing.listingId} ownerId={listing.ownerId} renterId={listing.ownerId} />
+        <div className="pt-4 py-4 flex flex-col gap-2">
+          <RentRequestButton listingId={listing.listingId} ownerId={listing.ownerId} />
           <Button
             onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
             variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
@@ -87,24 +79,31 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
         </div>
 
         {/* Владелец */}
-        {listing.owner && (
-          <div className="flex items-center gap-4 border-t pt-4">
-            <Image
-              src={listing.owner.avatar || '/avatar-placeholder.png'}
-              alt={listing.owner.name}
-              width={40}
-              height={40}
-              className="rounded-full object-cover"
-            />
-            <div>
-              <p className="text-sm font-medium">{listing.owner.name}</p>
-              <p className="text-xs text-muted-foreground">⭐ {listing.owner.rating?.toFixed(1)} / 5</p>
-            </div>
-            <Button variant="ghost" className="ml-auto text-sm text-primary px-2">
-              {t('listing.viewOwnerProfile', 'Смотреть профиль')}
-            </Button>
-          </div>
-        )}
+<div className="flex items-center justify-between border-t pt-4">
+  {/* левая группа */}
+  <div className="flex items-center gap-4">
+    <Image
+      src={listing.ownerAvatar || '/avatar-placeholder.png'}
+      alt={listing.ownerName}
+      width={40}
+      height={40}
+      className="rounded-full object-cover"
+    />
+    <div>
+      <p className="text-sm font-medium">{listing.ownerName}</p>
+      <p className="text-xs text-muted-foreground">
+        ⭐ {listing.ownerRating?.toFixed(1)} / 5
+      </p>
+    </div>
+  </div>
+
+  {/* ссылка прижата вправо */}
+  <Link href={`/profile/owner/${listing.ownerId}`} passHref>
+  <Button asChild variant="ghost" className="text-sm text-primary px-2 hover:underline">
+    <span>{t('listing.viewOwnerProfile', 'Смотреть профиль')}</span>
+  </Button>
+</Link>
+</div>
       </div>
     </div>
   );

@@ -1,14 +1,21 @@
 'use client';
 
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
-import { useContracts } from '@/hooks/useContracts';
+import { useContracts, AgreementType } from '@/hooks/useContracts';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 export default function ContractsLanding() {
   const [userType] = useUserTypeWithProfile();
   const { contracts, loading } = useContracts();
+
+  const { deleteContract } = useContracts(); // предполагаем, что есть такой хук
+const handleDeleteContract = (id: string) => {
+  if (confirm('Вы уверены, что хотите удалить этот договор?')) {
+    deleteContract(id);
+  }
+};
 
   if (!userType) {
     return (
@@ -47,23 +54,133 @@ export default function ContractsLanding() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {contracts.map((c) => (
-            <Link
-              key={c.id}
-              href={`/contract/${c.id}`}
-              className="p-4 border rounded-xl hover:shadow-md transition"
+          {contracts.map((c: AgreementType) => {
+  const isOwner = userType === 'owner';
+  const isRenter = userType === 'renter';
+  const isSigned = c.status === 'signed';
+  const isPaid = c.isPaid ?? false; // предполагаем, что поле isPaid есть в объекте договора
+  const otherUserName = isOwner ? c.renterName : c.ownerName;
+  const otherUserAvatar = isOwner ? c.renterAvatar : c.ownerAvatar;
+
+  // Цвет и иконка статуса
+  const statusColor =
+    c.status === 'active'      ? 'text-green-600' :
+    c.status === 'declined'    ? 'text-red-600' :
+    c.status === 'pending'     ? 'text-yellow-500' :
+    'text-gray-500';
+
+  const statusIcon =
+    c.status === 'active'      ? <CheckCircle className="inline w-5 h-5 mr-1" /> :
+    c.status === 'declined'    ? <XCircle className="inline w-5 h-5 mr-1" /> :
+    c.status === 'pending'     ? <Clock className="inline w-5 h-5 mr-1" /> :
+    null;
+
+  return (
+    <div
+      key={c.id}
+      className="flex flex-col md:flex-row border rounded-xl p-4 hover:shadow-md transition gap-4 items-center"
+    >
+      {/* Фото объекта */}
+      {c.listingImageUrl && (
+        <img
+          src={c.listingImageUrl}
+          alt={c.title}
+          className="w-28 h-20 object-cover rounded-lg"
+        />
+      )}
+
+      <div className="flex-1 flex flex-col gap-2">
+        {/* Название объекта */}
+        <p className="font-semibold text-lg">{c.title || 'Объект без названия'}</p>
+
+        {/* Другой пользователь */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {otherUserAvatar && (
+              <img
+                src={otherUserAvatar}
+                alt={otherUserName}
+                className="w-8 h-8 rounded-full"
+              />
+            )}
+            <span className="text-sm font-medium">{otherUserName}</span>
+          </div>
+
+          {/* Ссылка на профиль */}
+          <Link
+            href={isOwner ? `/profile/renter/${c.renterId}` : `/profile/owner/${c.ownerId}`}
+            className="text-sm text-black-500 hover:underline"
+          >
+            Перейти на профиль
+          </Link>
+        </div>
+
+        {/* Статус */}
+        <p className={`flex items-center text-sm font-medium ${statusColor}`}>
+          {statusIcon} {c.status.toUpperCase()}
+        </p>
+
+        {/* Дата запроса */}
+        <p className="text-sm text-muted-foreground">
+          Дата запроса: {c.requestDate ? new Date(c.requestDate).toLocaleDateString() : '-'}
+        </p>
+      </div>
+
+      {/* Действия */}
+      <div className="flex flex-col gap-2 md:justify-end">
+        <div className="flex flex-wrap gap-2">
+          {/* Кнопка Перейти к договору */}
+          <Link href={`/contract/${c.id}`}>
+            <Button
+              size="sm"
+              className="text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100"
             >
-              <p>
-                <strong>Договор:</strong> {c.id}
-              </p>
-              <p>
-                <strong>Статус:</strong> {c.status}
-              </p>
-              <p>
-                <strong>Дата запроса:</strong> {new Date(c.requestDate).toLocaleDateString()}
-              </p>
-            </Link>
-          ))}
+              Перейти к договору
+            </Button>
+          </Link>
+
+          {isRenter && c.status === 'signed' && !isPaid && (
+  <div className="relative inline-block">
+    {/* Пульсирующее кольцо */}
+    <span
+      className={`
+        absolute inset-0
+        rounded-full
+        bg-green-300/50
+        animate-[ping_3s_infinite]
+      `}
+    />
+
+    {/* Ваша кнопка поверх анимации */}
+    <Button
+      size="sm"
+      className={`
+        relative
+        text-green-600 border border-green-300 bg-green-50
+        hover:bg-green-100
+        transition
+      `}
+      onClick={() => alert('Запускаем процесс оплаты…')}
+    >
+      Оплатить
+    </Button>
+  </div>
+)}
+
+          {/* Кнопка Удалить */}
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => handleDeleteContract(c.id)}
+            className="text-red-600 border border-red-300 bg-red-50 hover:bg-red-100"
+          >
+            Удалить
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+})}
         </div>
       )}
     </div>

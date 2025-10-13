@@ -11,39 +11,43 @@ export default function Benefits() {
       icon: Handshake,
       label: t('benefits.noIntermediaries', 'Без посредников'),
       description: t('benefits.directCommunication', 'Прямое общение между владельцем и арендатором'),
-      bg: 'bg-green-100 dark:bg-green-900/20',
-      color: 'text-green-600 dark:text-green-300',
+      gradientFrom: 'from-green-400/30',
+      gradientTo: 'to-green-600/30',
+      iconColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: ShieldCheck,
       label: t('benefits.insurance', 'Страховка объекта'),
       description: t('benefits.insuranceDescription', 'Страхуем объекты на сумму 250000 грн'),
-      bg: 'bg-blue-100 dark:bg-blue-900/20',
-      color: 'text-blue-600 dark:text-blue-300',
+      gradientFrom: 'from-blue-400/30',
+      gradientTo: 'to-blue-600/30',
+      iconColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: CreditCard,
       label: t('benefits.onlinePayment', 'Онлайн-оплата и договор'),
       description: t('benefits.paymentDescription', 'Удобно и прозрачно прямо на платформе'),
-      bg: 'bg-yellow-100 dark:bg-yellow-900/20',
-      color: 'text-yellow-600 dark:text-yellow-300',
+      gradientFrom: 'from-yellow-400/30',
+      gradientTo: 'to-yellow-600/30',
+      iconColor: 'text-yellow-600 dark:text-yellow-300',
     },
     {
       icon: Bitcoin,
       label: t('benefits.modernPlatform', 'Web3 и криптовалюта'),
       description: t('benefits.modernPlatformDescription', 'Возможность добавить оплату в криптовалюте'),
-      bg: 'bg-purple-100 dark:bg-purple-900/20',
-      color: 'text-purple-600 dark:text-purple-300',
+      gradientFrom: 'from-purple-400/30',
+      gradientTo: 'to-purple-600/30',
+      iconColor: 'text-purple-600 dark:text-purple-300',
     },
   ];
 
   return (
-    <section className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark">
+    <section className="w-full py-16 md:py-20 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl text-center font-semibold mb-10 text-foreground dark:text-foreground-dark">
-          {t('benefits.title', 'Преимущества Rentera')}
+        <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
+          {t('benefits.title', 'Преимущества Renterya')}
         </h2>
-        <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12">
+        <p className="text-lg md:text-2xl text-center text-muted-foreground dark:text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed tracking-wide">
           {t(
             'benefits.subtitle',
             'Rentera предлагает уникальные преимущества для арендаторов и владельцев жилья, делая процесс аренды безопасным и удобным.'
@@ -51,17 +55,19 @@ export default function Benefits() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {benefits.map(({ icon: Icon, label, description, bg, color }, idx) => (
+          {benefits.map(({ icon: Icon, label, description, gradientFrom, gradientTo, iconColor }, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-4 bg-card border border-muted rounded-2xl p-5 shadow-sm transition-all"
+              className="flex items-start gap-4 p-6 bg-card rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 hover:scale-105"
             >
-              <div className={`p-2 rounded-xl ${bg}`}>
-                <Icon className={`w-8 h-8 ${color}`} />
-              </div>
+              <div
+  className={`w-16 h-16 flex-shrink-0 flex items-center justify-center rounded-full bg-gradient-to-br ${gradientFrom} ${gradientTo} shadow-md aspect-square`}
+>
+  <Icon className={`w-10 h-10 ${iconColor}`} />
+</div>
               <div className="space-y-2">
-                <h3 className="text-xl font-semibold">{label}</h3>
-                <p className="text-base text-muted-foreground dark:text-muted-foreground">{description}</p>
+                <h3 className="text-xl font-semibold text-foreground dark:text-foreground-dark">{label}</h3>
+                <p className="text-base text-muted-foreground dark:text-muted-foreground leading-relaxed">{description}</p>
               </div>
             </div>
           ))}

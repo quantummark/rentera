@@ -48,7 +48,7 @@ export default function Header() {
             href="/"
             className="text-xl font-bold font-logo text-primary tracking-widest uppercase"
           >
-            Rentera
+            Renterya
           </Link>
         </div>
 

@@ -43,17 +43,27 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-md space-y-6 text-center">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-foreground">
-            {title}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
-        </div>
+  <div className="space-y-2">
+    <h1 className="text-2xl font-semibold text-foreground">
+      {title}
+    </h1>
+    <p className="text-sm text-muted-foreground">
+      {description}
+    </p>
+  </div>
 
-        <AuthForm language={language} />
-      </div>
+  <AuthForm language={language} />
+
+  {/* ===== Магическая карточка уведомления ===== */}
+  <div className="mt-4 p-4 rounded-xl border border-orange-400 bg-orange-50 dark:bg-orange-900 dark:border-orange-700 text-left shadow-md">
+    <h2 className="text-lg font-bold text-orange-600 dark:text-orange-300 mb-2">
+      Магия аренды включена 🔮
+    </h2>
+    <p className="text-sm text-orange-800 dark:text-orange-200">
+      Агентов сюда не пустим — их чары слишком коварны. Только владельцы и жильцы с чистым сердцем! Попробуете пройти без разрешения — превратим ваш аккаунт в кота 🐱… шучу, но магия следит!
+    </p>
+  </div>
+</div>
     </div>
   );
 }
