@@ -137,7 +137,13 @@ export default function OwnerListings({ ownerId, currentUserId }: OwnerListingsP
         {listings.map((listing) => (
           <ListingCard
             key={listing.id}
-            listing={listing}
+            listing={{
+              ...listing,
+              listingId: listing.id ?? '',
+              ownerName: listing.owner?.name ?? '',
+              ownerAvatar: listing.owner?.avatar ?? '',
+              ownerRating: listing.owner?.rating ?? 0,
+            }}
             showActions={isCurrentUser}
             onView={() => router.push(`/listing/${listing.id}`)}
             onEdit={() => router.push(`/edit-listing/${listing.id}`)}
