@@ -20,8 +20,7 @@ export default function AgreementStatus({ agreementId, userType }: AgreementStat
   const [status, setStatus] = useState<AgreementStatusType>('pending');
 
   // Участник (для отображения профиля)
-  const participantId = userType === 'owner' ? agreement?.renter?.id : agreement?.owner?.id;
-  const [_, participant, participantLoading] = useUserTypeWithProfile();
+  const [, participant, participantLoading] = useUserTypeWithProfile();
 
   useEffect(() => {
     if (agreement?.status) setStatus(agreement.status);

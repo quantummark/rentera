@@ -2,289 +2,415 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
-
 import { db } from '@/app/firebase/firebase';
-import { doc, onSnapshot, updateDoc, serverTimestamp } from 'firebase/firestore';
+import {
+  doc,
+  onSnapshot,
+  updateDoc,
+  serverTimestamp,
+  Timestamp,
+} from 'firebase/firestore';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import debounce from 'lodash/debounce';
 import { PDFDocument, rgb } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import fontkit from '@pdf-lib/fontkit';                // общий тип договора
+import { GeneratePdfData } from '@/app/types/pdfTypes' // новый тип для PDF
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from 'react-i18next';
 import SignaturePad, { type SignatureCanvas } from 'react-signature-canvas';
 import { trimCanvas } from '@/app/utils/trimCanvas';
 
+// Интерфейс пользователя договора
+interface AgreementUser {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  [key: string]: unknown;
+}
+
+// Интерфейс документа договоров
+interface Agreement {
+  title?: string;
+  status?: 'draft' | 'signed' | 'paid';
+  pdfUrl?: string;
+  ownerId?: string;
+  renterId?: string;
+  owner?: AgreementUser;
+  renter?: AgreementUser;
+  signatures?: {
+    owner?: string;
+    renter?: string;
+  };
+  isFrozen?: boolean;
+  lastUpdated?: Timestamp;
+  // …другие поля
+  [key: string]: unknown;
+}
+
+// Тип значения для полей автосохранения
+type FieldValue = string | number | boolean | Date | null | undefined;
+
+// Пропсы компонента
 interface AgreementFormProps {
   agreementId: string;
 }
 
 export default function AgreementTextForm({ agreementId }: AgreementFormProps) {
-  const [userType] = useUserTypeWithProfile(); // 'owner' | 'renter'
-  const [agreement, setAgreement] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const storage = getStorage();
-  const [isChecked, setIsChecked] = useState(false);
+  const [userType] = useUserTypeWithProfile(); // 'owner' | 'renter' | null
+  const currentUserType = userType ?? null;
+
+  // Состояние документа договора
+  const [agreement, setAgreement] = useState<Agreement | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  
+  const [isChecked, setIsChecked] = useState<boolean>(false);
   const { t } = useTranslation();
+
+  // Ссылки на canvas-подписи
   const ownerSignRef = useRef<SignatureCanvas>(null);
   const renterSignRef = useRef<SignatureCanvas>(null);
-  const [isSavingOwner, setIsSavingOwner] = useState(false);
-const [isSavedOwner, setIsSavedOwner] = useState(false);
-const [isSavingRenter, setIsSavingRenter] = useState(false);
-const [isSavedRenter, setIsSavedRenter] = useState(false);
-const [ownerSigUrl, setOwnerSigUrl] = useState<string | null>(
-  agreement?.signatures?.owner || null
-);
-const [renterSigUrl, setRenterSigUrl] = useState<string | null>(
-  agreement?.signatures?.renter || null
-);
 
+  // Стейт для сохранения подписей
+  const [isSavingOwner, setIsSavingOwner] = useState<boolean>(false);
+  const [_isSavedOwner, setIsSavedOwner] = useState<boolean>(false);
+  const [isSavingRenter, setIsSavingRenter] = useState<boolean>(false);
+  const [_isSavedRenter, setIsSavedRenter] = useState<boolean>(false);
+
+  const [ownerSigUrl, setOwnerSigUrl] = useState<string | null>(
+    null
+  );
+  const [renterSigUrl, setRenterSigUrl] = useState<string | null>(
+    null
+  );
+
+  // Подписываемся на документ Firestore
   useEffect(() => {
     const docRef = doc(db, 'contracts', agreementId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        setAgreement(docSnap.data());
+        setAgreement(docSnap.data() as Agreement);
+        setOwnerSigUrl(
+          (docSnap.data() as Agreement).signatures?.owner as string | null
+        );
+        setRenterSigUrl(
+          (docSnap.data() as Agreement).signatures?.renter as string | null
+        );
         setLoading(false);
       }
     });
     return () => unsubscribe();
   }, [agreementId]);
 
-  const saveField = debounce(async (field: string, value: any) => {
-    if (!agreement) return;
-    setIsSaving(true);
+  // 1) Функция автосохранения поля с debounce
+  const saveField = debounce(
+    async (field: keyof Agreement, value: FieldValue) => {
+      if (!agreement) return;
+      setIsSaving(true);
+
+      try {
+        const docRef = doc(db, 'contracts', agreementId);
+        await updateDoc(docRef, {
+          [field]: value,
+          lastUpdated: serverTimestamp(),
+        });
+      } catch (err: unknown) {
+        console.error('Ошибка автосохранения:', err);
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    700
+  );
+
+  if (loading) return <p>Загрузка договора…</p>;
+
+  const isOwner = currentUserType === 'owner';
+  const isRenter = currentUserType === 'renter';
+
+  // 2) Обработчик изменения любого поля
+  const handleInputChange = (fieldPath: string, value: FieldValue) => {
+    setAgreement((prev) => {
+      const updated: Agreement = { ...(prev ?? {}) };
+
+      const keys = fieldPath.split('.');
+      if (keys.length === 2) {
+        const [parent, child] = keys;
+        const nested = {
+          ...(typeof updated[parent] === 'object'
+            ? (updated[parent] as Record<string, unknown>)
+            : {}),
+        };
+        nested[child] = value;
+        updated[parent] = nested;
+      } else {
+        updated[fieldPath] = value;
+      }
+
+      return updated;
+    });
+
+    // Делаем автосохранение с правильными типами
+    saveField(fieldPath as keyof Agreement, value);
+  };
+
+  // 3) Получение dataURL из подписи
+  const getSignatureUrl = (type: 'owner' | 'renter'): string | null => {
+    const sigRef = type === 'owner' ? ownerSignRef : renterSignRef;
+    const sig = sigRef.current;
+    if (!sig) return null;
+
+    const rawCanvas = sig.getCanvas();
+    const cropped = trimCanvas(rawCanvas);
+    return cropped.toDataURL('image/png');
+  };
+
+  // 4) Сохранение подписи в Firestore
+  const saveSignature = async (type: 'owner' | 'renter') => {
+    const setUrl = type === 'owner' ? setOwnerSigUrl : setRenterSigUrl;
+    const setOwnerSaving = type === 'owner' ? setIsSavingOwner : setIsSavingRenter;
+    const setOwnerSaved = type === 'owner' ? setIsSavedOwner : setIsSavedRenter;
+
+    const rawUrl = getSignatureUrl(type);
+    if (!rawUrl) return;
+
+    setOwnerSaving(true);
+    setOwnerSaved(false);
+
     try {
       const docRef = doc(db, 'contracts', agreementId);
-      await updateDoc(docRef, { [field]: value, lastUpdated: serverTimestamp() });
-    } catch (err) {
-      console.error('Ошибка автосохранения:', err);
+      await updateDoc(docRef, {
+        [`signatures.${type}`]: rawUrl,
+        lastUpdated: serverTimestamp(),
+      });
+      setUrl(rawUrl);
+      setOwnerSaved(true);
+    } catch (err: unknown) {
+      console.error('Ошибка сохранения подписи:', err);
     } finally {
-      setIsSaving(false);
+      setOwnerSaving(false);
     }
-  }, 700);
+  };
 
-  if (loading) return <p>Загрузка договора...</p>;
+  // 5) Проверка состояний
+  const bothSigned =
+    !!agreement?.signatures?.owner && !!agreement?.signatures?.renter;
+  const isFrozen = agreement?.isFrozen === true;
 
-  const isOwner = userType === 'owner';
-  const isRenter = userType === 'renter';
-
-  const handleInputChange = (fieldPath: string, value: any) => {
-  setAgreement((prev: any) => {
-    const updated = { ...prev };
-    const keys = fieldPath.split('.');
-
-    if (keys.length === 2) {
-      // Если объект по ключу ещё не существует, создаём пустой объект
-      if (!updated[keys[0]]) updated[keys[0]] = {};
-      updated[keys[0]][keys[1]] = value;
-    } else {
-      updated[fieldPath] = value;
+  // 6) Заморозка / разморозка договора
+  const handleFreeze = async () => {
+    if (!bothSigned) return;
+    try {
+      const docRef = doc(db, 'contracts', agreementId);
+      await updateDoc(docRef, {
+        isFrozen: true,
+        lastUpdated: serverTimestamp(),
+      });
+      setAgreement((prev) => ({ ...(prev ?? {}), isFrozen: true }));
+      // generateAndSavePdf(agreement, agreementId); // используйте нужную функцию
+      await generateAndSavePdf(
+      {
+        owner: agreement.owner,
+        renter: agreement.renter,
+        address: typeof agreement.address === 'string' ? agreement.address : undefined,
+        rentalStart: typeof agreement.rentalStart === 'string' ? agreement.rentalStart : undefined,
+        rentalEnd: typeof agreement.rentalEnd === 'string' ? agreement.rentalEnd : undefined,
+        rentAmount: typeof agreement.rentAmount === 'string' || typeof agreement.rentAmount === 'number' ? agreement.rentAmount : undefined,
+        additionalTerms: typeof agreement.additionalTerms === 'string' ? agreement.additionalTerms : undefined,
+        signatures: agreement.signatures,
+      },
+      agreementId
+    );
+    } catch (err: unknown) {
+      console.error('Ошибка заморозки договора:', err);
     }
+  };
 
-    return updated;
-  });
+  const handleUnfreeze = async () => {
+    try {
+      const docRef = doc(db, 'contracts', agreementId);
+      await updateDoc(docRef, {
+        isFrozen: false,
+        lastUpdated: serverTimestamp(),
+      });
+      setAgreement((prev) => ({ ...(prev ?? {}), isFrozen: false }));
+    } catch (err: unknown) {
+      console.error('Ошибка разморозки договора:', err);
+    }
+  };
 
-  saveField(fieldPath, value);
-};
+ async function generateAndSavePdf(
+  data: GeneratePdfData,
+  agreementId: string
+): Promise<string> {
+  const storage = getStorage()
 
-  const getSignatureUrl = (type: 'owner' | 'renter') => {
-  const sig = (type === 'owner' ? ownerSignRef : renterSignRef).current;
-  if (!sig) return null;
-
-  // берём полный canvas, обрезаем руками и превращаем в dataURL
-  const rawCanvas = sig.getCanvas();
-  const cropped = trimCanvas(rawCanvas);
-  return cropped.toDataURL('image/png');
-};
-
-  const saveSignature = async (type: 'owner' | 'renter') => {
-  const sigRef = type === 'owner' ? ownerSignRef : renterSignRef;
-  const setUrl = type === 'owner' ? setOwnerSigUrl : setRenterSigUrl;
-  const setIsSaving = type === 'owner' ? setIsSavingOwner : setIsSavingRenter;
-  const setIsSaved = type === 'owner' ? setIsSavedOwner : setIsSavedRenter;
-
-  const rawUrl = getSignatureUrl(type);
-  if (!rawUrl) return;
-
-  setIsSaving(true);
-  setIsSaved(false);
-  try {
-    // 1. загрузка в Storage (если нужно) и получение финального URL
-    // const finalUrl = await uploadSignatureToStorage(type, rawUrl);
-    // 2. или сразу сохраняем base64 в Firestore
-    const docRef = doc(db, 'contracts', agreementId);
-    await updateDoc(docRef, {
-      [`signatures.${type}`]: rawUrl,
-      lastUpdated: serverTimestamp(),
-    });
-    // 3. обновляем локальный стейт, чтобы картинка отобразилась мгновенно
-    setUrl(rawUrl);
-    setIsSaved(true);
-  } catch (err) {
-    console.error('Ошибка сохранения подписи:', err);
-  } finally {
-    setIsSaving(false);
-  }
-};
-
-     // Проверка, что оба участника подписали
-    const bothSigned = agreement?.signatures?.owner && agreement?.signatures?.renter;
-
-      // Проверка, можно ли заморозить поля
-     const isFrozen = agreement?.isFrozen;
-
-     // Функция заморозки договора
-const handleFreeze = async () => {
-  if (!bothSigned) return;
-  try {
-    const docRef = doc(db, 'contracts', agreementId);
-    await updateDoc(docRef, { isFrozen: true, lastUpdated: serverTimestamp() });
-    setAgreement((prev: any) => ({ ...prev, isFrozen: true }));
-    await generateAndSavePdf(agreement, agreementId);
-  } catch (err) {
-    console.error('Ошибка заморозки договора:', err);
-  }
-};
-
-// Только владелец может разморозить
-const handleUnfreeze = async () => {
-  try {
-    const docRef = doc(db, 'contracts', agreementId);
-    await updateDoc(docRef, {
-      isFrozen: false,
-      lastUpdated: serverTimestamp(),
-    });
-    setAgreement((prev: any) => ({ ...prev, isFrozen: false }));
-  } catch (err) {
-    console.error('Ошибка разморозки договора:', err);
-  }
-};
-
-async function generateAndSavePdf(agreement: any, agreementId: string) {
   try {
     // 1. Создаём PDF
-    const pdfDoc = await PDFDocument.create();
-    pdfDoc.registerFontkit(fontkit);
-    const page = pdfDoc.addPage([595, 842]);
-    const { height } = page.getSize();
-    let y = height - 50;
-    const lineHeight = 20;
+    const pdfDoc = await PDFDocument.create()
+    pdfDoc.registerFontkit(fontkit)
+    const page = pdfDoc.addPage([595, 842])
+    const { height } = page.getSize()
+    let yPos = height - 50
+    const lineHeight = 20
 
-    // 2. Загружаем и встраиваем Open Sans
-    const fontUrl = '/fonts/OpenSans-Regular.ttf';
-    const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
-    const openSans = await pdfDoc.embedFont(fontBytes, { subset: true });
+    // 2. Встраиваем шрифт
+    const fontBytes = await fetch('/fonts/OpenSans-Regular.ttf')
+      .then(res => res.arrayBuffer())
+    const openSans = await pdfDoc.embedFont(fontBytes, { subset: true })
 
-    // 3. Рисуем текст с кириллицей
+    // 3. Пишем заголовок
     page.drawText('Договор аренды', {
       x: 50,
-      y,
+      y: yPos,
       size: 20,
       font: openSans,
       color: rgb(0, 0, 0),
-    });
-    y -= lineHeight * 2;
+    })
+    yPos -= lineHeight * 2
 
-    page.drawText(`Владелец: ${agreement.owner?.fullName || ''}`, {
-      x: 50,
-      y,
-      size: 12,
-      font: openSans,
-    });
-    y -= lineHeight;
-    page.drawText(`Телефон владельца: ${agreement.owner?.phone || ''}`, {
-      x: 50,
-      y,
-      size: 12,
-      font: openSans,
-    });
-    y -= lineHeight;
+    // 4. Распаковываем данные
+    const {
+      owner,
+      renter,
+      address,
+      rentalStart,
+      rentalEnd,
+      rentAmount,
+      additionalTerms,
+      signatures,
+    } = data
 
-    page.drawText(`Арендатор: ${agreement.renter?.fullName || ''}`, {
+    // 5. Рисуем текст полей
+    page.drawText(`Владелец: ${owner?.fullName ?? ''}`, {
       x: 50,
-      y,
+      y: yPos,
       size: 12,
       font: openSans,
-    });
-    y -= lineHeight;
-    page.drawText(`Телефон арендатора: ${agreement.renter?.phone || ''}`, {
+    })
+    yPos -= lineHeight
+    page.drawText(`Телефон владельца: ${owner?.phone ?? ''}`, {
       x: 50,
-      y,
+      y: yPos,
       size: 12,
       font: openSans,
-    });
-    y -= lineHeight;
+    })
+    yPos -= lineHeight
 
-    page.drawText(`Адрес объекта: ${agreement.address || ''}`, {
+    page.drawText(`Арендатор: ${renter?.fullName ?? ''}`, {
       x: 50,
-      y,
+      y: yPos,
       size: 12,
       font: openSans,
-    });
-    y -= lineHeight;
-    page.drawText(
-      `Срок аренды: ${agreement.rentalStart || ''} – ${agreement.rentalEnd || ''}`,
-      { x: 50, y, size: 12, font: openSans }
-    );
-    y -= lineHeight;
-    page.drawText(
-      `Арендная плата: ${agreement.rentAmount || ''} грн.`,
-      { x: 50, y, size: 12, font: openSans }
-    );
-    y -= lineHeight;
-    page.drawText(`Дополнительные условия: ${agreement.additionalTerms || ''}`, {
+    })
+    yPos -= lineHeight
+    page.drawText(`Телефон арендатора: ${renter?.phone ?? ''}`, {
       x: 50,
-      y,
+      y: yPos,
       size: 12,
       font: openSans,
-    });
-    y -= lineHeight * 2;
+    })
+    yPos -= lineHeight
 
-    page.drawText('Подписи:', { x: 50, y, size: 14, font: openSans });
-    y -= lineHeight;
+    page.drawText(`Адрес объекта: ${address ?? ''}`, {
+      x: 50,
+      y: yPos,
+      size: 12,
+      font: openSans,
+    })
+    yPos -= lineHeight
+    page.drawText(`Срок аренды: ${rentalStart ?? ''} – ${rentalEnd ?? ''}`, {
+      x: 50,
+      y: yPos,
+      size: 12,
+      font: openSans,
+    })
+    yPos -= lineHeight
+    page.drawText(`Арендная плата: ${rentAmount ?? ''} грн.`, {
+      x: 50,
+      y: yPos,
+      size: 12,
+      font: openSans,
+    })
+    yPos -= lineHeight
+    page.drawText(`Дополнительные условия: ${additionalTerms ?? ''}`, {
+      x: 50,
+      y: yPos,
+      size: 12,
+      font: openSans,
+    })
+    yPos -= lineHeight * 2
 
-    // 4. Встраиваем подписи, если есть
-    if (agreement.signatures?.owner) {
-      page.drawText('Владелец:', { x: 50, y, size: 12, font: openSans });
-      y -= lineHeight;
-      const ownerImg = await pdfDoc.embedPng(agreement.signatures.owner);
-      page.drawImage(ownerImg, { x: 50, y: y - 50, width: 150, height: 50 });
-      y -= 60;
+    page.drawText('Подписи:', {
+      x: 50,
+      y: yPos,
+      size: 14,
+      font: openSans,
+    })
+    yPos -= lineHeight
+
+    // 6. Встраиваем подписи, если они есть
+    if (signatures?.owner) {
+      page.drawText('Владелец:', { x: 50, y: yPos, size: 12, font: openSans })
+      yPos -= lineHeight
+      const ownerImg = await pdfDoc.embedPng(signatures.owner)
+      page.drawImage(ownerImg, {
+        x: 50,
+        y: yPos - 50,
+        width: 150,
+        height: 50,
+      })
+      yPos -= 60
     }
 
-    if (agreement.signatures?.renter) {
-      page.drawText('Арендатор:', { x: 50, y, size: 12, font: openSans });
-      y -= lineHeight;
-      const renterImg = await pdfDoc.embedPng(agreement.signatures.renter);
-      page.drawImage(renterImg, { x: 50, y: y - 50, width: 150, height: 50 });
-      y -= 60;
+    if (signatures?.renter) {
+      page.drawText('Арендатор:', { x: 50, y: yPos, size: 12, font: openSans })
+      yPos -= lineHeight
+      const renterImg = await pdfDoc.embedPng(signatures.renter)
+      page.drawImage(renterImg, {
+        x: 50,
+        y: yPos - 50,
+        width: 150,
+        height: 50,
+      })
+      yPos -= 60
     }
 
-    // 5. Сохраняем PDF и заливаем в Storage
-    const pdfBytes = await pdfDoc.save();
-    const pdfRef = ref(storage, `agreements/${agreementId}.pdf`);
-    await uploadBytes(pdfRef, pdfBytes, { contentType: 'application/pdf' });
-    const pdfUrl = await getDownloadURL(pdfRef);
+    // 7. Сохраняем в Storage
+    const pdfBytes = await pdfDoc.save()
+    const pdfReference = storageRef(storage, `agreements/${agreementId}.pdf`)
+    await uploadBytes(pdfReference, pdfBytes, {
+      contentType: 'application/pdf',
+    })
+    const pdfUrl = await getDownloadURL(pdfReference)
 
-    // 6. Обновляем Firestore
+    // 8. Обновляем Firestore и переводим статус в signed
     await updateDoc(doc(db, 'contracts', agreementId), {
-      status: 'signed',
+      status: 'signed' as const,
       pdfUrl,
       lastUpdated: serverTimestamp(),
-    });
+    })
 
-    console.log('PDF успешно создан и сохранён:', pdfUrl);
-    return pdfUrl;
-  } catch (err) {
-    console.error('Ошибка генерации PDF:', err);
+    console.log('PDF успешно создан и сохранён:', pdfUrl)
+    return pdfUrl
+  } catch (error: unknown) {
+    console.error('Ошибка генерации PDF:', error)
+    throw error
   }
 }
 
-const formDisabled = isFrozen;
+ // Если нужно дизейблить форму, задаём булевый флаг
+ const formDisabled: boolean = isFrozen
 
   return (
   <div className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark rounded-lg shadow-md">
@@ -302,28 +428,29 @@ const formDisabled = isFrozen;
     Этот договор заключён между
     <Input
       className="inline w-full sm:w-60 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement?.owner?.fullName || ''}
-      onChange={(e) => handleInputChange('owner.fullName', e.target.value)}
+      value={agreement?.owner?.fullName ?? ''}
+      onChange={e => handleInputChange('owner.fullName', e.target.value)}
       disabled={!isOwner || formDisabled}
       placeholder="ФИО владельца"
     />
-    (в дальнейшем "Владелец") и
+    (в дальнейшем &quot;Владелец&quot;)
+    и
     <Input
       className="inline w-full sm:w-60 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement?.renter?.fullName || ''}
-      onChange={(e) => handleInputChange('renter.fullName', e.target.value)}
+      value={agreement?.renter?.fullName ?? ''}
+      onChange={e => handleInputChange('renter.fullName', e.target.value)}
       disabled={!isRenter || formDisabled}
       placeholder="ФИО арендатора"
     />
-    (в дальнейшем "Арендатор").
+    (в дальнейшем &quot;Арендатор&quot;).
   </p>
 
   <p className="flex flex-wrap items-center gap-2">
     Владелец предоставляет Арендатору в аренду недвижимое имущество по адресу
     <Input
       className="inline w-full sm:w-80 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement.address || ''}
-      onChange={(e) => handleInputChange('address', e.target.value)}
+      value={typeof agreement?.address === 'string' ? agreement.address : ''}
+      onChange={e => handleInputChange('address', e.target.value)}
       disabled={formDisabled}
       placeholder="Адрес объекта"
     />
@@ -331,16 +458,16 @@ const formDisabled = isFrozen;
     <Input
       type="date"
       className="inline w-full sm:w-40 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement.rentalStart || ''}
-      onChange={(e) => handleInputChange('rentalStart', e.target.value)}
+      value={typeof agreement?.rentalStart === 'string' ? agreement.rentalStart : ''}
+      onChange={e => handleInputChange('rentalStart', e.target.value)}
       disabled={formDisabled}
     />
     по
     <Input
       type="date"
       className="inline w-full sm:w-40 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement.rentalEnd || ''}
-      onChange={(e) => handleInputChange('rentalEnd', e.target.value)}
+      value={typeof agreement?.rentalEnd === 'string' ? agreement.rentalEnd : ''}
+      onChange={e => handleInputChange('rentalEnd', e.target.value)}
       disabled={formDisabled}
     />
   </p>
@@ -350,8 +477,10 @@ const formDisabled = isFrozen;
     <Input
       type="number"
       className="inline w-full sm:w-32 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-      value={agreement.rentAmount || ''}
-      onChange={(e) => handleInputChange('rentAmount', parseFloat(e.target.value))}
+      value={agreement?.rentAmount?.toString() ?? ''}
+      onChange={e =>
+        handleInputChange('rentAmount', parseFloat(e.target.value))
+      }
       disabled={formDisabled}
     />
     грн.
@@ -359,8 +488,8 @@ const formDisabled = isFrozen;
 
   <Textarea
     className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-    value={agreement.additionalTerms || ''}
-    onChange={(e) => handleInputChange('additionalTerms', e.target.value)}
+    value={typeof agreement?.additionalTerms === 'string' ? agreement.additionalTerms : ''}
+    onChange={e => handleInputChange('additionalTerms', e.target.value)}
     placeholder="Дополнительные условия: правила проживания, курение, животные..."
     disabled={formDisabled}
   />
@@ -368,12 +497,12 @@ const formDisabled = isFrozen;
   <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
     <div className="flex-1 flex flex-col">
       <Label className="text-foreground dark:text-foreground-dark">
-        Контактные данные Владелеца
+        Контактные данные владельца
       </Label>
       <Input
         className="w-full px-3 py-2 mt-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-        value={agreement?.owner?.phone || ''}
-        onChange={(e) => handleInputChange('owner.phone', e.target.value)}
+        value={agreement?.owner?.phone ?? ''}
+        onChange={e => handleInputChange('owner.phone', e.target.value)}
         disabled={!isOwner || formDisabled}
         placeholder="Телефон владельца"
       />
@@ -381,12 +510,12 @@ const formDisabled = isFrozen;
 
     <div className="flex-1 flex flex-col">
       <Label className="text-foreground dark:text-foreground-dark">
-        Контактные данные Арендатора
+        Контактные данные арендатора
       </Label>
       <Input
         className="w-full px-3 py-2 mt-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
-        value={agreement?.renter?.phone || ''}
-        onChange={(e) => handleInputChange('renter.phone', e.target.value)}
+        value={agreement?.renter?.phone ?? ''}
+        onChange={e => handleInputChange('renter.phone', e.target.value)}
         disabled={!isRenter || formDisabled}
         placeholder="Телефон арендатора"
       />

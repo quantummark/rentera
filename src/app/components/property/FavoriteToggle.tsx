@@ -6,7 +6,6 @@ import { Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { Listing } from '@/app/types/listing';
 import { useToast } from '@/components/ui/ToastContext';
-import { Description } from '@radix-ui/react-dialog';
 
 type Props = {
   listing: Listing;

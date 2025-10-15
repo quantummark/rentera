@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Timestamp } from 'firebase/firestore';
 import AgreementStatus from './AgreementStatus';
 import AgreementForm from './AgreementForm';
 import AgreementDocuments from './AgreementDocuments';
@@ -15,7 +14,7 @@ interface AgreementTabsProps {
   onUpdateStatus: (status: AgreementStatusType) => Promise<void>;
 }
 
-export default function AgreementTabs({ agreementId, onUpdateStatus }: AgreementTabsProps) {
+export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
   const [userType] = useUserTypeWithProfile();
   const { agreement, loading } = useAgreement(agreementId);
 
@@ -23,13 +22,6 @@ export default function AgreementTabs({ agreementId, onUpdateStatus }: Agreement
 
   if (loading) return <div>Загрузка...</div>;
   if (!agreement) return <div>Договор не найден</div>;
-
-  // Преобразуем createdAt в ISO string для AgreementStatus
-  const requestDate = agreement.createdAt
-    ? agreement.createdAt instanceof Timestamp
-      ? agreement.createdAt.toDate().toISOString()
-      : new Date(agreement.createdAt).toISOString()
-    : new Date().toISOString();
 
   // Безопасный доступ к owner/renter
   const ownerId = agreement.owner?.id || '';

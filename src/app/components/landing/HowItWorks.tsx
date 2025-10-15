@@ -71,7 +71,7 @@ export default function HowItWorks() {
         </p>
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {steps.map(({ number, icon: Icon, title, description, gradientFrom, gradientTo, iconColor }, idx) => (
+          {steps.map(({ icon: Icon, title, description, gradientFrom, gradientTo, iconColor }, idx) => (
             <div
               key={idx}
               className="flex flex-col items-center text-center p-6 bg-card rounded-3xl shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-2 hover:scale-105"

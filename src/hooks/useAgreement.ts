@@ -122,7 +122,7 @@ export function useAgreement(agreementId: string) {
 
   // Чистим updates от undefined
   const cleanUpdates = Object.fromEntries(
-    Object.entries(updates).filter(([_, v]) => v !== undefined)
+    Object.entries(updates).filter(([, v]) => v !== undefined)
   );
 
   const currentAuditLog = Array.isArray(agreement.auditLog) ? agreement.auditLog : [];

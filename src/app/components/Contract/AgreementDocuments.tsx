@@ -16,9 +16,14 @@ interface AgreementDocument {
   isPaid?: boolean;
 }
 
-export default function AgreementDocuments() {
+interface AgreementDocumentsProps {
+  ownerId: string;
+  renterId: string;
+}
+
+export default function AgreementDocuments({ ownerId, renterId }: AgreementDocumentsProps) {
   // 1) Получаем тип и профиль пользователя
-  const [userType, userProfile, userLoading] = useUserTypeWithProfile();
+  const [_userType, userProfile, userLoading] = useUserTypeWithProfile();
   const currentUid = userProfile?.uid || '';
 
   // 2) Состояния для списка договоров
@@ -33,7 +38,7 @@ export default function AgreementDocuments() {
         const snapshot = await getDocs(collection(db, 'contracts'));
         const docs = snapshot.docs
           .map(d => {
-            const data = d.data() as any;
+            const data = d.data() as Omit<AgreementDocument, 'id' | 'lastUpdated'> & { lastUpdated: { seconds: number; nanoseconds: number } };
             return {
               id: d.id,
               ownerId: data.ownerId || '',

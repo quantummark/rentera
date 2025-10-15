@@ -13,63 +13,83 @@ interface RentRequestButtonProps {
 
 type RequestStatus = 'none' | 'pending' | 'active' | 'signed';
 
-export default function RentRequestButton({ listingId, ownerId }: RentRequestButtonProps) {
+export default function RentRequestButton({
+  listingId,
+  ownerId,
+}: RentRequestButtonProps) {
   const [status, setStatus] = useState<RequestStatus>('none');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const { addToast } = useToast();
 
+  // Текущий пользователь (арендатор)
   const currentUser = auth.currentUser;
   const renterId = currentUser?.uid;
 
-  if (!renterId) return null; // скрываем кнопку если не авторизован
+  // Ссылка на документ Firestore или null, если не авторизован
+  const requestDocRef = renterId
+    ? doc(db, 'contracts', `${listingId}_${renterId}`)
+    : null;
 
-  const requestDocRef = doc(db, 'contracts', `${listingId}_${renterId}`);
-
-  // Проверка статуса запроса
+  // 1. Проверяем, был ли уже создан запрос (pending/active)
   useEffect(() => {
+    if (!requestDocRef) {
+      setStatus('none');
+      return;
+    }
+
     const fetchStatus = async () => {
       try {
         const docSnap = await getDoc(requestDocRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          if (data.status === 'active') setStatus('active');
-          else setStatus('pending');
+          setStatus(data.status === 'active' ? 'active' : 'pending');
+        } else {
+          setStatus('none');
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Ошибка при проверке статуса запроса:', err);
       }
     };
+
     fetchStatus();
   }, [requestDocRef]);
 
-  // Если в колекции status: signed, меняем кнопку на "Договор подписан"
+  // 2. Отдельно проверяем, не подписан ли уже договор
   useEffect(() => {
-  // Зависимость всегда одна — requestDocRef
-  if (!requestDocRef) return;
+    if (!requestDocRef) return;
 
-  const checkSignedStatus = async () => {
-    try {
-      const docSnap = await getDoc(requestDocRef);
-      if (docSnap.exists() && docSnap.data().status === 'signed') {
-        setStatus('signed');
+    const checkSignedStatus = async () => {
+      try {
+        const docSnap = await getDoc(requestDocRef);
+        if (docSnap.exists() && docSnap.data().status === 'signed') {
+          setStatus('signed');
+        }
+      } catch (err: unknown) {
+        console.error('Ошибка при проверке подписанного статуса:', err);
       }
-    } catch (err) {
-      console.error('Ошибка при проверке статуса:', err);
-    }
-  };
+    };
 
-  checkSignedStatus();
-}, [requestDocRef]);
+    checkSignedStatus();
+  }, [requestDocRef]);
 
+  // Если нет авторизованного пользователя — не рендерим кнопку
+  if (!renterId) {
+    return null;
+  }
+
+  // Отправка запроса на аренду
   const handleClick = async () => {
     if (status === 'pending') {
-      addToast({ title: 'Запрос уже отправлен', description: 'Ждите ответа владельца.' });
+      addToast({
+        title: 'Запрос уже отправлен',
+        description: 'Ждите ответа владельца.',
+      });
       return;
     }
 
     setLoading(true);
     try {
-      await setDoc(requestDocRef, {
+      await setDoc(requestDocRef!, {
         listingId,
         ownerId,
         renterId,
@@ -78,24 +98,27 @@ export default function RentRequestButton({ listingId, ownerId }: RentRequestBut
       });
 
       setStatus('pending');
-      addToast({ title: 'Запрос отправлен', description: 'Вы можете отслеживать его на странице договоров.' });
-    } catch (err) {
+      addToast({
+        title: 'Запрос отправлен',
+        description: 'Вы можете отслеживать его на странице договоров.',
+      });
+    } catch (err: unknown) {
       console.error('Ошибка при отправке запроса:', err);
       addToast({ title: 'Ошибка', description: 'Не удалось отправить запрос.' });
     } finally {
       setLoading(false);
     }
-
   };
 
+  // Выбор текста кнопки в зависимости от статуса
   let buttonText = '💰 Арендовать онлайн';
   if (status === 'pending') buttonText = '⏳ Запрос отправлен';
   if (status === 'active') buttonText = '✅ Принято';
-  if (status === 'signed') buttonText = '📄 Договор подписан'; 
+  if (status === 'signed') buttonText = '📄 Договор подписан';
 
   return (
     <Button
-      className={`w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white`}
+      className="w-full rounded-full bg-orange-500 hover:bg-orange-600 text-white"
       onClick={handleClick}
       disabled={loading || status !== 'none'}
     >

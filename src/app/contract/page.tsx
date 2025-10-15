@@ -4,7 +4,7 @@ import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useContracts, AgreementType } from '@/hooks/useContracts';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Loader2, CheckCircle, XCircle, Clock, Check } from 'lucide-react';
 
 export default function ContractsLanding() {
   const [userType] = useUserTypeWithProfile();
@@ -67,12 +67,14 @@ const handleDeleteContract = (id: string) => {
     c.status === 'active'      ? 'text-green-600' :
     c.status === 'declined'    ? 'text-red-600' :
     c.status === 'pending'     ? 'text-yellow-500' :
+    c.status === 'signed'      ? (isPaid ? 'text-green-600' : 'text-green-600') :
     'text-gray-500';
 
   const statusIcon =
     c.status === 'active'      ? <CheckCircle className="inline w-5 h-5 mr-1" /> :
     c.status === 'declined'    ? <XCircle className="inline w-5 h-5 mr-1" /> :
     c.status === 'pending'     ? <Clock className="inline w-5 h-5 mr-1" /> :
+    c.status === 'signed'      ? (isPaid ? <Check className="inline w-5 h-5 mr-1" /> : <Check className="inline w-5 h-5 mr-1" />) :
     null;
 
   return (
