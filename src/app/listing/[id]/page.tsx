@@ -26,7 +26,7 @@ export default function ListingPage() {
     const fetchListing = async () => {
       if (!listingId) return;
       const data = await getListingById(listingId);
-      if (data) setListing(data);
+      if (data) setListing({ ...data, listingId });
     };
 
     fetchListing();
