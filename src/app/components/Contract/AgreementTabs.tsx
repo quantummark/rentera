@@ -23,10 +23,6 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
   if (loading) return <div>Загрузка...</div>;
   if (!agreement) return <div>Договор не найден</div>;
 
-  // Безопасный доступ к owner/renter
-  const ownerId = agreement.owner?.id || '';
-  const renterId = agreement.renter?.id || '';
-
   return (
     <div className="w-full max-w-6xl mx-auto p-4">
       <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'status' | 'form' | 'documents')} className="space-y-4">
@@ -76,10 +72,7 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
 
         {/* Вкладка "Мои документы" */}
         <TabsContent value="documents">
-  <AgreementDocuments
-    ownerId={ownerId || ''}
-    renterId={renterId || ''}
-  />
+  <AgreementDocuments />
 </TabsContent>
       </Tabs>
     </div>

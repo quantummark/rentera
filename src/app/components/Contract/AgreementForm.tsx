@@ -83,9 +83,11 @@ export default function AgreementTextForm({ agreementId }: AgreementFormProps) {
 
   // Стейт для сохранения подписей
   const [isSavingOwner, setIsSavingOwner] = useState<boolean>(false);
-  const [_isSavedOwner, setIsSavedOwner] = useState<boolean>(false);
-  const [isSavingRenter, setIsSavingRenter] = useState<boolean>(false);
-  const [_isSavedRenter, setIsSavedRenter] = useState<boolean>(false);
+const [, setIsSavedOwner] = useState<boolean>(false);
+
+const [isSavingRenter, setIsSavingRenter] = useState<boolean>(false);
+const [, setIsSavedRenter] = useState<boolean>(false);
+
 
   const [ownerSigUrl, setOwnerSigUrl] = useState<string | null>(
     null

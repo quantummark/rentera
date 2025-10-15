@@ -16,19 +16,13 @@ interface AgreementDocument {
   isPaid?: boolean;
 }
 
-interface AgreementDocumentsProps {
-  ownerId: string;
-  renterId: string;
-}
+export default function AgreementDocuments() {
+  // игнорим первый элемент из useUserTypeWithProfile, берём только профиль и loading
+  const [, userProfile, userLoading] = useUserTypeWithProfile();
+  const currentUid = userProfile?.uid ?? '';
 
-export default function AgreementDocuments({ ownerId, renterId }: AgreementDocumentsProps) {
-  // 1) Получаем тип и профиль пользователя
-  const [_userType, userProfile, userLoading] = useUserTypeWithProfile();
-  const currentUid = userProfile?.uid || '';
-
-  // 2) Состояния для списка договоров
   const [documents, setDocuments] = useState<AgreementDocument[]>([]);
-  const [loadingDocs, setLoadingDocs] = useState(true);
+  const [loadingDocs, setLoadingDocs] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -38,7 +32,10 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
         const snapshot = await getDocs(collection(db, 'contracts'));
         const docs = snapshot.docs
           .map(d => {
-            const data = d.data() as Omit<AgreementDocument, 'id' | 'lastUpdated'> & { lastUpdated: { seconds: number; nanoseconds: number } };
+            const data = d.data() as Omit<AgreementDocument, 'id' | 'lastUpdated'> & {
+              lastUpdated: { seconds: number; nanoseconds: number };
+            };
+
             return {
               id: d.id,
               ownerId: data.ownerId || '',
@@ -54,7 +51,7 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
           .filter(d => Boolean(d.pdfUrl));
 
         setDocuments(docs);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error fetching documents:', err);
         setDocuments([]);
       } finally {
@@ -65,12 +62,10 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
     fetchDocuments();
   }, []);
 
-  // 3) Показываем лоадер пока грузятся профиль или документы
   if (userLoading || loadingDocs) {
     return <p className="text-center py-4">Загрузка документов...</p>;
   }
 
-  // 4) Если нет подходящих документов
   if (documents.length === 0) {
     return (
       <p className="text-center py-4 text-muted-foreground">
@@ -79,7 +74,6 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
     );
   }
 
-  // 5) Рендерим сетку карточек
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {documents.map(doc => {
@@ -94,7 +88,6 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
                        hover:shadow-lg transform hover:-translate-y-1
                        transition duration-200"
           >
-            {/* Заголовок и дата */}
             <h3 className="text-xl font-semibold text-foreground dark:text-foreground-dark">
               {doc.title}
             </h3>
@@ -102,7 +95,6 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
               Дата: {doc.lastUpdated}
             </p>
 
-            {/* === Блок для владельца === */}
             {isOwner && (
               <div className="mt-6 flex flex-col items-center gap-4">
                 <a
@@ -127,7 +119,6 @@ export default function AgreementDocuments({ ownerId, renterId }: AgreementDocum
               </div>
             )}
 
-            {/* === Блок для арендатора === */}
             {isRenter && (
               <div className="mt-6 flex items-center justify-between">
                 <a

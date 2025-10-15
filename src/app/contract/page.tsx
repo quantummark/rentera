@@ -57,7 +57,6 @@ const handleDeleteContract = (id: string) => {
           {contracts.map((c: AgreementType) => {
   const isOwner = userType === 'owner';
   const isRenter = userType === 'renter';
-  const isSigned = c.status === 'signed';
   const isPaid = c.isPaid ?? false; // предполагаем, что поле isPaid есть в объекте договора
   const otherUserName = isOwner ? c.renterName : c.ownerName;
   const otherUserAvatar = isOwner ? c.renterAvatar : c.ownerAvatar;
