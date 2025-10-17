@@ -4,37 +4,37 @@ import { useTranslation } from 'react-i18next';
 import { Handshake, ShieldCheck, CreditCard, Bitcoin } from 'lucide-react';
 
 export default function Benefits() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('benefits');
 
   const benefits = [
     {
       icon: Handshake,
-      label: t('benefits.noIntermediaries', 'Без посредников'),
-      description: t('benefits.directCommunication', 'Прямое общение между владельцем и арендатором'),
+      label: t('benefits:noIntermediaries'),
+      description: t('benefits:directCommunication'),
       gradientFrom: 'from-green-400/30',
       gradientTo: 'to-green-600/30',
       iconColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: ShieldCheck,
-      label: t('benefits.insurance', 'Страховка объекта'),
-      description: t('benefits.insuranceDescription', 'Страхуем объекты на сумму 250000 грн'),
+      label: t('benefits:insurance'),
+      description: t('benefits:insuranceDescription'),
       gradientFrom: 'from-blue-400/30',
       gradientTo: 'to-blue-600/30',
       iconColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: CreditCard,
-      label: t('benefits.onlinePayment', 'Онлайн-оплата и договор'),
-      description: t('benefits.paymentDescription', 'Удобно и прозрачно прямо на платформе'),
+      label: t('benefits:onlinePayment'),
+      description: t('benefits:paymentDescription'),
       gradientFrom: 'from-yellow-400/30',
       gradientTo: 'to-yellow-600/30',
       iconColor: 'text-yellow-600 dark:text-yellow-300',
     },
     {
       icon: Bitcoin,
-      label: t('benefits.modernPlatform', 'Web3 и криптовалюта'),
-      description: t('benefits.modernPlatformDescription', 'Возможность добавить оплату в криптовалюте'),
+      label: t('benefits:modernPlatform'),
+      description: t('benefits:modernPlatformDescription'),
       gradientFrom: 'from-purple-400/30',
       gradientTo: 'to-purple-600/30',
       iconColor: 'text-purple-600 dark:text-purple-300',
@@ -45,13 +45,10 @@ export default function Benefits() {
     <section className="w-full py-16 md:py-20 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
-          {t('benefits.title', 'Преимущества Renterya')}
+          {t('benefits:title')}
         </h2>
         <p className="text-lg md:text-2xl text-center text-muted-foreground dark:text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed tracking-wide">
-          {t(
-            'benefits.subtitle',
-            'Rentera предлагает уникальные преимущества для арендаторов и владельцев жилья, делая процесс аренды безопасным и удобным.'
-          )}
+          {t('benefits:subtitle')}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

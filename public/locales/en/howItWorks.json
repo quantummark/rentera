@@ -1,0 +1,20 @@
+{
+  "title": "How it works",
+  "subtitle": "Renterya streamlines the rental process, making it fast and transparent for everyone.",
+  "step1": {
+    "title": "Sign up",
+    "description": "Create an account as a renter or an owner and complete your profile."
+  },
+  "step2": {
+    "title": "Search or list a home",
+    "description": "Start browsing for a place or add your own property for rent."
+  },
+  "step3": {
+    "title": "Rental terms",
+    "description": "Agree on rental terms right on the platform—no extra calls or paperwork."
+  },
+  "step4": {
+    "title": "Sign & pay",
+    "description": "Sign the contract and pay the rent online directly on the platform."
+  }
+}

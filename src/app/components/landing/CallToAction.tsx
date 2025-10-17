@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 
 export default function CallToAction() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('cta');
 
   return (
     <section
@@ -21,12 +21,11 @@ export default function CallToAction() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="space-y-6">
           <h2 className="text-3xl md:text-4xl font-bold drop-shadow-lg">
-            {t('cta.title', 'Готовы начать?')}
+            {t('cta:title')}
           </h2>
           <p className="text-lg md:text-2xl opacity-90 max-w-2xl mx-auto leading-relaxed">
             {t(
-              'cta.subtitle',
-              'Начни с Renterya — арендуй или сдавай с уверенностью!'
+              'cta:subtitle'
             )}
           </p>
 
@@ -36,7 +35,7 @@ export default function CallToAction() {
               href="/search"
               className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-transform inline-flex items-center justify-center w-full md:w-auto"
             >
-              🔍 {t('landing.startSearch', 'Начать поиск')}
+               {t('cta:startSearch')}
             </Link>
 
             {/* Кнопка "Сдать жильё" */}
@@ -44,7 +43,7 @@ export default function CallToAction() {
               href="/login"
               className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-yellow-400 via-orange-400 to-orange-500 text-white rounded-full shadow-md hover:scale-105 hover:shadow-xl transition-transform inline-flex items-center justify-center w-full md:w-auto"
             >
-              🗝️ {t('landing.startRenting', 'Сдать жильё')}
+               {t('cta:startRenting')}
             </Link>
           </div>
         </div>

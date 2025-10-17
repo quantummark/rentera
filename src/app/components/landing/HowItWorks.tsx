@@ -4,17 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { CircleUser, Home, FileCheck, ClipboardPenLine } from 'lucide-react';
 
 export default function HowItWorks() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('howItWorks');
 
   const steps = [
     {
       icon: CircleUser,
       number: 1,
-      title: t('howItWorks.step1.title', 'Регистрация'),
-      description: t(
-        'howItWorks.step1.description',
-        'Создайте аккаунт как арендатор или владелец и заполните профиль.'
-      ),
+      title: t('howItWorks:step1.title'),
+      description: t('howItWorks:step1.description'),
       gradientFrom: 'from-blue-400/30',
       gradientTo: 'to-blue-600/30',
       iconColor: 'text-blue-600 dark:text-blue-300',
@@ -22,10 +19,9 @@ export default function HowItWorks() {
     {
       icon: Home,
       number: 2,
-      title: t('howItWorks.step2.title', 'Поиск или добавление жилья'),
+      title: t('howItWorks:step2.title'),
       description: t(
-        'howItWorks.step2.description',
-        'Начните искать жильё или добавьте собственное для аренды.'
+        'howItWorks:step2.description',
       ),
       gradientFrom: 'from-green-400/30',
       gradientTo: 'to-green-600/30',
@@ -34,10 +30,9 @@ export default function HowItWorks() {
     {
       icon: FileCheck,
       number: 3,
-      title: t('howItWorks.step3.title', 'Условия аренды'),
+      title: t('howItWorks:step3.title'),
       description: t(
-        'howItWorks.step3.description',
-        'Согласуйте условия аренды через платформу — без лишних звонков и бумажной работы.'
+        'howItWorks:step3.description',
       ),
       gradientFrom: 'from-yellow-400/30',
       gradientTo: 'to-yellow-600/30',
@@ -46,11 +41,8 @@ export default function HowItWorks() {
     {
       icon: ClipboardPenLine,
       number: 4,
-      title: t('howItWorks.step4.title', 'Подписание и оплата'),
-      description: t(
-        'howItWorks.step4.description',
-        'Подпишите договор и оплатите аренду онлайн прямо через платформу.'
-      ),
+      title: t('howItWorks:step4.title'),
+      description: t('howItWorks:step4.description'),
       gradientFrom: 'from-purple-400/30',
       gradientTo: 'to-purple-600/30',
       iconColor: 'text-purple-600 dark:text-purple-300',
@@ -61,13 +53,10 @@ export default function HowItWorks() {
     <section className="py-16 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
-          {t('howItWorks.title', 'Как это работает?')}
+          {t('howItWorks:title')}
         </h2>
         <p className="text-lg md:text-2xl text-center text-muted-foreground dark:text-muted-foreground mb-16 max-w-3xl mx-auto leading-relaxed tracking-wide">
-          {t(
-            'howItWorks.subtitle',
-            'Renterya упрощает процесс аренды жилья, делая его быстрым и прозрачным для всех участников.'
-          )}
+          {t('howItWorks:subtitle')}
         </p>
 
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">

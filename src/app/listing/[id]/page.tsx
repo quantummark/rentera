@@ -38,7 +38,7 @@ export default function ListingPage() {
   
 
   return (
-    <div className="max-w-8xl mx-auto px-4 md:px-8 py-8 space-y-10">
+    <div className="w-full max-w-full sm:max-w-8xl mx-auto px-2 sm:px-4 md:px-8 py-6 sm:py-8 space-y-10">
       <ListingHeader listing={{ ...listing, listingId }} />
       <Separator className="my-6 border-t border-gray-300 dark:border-gray-700" />
       <ListingRentConditions listing={listing} />

@@ -4,38 +4,29 @@ import { useTranslation } from 'react-i18next';
 import { UserRoundPen, Globe, Store } from 'lucide-react';
 
 export default function Motivation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('motivation');
 
   const beliefs = [
     {
       icon: UserRoundPen,
-      label: t('motivation.belief1', 'Профили владельцев и арендаторов'),
-      description: t(
-        'motivation.belief1Desc',
-        'Личные страницы с рейтингами, отзывами и верификацией создают прозрачность и доверие.'
-      ),
+      label: t('motivation:belief1'),
+      description: t('motivation:belief1Desc'),
       gradientFrom: 'from-blue-400/30',
       gradientTo: 'to-blue-600/30',
       iconColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: Globe,
-      label: t('motivation.belief2', 'Социальная сеть аренды'),
-      description: t(
-        'motivation.belief2Desc',
-        'Пользователи могут общаться, делиться опытом, писать посты и находить единомышленников.'
-      ),
+      label: t('motivation:belief2'),
+      description: t('motivation:belief2Desc'),
       gradientFrom: 'from-green-400/30',
       gradientTo: 'to-green-600/30',
       iconColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: Store,
-      label: t('motivation.belief3', 'Маркетплейс “Услуги для жилья”'),
-      description: t(
-        'motivation.belief3Desc',
-        'Сборка мебели, клининг, сантехника, доставка и т.д. — всё для удобства арендаторов и владельцев.'
-      ),
+      label: t('motivation:belief3'),
+      description: t('motivation:belief3Desc'),
       gradientFrom: 'from-orange-400/30',
       gradientTo: 'to-orange-600/30',
       iconColor: 'text-orange-600 dark:text-orange-300',
@@ -46,13 +37,10 @@ export default function Motivation() {
     <section className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl md:text-5xl font-semibold text-center mb-12 text-foreground dark:text-foreground-dark drop-shadow-lg">
-          {t('motivation.title', 'Строим экосистему аренды')}
+          {t('motivation:title')}
         </h2>
         <p className="text-lg md:text-2xl text-muted-foreground dark:text-muted-foreground text-center mb-12 max-w-3xl mx-auto leading-relaxed tracking-wide">
-          {t(
-            'motivation.subtitle',
-            'Арендуйте и сдавайте жильё напрямую, общайтесь с проверенными пользователями и пользуйтесь сервисами для дома — всё удобно и прозрачно на Renterya.'
-          )}
+          {t('motivation:subtitle')}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

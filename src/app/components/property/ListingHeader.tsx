@@ -99,7 +99,7 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
 
   {/* ссылка прижата вправо */}
   <Link href={`/profile/owner/${listing.ownerId}`} passHref>
-  <Button asChild variant="ghost" className="text-sm text-primary px-2 hover:underline">
+  <Button asChild variant="ghost" className="text-sm sm:text-xs text-primary px-2 hover:underline">
     <span>{t('listing.viewOwnerProfile', 'Смотреть профиль')}</span>
   </Button>
 </Link>

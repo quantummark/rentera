@@ -18,27 +18,30 @@ export default function AgreementPage() {
   if (!agreement)         return <div>Договор не найден</div>;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 space-y-6">
-      <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900">
-  <h1 className="text-2xl font-bold mb-2 text-foreground dark:text-white">
-    Онлайн-договор аренды
-  </h1>
-  <p className="text-foreground/70 dark:text-white/70">
-    На этой странице вы можете просмотреть, заполнить и подписать договор.
-  </p>
-</div>
-
-      <AgreementTabs
-        agreementId={agreementId}
-        userType={userType}
-        onUpdateStatus={async (status: AgreementStatus) => {
-          if (updateAgreement) {
-            await updateAgreement({ status }, 'updateStatus');
-          } else {
-            return Promise.resolve();
-          }
-        }}
-      />
+    <div className="w-full max-w-full sm:max-w-5xl mx-auto px-2 sm:px-4 space-y-6">
+  {/* Информационный баннер */}
+  <div className="rounded-xl bg-blue-50 dark:bg-blue-900 overflow-hidden">
+    {/* Внутренние паддинги чуть меньше на мобилках */}
+    <div className="px-4 py-3 sm:px-6 sm:py-4">
+      <h1 className="text-xl sm:text-2xl font-bold mb-2 text-foreground dark:text-white">
+        Онлайн-договор аренды
+      </h1>
+      <p className="text-sm sm:text-base text-foreground/70 dark:text-white/70">
+        На этой странице вы можете просмотреть, заполнить и подписать договор.
+      </p>
     </div>
+  </div>
+
+  {/* Табуляция договора */}
+  <AgreementTabs
+    agreementId={agreementId}
+    userType={userType}
+    onUpdateStatus={async status => {
+      if (updateAgreement) {
+        await updateAgreement({ status }, 'updateStatus');
+      }
+    }}
+  />
+</div>
   );
 }

@@ -8,6 +8,8 @@ import Header from '@/app/components/layout/Header';
 import Footer from '@/app/components/layout/Footer';
 import QueryClientWrapper from '@/app/components/query-client-wrapper';
 import { ToastProvider } from '@/components/ui/ToastContext'; // Импортируем провайдер для тостов
+import '@/app/components/ui/i18n'; // инициализируем i18next
+import Providers from './providers';
 
 
 
@@ -39,9 +41,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
+    
     <ToastProvider>
       <html
-        lang="en"
+        lang="uk"
         suppressHydrationWarning
         data-theme="light" // Устанавливаем тему по умолчанию
         className={`${geistSans.variable} ${geistMono.variable} font-sans`}
@@ -57,6 +60,7 @@ export default function RootLayout({
         <body className="bg-background text-foreground min-h-screen antialiased">
           {/* Оборачиваем приложение в QueryClientWrapper */}
           <QueryClientWrapper>
+            <Providers>
             {/* Оборачиваем приложение в ThemeProvider для поддержки темной и светлой темы */}
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="rentera-theme" disableTransitionOnChange={true}>
               <ClientRoot>
@@ -67,6 +71,7 @@ export default function RootLayout({
                 <Footer />
               </ClientRoot>
             </ThemeProvider>
+          </Providers>
           </QueryClientWrapper>
         </body>
       </html>
