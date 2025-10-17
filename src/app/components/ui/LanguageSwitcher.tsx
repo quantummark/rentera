@@ -21,7 +21,7 @@ function norm(lng?: string): Lng {
 }
 
 export const LanguageSwitcher = () => {
-  const { i18n, t } = useTranslation(); // t держит подписку на i18n-ивенты
+  const { i18n } = useTranslation(); // t держит подписку на i18n-ивенты
   const [current, setCurrent] = useState<Lng>(norm(i18n.language));
 
   // Обновляем состояние при смене языка (на 100% надёжно)

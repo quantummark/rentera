@@ -4,7 +4,6 @@ import { useParams } from 'next/navigation';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useAgreement } from '@/hooks/useAgreement';
 import AgreementTabs from '@/app/components/Contract/AgreementTabs';
-import { AgreementStatus } from '@/hooks/useAgreement';
 
 export default function AgreementPage() {
   // получаем id напрямую из URL
