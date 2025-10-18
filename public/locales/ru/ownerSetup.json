@@ -1,17 +1,25 @@
 {
   "title": "Настройка профиля владельца",
   "photo": "Фото профиля",
+  "avatarAlt": "Аватар владельца",
   "noPhoto": "Нет фото",
   "fullName": "Имя или ник",
   "bio": "О себе",
   "city": "Город",
   "phone": "Телефон",
   "email": "Email",
-  "socials": "Ссылки на соцсети",
   "instagram": "Instagram",
   "telegram": "Telegram",
   "save": "Сохранить и продолжить",
-  "saving": "Сохраняем...",
+  "saving": "Сохранение...",
   "successMessage": "Профиль успешно сохранён!",
-  "errorMessage": "Ошибка при сохранении профиля"
+  "errorMessage": "Ошибка при сохранении профиля",
+  "errorMessageUser": "Ошибка: не удалось определить пользователя.",
+  "placeholderFullName": "Ирина Коваль",
+  "placeholderBio": "Сдаю жильё более 5 лет, предпочитаю долгосрочных арендаторов...",
+  "placeholderCity": "Киев",
+  "placeholderPhone": "+380501234567",
+  "placeholderEmail": "owner@email.com",
+  "placeholderInstagram": "https://instagram.com/...",
+  "placeholderTelegram": "@owner"
 }

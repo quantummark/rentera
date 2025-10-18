@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('footer');
   const { resolvedTheme } = useTheme();
 
   return (
@@ -24,28 +24,28 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Навигация */}
         <div>
-          <h4 className="font-semibold mb-2 text-foreground">{t('footer.navigation', 'Навигация')}</h4>
+          <h4 className="font-semibold mb-2 text-foreground">{t('footer:navigation')}</h4>
           <ul className="space-y-1">
-            <li><Link href="/search">{t('nav.search', 'Поиск')}</Link></li>
-            <li><Link href="/community">{t('nav.community', 'Комьюнити')}</Link></li>
-            <li><Link href="/about">{t('nav.about', 'О нас')}</Link></li>
-            <li><Link href="/support">{t('nav.support', 'Поддержка')}</Link></li>
+            <li><Link href="/search">{t('footer:nav.search')}</Link></li>
+            <li><Link href="/community">{t('footer:nav.community')}</Link></li>
+            <li><Link href="/about">{t('footer:nav.about')}</Link></li>
+            <li><Link href="/support">{t('footer:nav.support')}</Link></li>
           </ul>
         </div>
 
         {/* Информация */}
         <div>
-          <h4 className="font-semibold mb-2 text-foreground">{t('footer.info', 'Информация')}</h4>
+          <h4 className="font-semibold mb-2 text-foreground">{t('footer:info')}</h4>
           <ul className="space-y-1">
-            <li><Link href="/terms">{t('footer.terms', 'Условия использования')}</Link></li>
-            <li><Link href="/privacy">{t('footer.privacy', 'Политика конфиденциальности')}</Link></li>
-            <li><Link href="/faq">{t('footer.faq', 'Вопросы и ответы')}</Link></li>
+            <li><Link href="/terms">{t('footer:terms')}</Link></li>
+            <li><Link href="/privacy">{t('footer:privacy')}</Link></li>
+            <li><Link href="/faq">{t('footer:faq')}</Link></li>
           </ul>
         </div>
 
         {/* Контакты и соцсети */}
         <div>
-          <h4 className="font-semibold mb-2 text-foreground">{t('footer.contacts', 'Контакты')}</h4>
+          <h4 className="font-semibold mb-2 text-foreground">{t('footer:contacts')}</h4>
           <ul className="space-y-1">
             <li>
               <a href="mailto:support@renterya.com" className="hover:underline">
@@ -72,10 +72,10 @@ export default function Footer() {
             RENTERYA
           </Link>
           <p className="mt-2 text-sm italic text-muted-foreground">
-          Аренда без посредников — честно, удобно, надёжно.
+            {t('footer:slogan')}
           </p>
           <p className="mt-4 text-xs text-muted-foreground">
-            © 2025 Renterya. {t('footer.rights', 'Все права защищены.')}
+            © 2025 Renterya. {t('footer:rights')}
           </p>
         </div>
       </div>

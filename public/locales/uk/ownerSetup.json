@@ -1,17 +1,25 @@
 {
   "title": "Налаштування профілю власника",
   "photo": "Фото профілю",
+  "avatarAlt": "Аватар власника",
   "noPhoto": "Немає фото",
   "fullName": "Ім'я або нік",
   "bio": "Про себе",
   "city": "Місто",
   "phone": "Телефон",
   "email": "Email",
-  "socials": "Посилання на соцмережі",
   "instagram": "Instagram",
   "telegram": "Telegram",
   "save": "Зберегти та продовжити",
   "saving": "Збереження...",
   "successMessage": "Профіль успішно збережено!",
-  "errorMessage": "Помилка під час збереження профілю"
+  "errorMessage": "Помилка під час збереження профілю",
+  "errorMessageUser": "Помилка: не вдалося визначити користувача.",
+  "placeholderFullName": "Ірина Коваль",
+  "placeholderBio": "Здаю житло понад 5 років, надаю перевагу довгостроковим орендарям...",
+  "placeholderCity": "Київ",
+  "placeholderPhone": "+380501234567",
+  "placeholderEmail": "owner@email.com",
+  "placeholderInstagram": "https://instagram.com/...",
+  "placeholderTelegram": "@owner"
 }

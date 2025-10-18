@@ -7,7 +7,7 @@ import { useListingsSearch } from '@/hooks/useListingsSearch';
 import { useTranslation } from 'react-i18next';
 
 export default function ListingsGrid() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('listings');
   const { results, search } = useListingsSearch(); // Убрали неиспользуемую переменную `loading`
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<'new' | 'cheap' | 'expensive'>('new');
@@ -46,9 +46,9 @@ export default function ListingsGrid() {
           value={sort}
           onChange={(e) => setSort(e.target.value as typeof sort)}
         >
-          <option value="new">{t('listings.sort.new', 'Новые')}</option>
-          <option value="expensive">{t('listings.sort.expensive', 'Дорогие')}</option>
-          <option value="cheap">{t('listings.sort.cheap', 'Дешёвые')}</option>
+          <option value="new">{t('sort.new')}</option>
+          <option value="expensive">{t('sort.expensive')}</option>
+          <option value="cheap">{t('sort.cheap')}</option>
         </select>
       </div>
 
@@ -68,7 +68,7 @@ export default function ListingsGrid() {
         </div>
       ) : (
         <div className="text-center text-muted-foreground py-10">
-          {t('listings.notFound', 'Объявлений не найдено')}
+          {t('sort.notFound')}
         </div>
       )}
 
@@ -80,12 +80,12 @@ export default function ListingsGrid() {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
-            {t('listings.prev', 'Предыдущее')}
+            {t('sort.prev')}
           </Button>
 
           {visibleListings.length < sortedListings.length && (
             <Button onClick={() => setPage((p) => p + 1)}>
-              {t('listings.more', 'Смотреть ещё')}
+              {t('sort.more')}
             </Button>
           )}
         </div>

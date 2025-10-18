@@ -1,0 +1,17 @@
+{
+  "navigation": "Navigation",
+  "info": "Information",
+  "contacts": "Contacts",
+  "terms": "Terms of use",
+  "privacy": "Privacy policy",
+  "faq": "FAQ",
+  "rights": "All rights reserved.",
+  "slogan": "Direct rental — honest, convenient, and reliable.",
+  "nav": {
+    "search": "Search",
+    "community": "Community",
+    "about": "About us",
+    "support": "Support",
+    "slogan": "Direct rental — honest, convenient, and reliable."
+  }
+}

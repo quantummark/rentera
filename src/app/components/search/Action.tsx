@@ -8,7 +8,7 @@ import BackgroundParticles from '@/app/components/BackgroundParticles';
 
 export default function Action() {
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('action');
 
   return (
     <section
@@ -25,14 +25,11 @@ export default function Action() {
       {/* Контент — поверх */}
       <div className="relative z-10 space-y-6">
         <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-          {t('action.title', 'Сдаёте жильё? Или ищете аренду?')}
+          {t('action:title')}
         </h2>
 
         <p className="text-muted-foreground text-lg">
-          {t(
-            'action.subtitle',
-            'Присоединяйтесь к Rentera — создайте профиль арендатора или зарегистрируйтесь как владелец.'
-          )}
+          {t('action:subtitle')}
         </p>
 
         <div className="flex flex-col md:flex-row justify-center gap-4">
@@ -40,14 +37,14 @@ export default function Action() {
             href="/login"
             className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-6 py-3 rounded-xl transition"
           >
-            {t('action.owner', 'Создать профиль владельца')}
+            {t('action:owner')}
           </Link>
 
           <Link
             href="/login"
             className="dark:bg-background-dark border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
           >
-            {t('action.renter', 'Создать профиль арендатора')}
+            {t('action:renter')}
           </Link>
         </div>
       </div>

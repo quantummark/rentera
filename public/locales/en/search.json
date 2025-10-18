@@ -1,0 +1,15 @@
+{
+  "city": "City",
+  "type": "Property type",
+  "rooms": "Rooms",
+  "insurance": "Insurance",
+  "payment": "Payment",
+  "currency": "Currency",
+  "price": "Price",
+  "kids": "With kids",
+  "pets": "Pets allowed",
+  "smoking": "Smoking",
+  "reset": "Reset",
+  "submit": "Search",
+  "choose": "Choose"
+}

@@ -7,38 +7,38 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db, auth } from '@/app/firebase/firebase'; // ✅ импорт auth из firebase.ts
-
-const roles = [
-  {
-    key: 'owner',
-    title: 'Владелец жилья',
-    description: 'Сдавайте жильё, управляйте объявлениями и получайте доход.',
-    icon: <Building2 className="w-8 h-8 text-orange-500" />,
-  },
-  {
-    key: 'renter',
-    title: 'Арендатор',
-    description: 'Ищите жильё, бронируйте онлайн и живите комфортно.',
-    icon: <Home className="w-8 h-8 text-orange-500" />,
-  },
-] as const;
-
-type RoleKey = (typeof roles)[number]['key'];
-
-const roleRoutes: Record<RoleKey, string> = {
-  owner: '/owner-setup',
-  renter: '/renter-setup',
-};
+import { db, auth } from '@/app/firebase/firebase';
+import { useTranslation } from 'react-i18next';
 
 const SelectRolePage = () => {
   const router = useRouter();
+  const { t } = useTranslation('selectRole'); // <-- namespace
 
-  const handleSelect = async (role: RoleKey) => {
-    const user = auth.currentUser; // ✅ используем auth из центра
+  const roles = [
+    {
+      key: 'owner',
+      title: t('roles.owner.title'),
+      description: t('roles.owner.description'),
+      icon: <Building2 className="w-8 h-8 text-orange-500" />,
+    },
+    {
+      key: 'renter',
+      title: t('roles.renter.title'),
+      description: t('roles.renter.description'),
+      icon: <Home className="w-8 h-8 text-orange-500" />,
+    },
+  ] as const;
+
+  const roleRoutes = {
+    owner: '/owner-setup',
+    renter: '/renter-setup',
+  } as const;
+
+  const handleSelect = async (role: 'owner' | 'renter') => {
+    const user = auth.currentUser;
 
     if (!user) {
-      alert('Вы должны быть авторизованы, чтобы выбрать роль.');
+      alert(t('errors.notAuthorized'));
       return;
     }
 
@@ -52,8 +52,8 @@ const SelectRolePage = () => {
 
       router.push(roleRoutes[role]);
     } catch (error) {
-      console.error('Ошибка при сохранении роли:', error);
-      alert('Не удалось сохранить роль. Попробуйте позже.');
+      console.error('Error saving role:', error);
+      alert(t('errors.saveFailed'));
     }
   };
 
@@ -65,7 +65,7 @@ const SelectRolePage = () => {
         transition={{ duration: 0.5 }}
         className="text-2xl sm:text-3xl font-bold text-foreground text-center"
       >
-        Выберите, что вы хотите делать на платформе
+        {t('title')}
       </motion.h1>
 
       <motion.div
@@ -89,7 +89,7 @@ const SelectRolePage = () => {
                 <h3 className="text-xl font-semibold">{role.title}</h3>
                 <p className="text-muted-foreground">{role.description}</p>
                 <Button variant="outline" className="mt-2">
-                  Выбрать
+                  {t('selectButton')}
                 </Button>
               </CardContent>
             </Card>

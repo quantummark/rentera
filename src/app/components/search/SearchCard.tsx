@@ -21,7 +21,7 @@ import CustomSelect from '@/components/ui/CustomSelect';
 import { useListingsSearch } from '@/hooks/useListingsSearch';
 
 export default function SearchCard() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['search','types','payment','common']);
 
   const [city, setCity] = useState('');
   const [type, setType] = useState('');
@@ -107,25 +107,25 @@ export default function SearchCard() {
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <MapPinHouse className="w-4 h-4 text-orange-500" />
-            {t('search.city', 'Город')}
+            {t('search:city')}
           </Label>
-          <Input placeholder={t('search.city', 'Город')} value={city} onChange={e => setCity(e.target.value)} />
+          <Input placeholder={t('search:city')} value={city} onChange={e => setCity(e.target.value)} />
         </div>
 
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <Home className="w-4 h-4 text-orange-500" />
-            {t('search.type', 'Тип жилья')}
+            {t('search:type')}
           </Label>
           <CustomSelect
             value={type}
             onChange={setType}
-            placeholder={t('search.type', 'Выберите')}
+            placeholder={t('search:type')}
             options={[
-              { value: 'apartment', label: t('types.apartment', 'Квартира') },
-              { value: 'house', label: t('types.house', 'Дом') },
-              { value: 'room', label: t('types.room', 'Комната') },
-              { value: 'studio', label: t('types.studio', 'Апартаменты') },
+              { value: 'apartment', label: t('types:apartment') },
+              { value: 'house', label: t('types:house') },
+              { value: 'room', label: t('types:room') },
+              { value: 'studio', label: t('types:studio') },
             ]}
           />
         </div>
@@ -133,12 +133,12 @@ export default function SearchCard() {
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <DoorOpen className="w-4 h-4 text-orange-500" />
-            {t('search.rooms', 'Комнат')}
+            {t('search:rooms')}
           </Label>
           <CustomSelect
             value={rooms}
             onChange={setRooms}
-            placeholder={t('search.rooms', 'Комнат')}
+            placeholder={t('search:rooms')}
             options={[
               { value: '1', label: '1' },
               { value: '2', label: '2' },
@@ -153,15 +153,15 @@ export default function SearchCard() {
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <ShieldCheck className="w-4 h-4 text-orange-500" />
-            {t('search.insurance', 'Страховка')}
+            {t('search:insurance')}
           </Label>
           <CustomSelect
             value={insurance}
             onChange={setInsurance}
-            placeholder={t('search.insurance', 'Страховка')}
+            placeholder={t('search:insurance')}
             options={[
-              { value: 'yes', label: t('yes', 'Да') },
-              { value: 'no', label: t('no', 'Нет') },
+              { value: 'yes', label: t('common:yes') },
+              { value: 'no', label: t('common:no') },
             ]}
           />
         </div>
@@ -169,16 +169,16 @@ export default function SearchCard() {
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <CreditCard className="w-4 h-4 text-orange-500" />
-            {t('search.payment', 'Оплата')}
+            {t('search:payment')}
           </Label>
           <CustomSelect
             value={payment}
             onChange={setPayment}
-            placeholder={t('search.payment', 'Оплата')}
+            placeholder={t('search:payment')}
             options={[
-              { value: 'card', label: t('payment.card', 'Карта') },
-              { value: 'cash', label: t('payment.cash', 'Наличные') },
-              { value: 'crypto', label: t('payment.crypto', 'Криптокошелёк') },
+              { value: 'card', label: t('payment:card') },
+              { value: 'cash', label: t('payment:cash') },
+              { value: 'crypto', label: t('payment:crypto') },
             ]}
           />
         </div>
@@ -186,12 +186,12 @@ export default function SearchCard() {
         <div className="space-y-1">
           <Label className="flex items-center gap-1 text-base text-foreground">
             <DollarSign className="w-4 h-4 text-orange-500" />
-            {t('search.currency', 'Валюта')}
+            {t('search:currency')}
           </Label>
           <CustomSelect
             value={currency}
             onChange={setCurrency}
-            placeholder={t('search.currency', 'Валюта')}
+            placeholder={t('search:currency')}
             options={[
               { value: 'usd', label: 'USD' },
               { value: 'eur', label: 'EUR' },
@@ -205,7 +205,7 @@ export default function SearchCard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="flex flex-col items-start space-y-1 md:col-span-1">
           <Label className="text-base text-muted-foreground text-left">
-            {t('search.price', 'Цена')}: ${priceRange[0]}
+            {t('search:price')}: ${priceRange[0]}
           </Label>
           <Slider
             className="w-full"
@@ -218,13 +218,13 @@ export default function SearchCard() {
 
         <div className="self-end flex flex-wrap items-center gap-6 md:col-span-2 md:pl-6 md:border-l md:border-white">
           <CustomToggle pressed={allowKids} onPressedChange={setAllowKids}>
-            👶 {t('search.kids', 'С детьми')}
+            👶 {t('search:kids')}
           </CustomToggle>
           <CustomToggle pressed={allowPets} onPressedChange={setAllowPets}>
-            🐱 {t('search.pets', 'С животными')}
+            🐱 {t('search:pets')}
           </CustomToggle>
           <CustomToggle pressed={allowSmoking} onPressedChange={setAllowSmoking}>
-            🚬 {t('search.smoking', 'Курение')}
+            🚬 {t('search:smoking')}
           </CustomToggle>
         </div>
       </div>
@@ -233,12 +233,12 @@ export default function SearchCard() {
       <div className="flex justify-between pt-4">
         <Button variant="outline" onClick={resetFilters} className="gap-2">
           <XCircle className="w-4 h-4" />
-          {t('search.reset', 'Сбросить')}
+          {t('search:reset')}
         </Button>
 
         <Button onClick={handleSearch} disabled={loading} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 text-sm font-medium">
           <Search className="w-4 h-4" />
-          {t('search.submit', 'Поиск')}
+          {t('search:submit')}
         </Button>
       </div>
     </div>

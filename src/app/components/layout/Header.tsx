@@ -14,7 +14,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const { t } = useTranslation();
+  const { t } = useTranslation('nav');
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,12 +24,12 @@ export default function Header() {
   if (!mounted) return null;
 
   const navLinks = [
-    { href: '/search', label: t('nav.search', 'Поиск') },
-    { href: '/messages', label: t('nav.messages', 'Сообщения') },
-    { href: '/payments', label: t('nav.payments', 'Платежи') },
-    { href: '/contract', label: t('nav.contract', 'Договор') },
-    { href: '/community', label: t('nav.community', 'Комьюнити') },
-    { href: '/support', label: t('nav.support', 'Поддержка') },
+    { href: '/search', label: t('nav:search') },
+    { href: '/messages', label: t('nav:messages') },
+    { href: '/payments', label: t('nav:payments') },
+    { href: '/contract', label: t('nav:contract') },
+    { href: '/community', label: t('nav:community') },
+    { href: '/support', label: t('nav:support') },
   ];
 
   return (
@@ -97,7 +97,7 @@ export default function Header() {
               href="/login"
               className="text-sm font-medium text-primary hover:underline"
             >
-              {t('nav.login', 'Войти')}
+              {t('nav:login')}
             </Link>
           )}
         </div>

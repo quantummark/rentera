@@ -1,0 +1,10 @@
+{
+  "sort": {
+    "new": "Newest",
+    "expensive": "Expensive",
+    "cheap": "Cheap"
+  },
+  "notFound": "No listings found",
+  "prev": "Previous",
+  "more": "Show more"
+}

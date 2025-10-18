@@ -1,0 +1,18 @@
+{
+  "title": "Choose what you want to do on the platform",
+  "selectButton": "Select",
+  "roles": {
+    "owner": {
+      "title": "Property owner",
+      "description": "List your property, manage rentals, and earn income."
+    },
+    "renter": {
+      "title": "Renter",
+      "description": "Find a home, book online, and live comfortably."
+    }
+  },
+  "errors": {
+    "notAuthorized": "You must be logged in to select a role.",
+    "saveFailed": "Failed to save role. Please try again later."
+  }
+}

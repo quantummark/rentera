@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, Path, PathValue } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,33 +24,56 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
-// 1) Схема валидации и типы
-const renterSchema = z.object({
-  fullName: z.string().min(1, 'Введите имя'),
-  bio: z.string().max(300, 'Не более 300 символов'),
-  city: z.string().min(1, 'Введите город'),
-  rentDuration: z.enum(['1-3', '3-6', '6+', '12+']),
-  hasPets: z.enum(['no', 'cat', 'dog']),
-  hasKids: z.enum(['yes', 'no']),
-  smoking: z.enum(['yes', 'no']),
-  occupation: z.string().min(1, 'Укажите род деятельности'),
-  budgetFrom: z.number().min(100),
-  budgetTo: z.number().max(1500),
-  profileImage: z
-    .instanceof(File)
-    .optional()
-    .refine(f => !f || f.size <= 2e6, 'Макс. 2 МБ'),
-});
+// Значения enum остаются стабильными в БД, а лейблы переводим
+type RentDuration = '1-3' | '3-6' | '6+' | '12+';
+type Pets = 'no' | 'cat' | 'dog';
+type YesNo = 'yes' | 'no';
 
-type RenterFormValues = z.infer<typeof renterSchema>;
+type RenterFormValues = {
+  fullName: string;
+  bio: string;
+  city: string;
+  rentDuration: RentDuration;
+  hasPets: Pets;
+  hasKids: YesNo;
+  smoking: YesNo;
+  occupation: string;
+  budgetFrom: number;
+  budgetTo: number;
+  profileImage?: File;
+};
 
 export default function RenterSetupPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation('renterSetup');
+
+  // Схему строим после получения t(), чтобы локализовать сообщения
+  const renterSchema = useMemo(
+    () =>
+      z.object({
+        fullName: z.string().min(1, t('errors.fullNameRequired')),
+        bio: z.string().max(300, t('errors.bioMax')),
+        city: z.string().min(1, t('errors.cityRequired')),
+        rentDuration: z.enum(['1-3', '3-6', '6+', '12+'] as const),
+        hasPets: z.enum(['no', 'cat', 'dog'] as const),
+        hasKids: z.enum(['yes', 'no'] as const),
+        smoking: z.enum(['yes', 'no'] as const),
+        occupation: z.string().min(1, t('errors.occupationRequired')),
+        budgetFrom: z.number().min(100, t('errors.budgetMin')),
+        budgetTo: z.number().max(1500, t('errors.budgetMax')),
+        profileImage: z
+          .instanceof(File)
+          .optional()
+          .refine(f => !f || f.size <= 2e6, t('errors.photoMax')),
+      }),
+    [t]
+  );
+
   const [globalError, setGlobalError] = useState<string | null>(null);
 
-  // 2) Настраиваем React Hook Form с Zod
   const {
     register,
     handleSubmit,
@@ -75,47 +98,38 @@ export default function RenterSetupPage() {
     },
   });
 
-  // Утилита для типобезопасного setValue
+  // typed setValue helper
   const setTypedValue = <K extends Path<RenterFormValues>>(
     field: K,
     value: PathValue<RenterFormValues, K>
-  ) => {
-    setValue(field, value);
-  };
+  ) => setValue(field, value);
 
-  // Вспомогательные описания полей
-  const textFields = [
-    { id: 'fullName', label: 'Имя или ник', type: 'input' },
-    { id: 'bio', label: 'О себе', type: 'textarea' },
-    { id: 'city', label: 'Город', type: 'input' },
-  ] as const;
+  // Локализованные наборы опций
+  const durationOptions: ReadonlyArray<RentDuration> = ['1-3', '3-6', '6+', '12+'] as const;
+  const petsOptions: ReadonlyArray<Pets> = ['no', 'cat', 'dog'] as const;
+  const yesNoOptions: ReadonlyArray<YesNo> = ['no', 'yes'] as const;
 
-  const selectFields = [
-    {
-      name: 'rentDuration',
-      label: 'Срок аренды',
-      options: ['1-3', '3-6', '6+', '12+'] as RenterFormValues['rentDuration'][],
-    },
-    {
-      name: 'hasPets',
-      label: 'Животные',
-      options: ['no', 'cat', 'dog'] as RenterFormValues['hasPets'][],
-    },
-    {
-      name: 'hasKids',
-      label: 'Дети',
-      options: ['no', 'yes'] as RenterFormValues['hasKids'][],
-    },
-    {
-      name: 'smoking',
-      label: 'Курение',
-      options: ['no', 'yes'] as RenterFormValues['smoking'][],
-    },
-  ] as const;
+  const durationLabel = (v: RentDuration) =>
+    v === '1-3'
+      ? t('options.duration.1_3')
+      : v === '3-6'
+      ? t('options.duration.3_6')
+      : v === '6+'
+      ? t('options.duration.6_plus')
+      : t('options.duration.12_plus');
 
-  // 3) Загрузка фото и запись профиля
+  const petsLabel = (v: Pets) =>
+    v === 'no' ? t('options.pets.none') : v === 'cat' ? t('options.pets.cat') : t('options.pets.dog');
+
+  const yesNoLabel = (v: YesNo) => (v === 'yes' ? t('options.common.yes') : t('options.common.no'));
+
+  // Превью файла
+  const file = watch('profileImage');
+  const previewUrl = file ? URL.createObjectURL(file) : null;
+
+  // Сохранение профиля
   const saveProfile = async (data: RenterFormValues) => {
-    if (!user) throw new Error('Неавторизован');
+    if (!user) throw new Error(t('errors.unauthorized'));
 
     let profileImageUrl = '';
     if (data.profileImage) {
@@ -141,27 +155,20 @@ export default function RenterSetupPage() {
     });
   };
 
-  // 4) Обработчик сабмита
   const onSubmit = async (data: RenterFormValues) => {
     setGlobalError(null);
     try {
       await saveProfile(data);
       if (!user) {
-        setGlobalError('Неавторизован');
+        setGlobalError(t('errors.unauthorized'));
         return;
       }
       router.push(`/profile/renter/${user.uid}`);
     } catch (err) {
       console.error(err);
-      const message =
-        err instanceof Error ? err.message : 'Не удалось сохранить профиль';
-      setGlobalError(message);
+      setGlobalError(t('errors.saveFailed'));
     }
   };
-
-  // Для превью загруженного файла
-  const file = watch('profileImage');
-  const previewUrl = file ? URL.createObjectURL(file) : null;
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 flex justify-center">
@@ -169,69 +176,84 @@ export default function RenterSetupPage() {
         onSubmit={handleSubmit(onSubmit)}
         className="w-full max-w-2xl space-y-8 bg-card p-8 rounded-2xl shadow-md border"
       >
-        <h1 className="text-2xl font-bold text-center">
-          Настройка профиля арендатора
-        </h1>
+        <h1 className="text-2xl font-bold text-center">{t('title')}</h1>
 
         {/* Фото профиля */}
         <div className="flex flex-col items-center gap-2">
-          <Label>Фото профиля (макс 2 МБ)</Label>
+          <Label>{t('photoLabel')}</Label>
           <div className="w-32 h-32 rounded-full overflow-hidden border">
             {previewUrl ? (
               <Image
                 src={previewUrl}
-                alt="Preview"
+                alt={t('avatarAlt')}
                 className="w-full h-full object-cover"
                 width={128}
                 height={128}
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-sm">
-                Нет фото
+                {t('noPhoto')}
               </div>
             )}
           </div>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={e => {
-              const f = e.target.files?.[0];
-              if (f) setValue('profileImage', f);
-            }}
-          />
+          {/* Кнопка выбора файла с переводом */}
+<div className="flex items-center gap-3">
+  <input
+    id="profileImage"
+    type="file"
+    accept="image/*"
+    className="sr-only"
+    onChange={e => {
+      const f = e.target.files?.[0];
+      if (f) setValue('profileImage', f); // или setProfileImage(f) в OwnerSetup
+    }}
+  />
+  <label
+    htmlFor="profileImage"
+    className="inline-flex items-center px-4 py-2 rounded-lg border border-input bg-background hover:bg-accent cursor-pointer"
+  >
+    {t('choosePhoto')} {/* <-- локализованный текст */}
+  </label>
+
+  {/* Показать имя выбранного файла */}
+  <span className="text-sm text-muted-foreground truncate max-w-[220px]">
+    {file?.name ?? t('noFile')}
+  </span>
+</div>
+
+{/* Подсказка под кнопкой */}
+<p className="text-xs text-muted-foreground mt-1">
+  {t('photoHint', { size: '2 MB' })} · {t('photoFormats', { formats: 'JPG, PNG, WebP' })}
+</p>
           {errors.profileImage && (
-            <p className="text-destructive text-sm">
-              {errors.profileImage.message}
-            </p>
+            <p className="text-destructive text-sm">{errors.profileImage.message as string}</p>
           )}
         </div>
 
         <Separator />
 
         {/* Текстовые поля */}
-        {textFields.map(({ id, label, type }) => (
-          <div key={id} className="space-y-1">
-            <Label htmlFor={id}>{label}</Label>
-            {type === 'input' ? (
-              <Input id={id} {...register(id as Path<RenterFormValues>)} />
-            ) : (
-              <Textarea
-                id={id}
-                {...register(id as Path<RenterFormValues>)}
-                rows={4}
-              />
-            )}
-            {errors[id] && (
-              <p className="text-destructive text-sm">
-                {errors[id]?.message}
-              </p>
-            )}
-          </div>
-        ))}
+        <div className="space-y-1">
+          <Label htmlFor="fullName">{t('fullName')}</Label>
+          <Input id="fullName" placeholder={t('placeholderFullName')} {...register('fullName')} />
+          {errors.fullName && <p className="text-destructive text-sm">{errors.fullName.message}</p>}
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="bio">{t('bio')}</Label>
+          <Textarea id="bio" rows={4} placeholder={t('placeholderBio')} {...register('bio')} />
+          {errors.bio && <p className="text-destructive text-sm">{errors.bio.message}</p>}
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="city">{t('city')}</Label>
+          <Input id="city" placeholder={t('placeholderCity')} {...register('city')} />
+          {errors.city && <p className="text-destructive text-sm">{errors.city.message}</p>}
+        </div>
 
         {/* Слайдер бюджета */}
         <div className="space-y-4">
-          <Label>Бюджет ($/мес)</Label>
+          <Label>{t('budgetLabel')}</Label>
           <Slider
             min={100}
             max={1500}
@@ -243,62 +265,89 @@ export default function RenterSetupPage() {
             }}
           />
           <div className="text-sm text-muted-foreground">
-            От {watch('budgetFrom')}$ до {watch('budgetTo')}$
+            {t('budgetRange', { from: watch('budgetFrom'), to: watch('budgetTo') })}
           </div>
         </div>
 
         {/* Селекты */}
-        <div className="grid grid-cols-2 gap-4">
-          {selectFields.map(({ name, label, options }) => (
-            <div key={name} className="space-y-1">
-              <Label>{label}</Label>
-              <Select onValueChange={val => setTypedValue(name, val as (typeof options)[number])}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Выберите..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {options.map(opt => (
-                    <SelectItem key={opt} value={opt}>
-                      {opt === 'no'
-                        ? 'Нет'
-                        : opt === 'yes'
-                        ? 'Да'
-                        : opt}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors[name] && (
-                <p className="text-destructive text-sm">
-                  {errors[name]?.message}
-                </p>
-              )}
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <Label>{t('rentDuration')}</Label>
+            <Select onValueChange={val => setTypedValue('rentDuration', val as RentDuration)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('choose')} />
+              </SelectTrigger>
+              <SelectContent>
+                {durationOptions.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {durationLabel(opt)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>{t('hasPets')}</Label>
+            <Select onValueChange={val => setTypedValue('hasPets', val as Pets)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('choose')} />
+              </SelectTrigger>
+              <SelectContent>
+                {petsOptions.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {petsLabel(opt)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>{t('hasKids')}</Label>
+            <Select onValueChange={val => setTypedValue('hasKids', val as YesNo)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('choose')} />
+              </SelectTrigger>
+              <SelectContent>
+                {yesNoOptions.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {yesNoLabel(opt)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>{t('smoking')}</Label>
+            <Select onValueChange={val => setTypedValue('smoking', val as YesNo)}>
+              <SelectTrigger>
+                <SelectValue placeholder={t('choose')} />
+              </SelectTrigger>
+              <SelectContent>
+                {yesNoOptions.map(opt => (
+                  <SelectItem key={opt} value={opt}>
+                    {yesNoLabel(opt)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Профессия */}
         <div className="space-y-1">
-          <Label htmlFor="occupation">Работа / занятость</Label>
-          <Input id="occupation" {...register('occupation')} />
-          {errors.occupation && (
-            <p className="text-destructive text-sm">
-              {errors.occupation.message}
-            </p>
-          )}
+          <Label htmlFor="occupation">{t('occupation')}</Label>
+          <Input id="occupation" placeholder={t('placeholderOccupation')} {...register('occupation')} />
+          {errors.occupation && <p className="text-destructive text-sm">{errors.occupation.message}</p>}
         </div>
 
         {/* Общая ошибка */}
-        {globalError && (
-          <p className="text-center text-destructive">{globalError}</p>
-        )}
+        {globalError && <p className="text-center text-destructive">{globalError}</p>}
 
-        <Button
-          type="submit"
-          disabled={!isValid || isSubmitting}
-          className="w-full py-4"
-        >
-          {isSubmitting ? 'Сохраняем…' : 'Сохранить и продолжить'}
+        <Button type="submit" disabled={!isValid || isSubmitting} className="w-full py-4">
+          {isSubmitting ? t('saving') : t('save')}
         </Button>
       </form>
     </div>

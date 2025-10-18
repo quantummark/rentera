@@ -13,10 +13,10 @@ import { useRouter } from 'next/navigation';
 import { db, storage } from '@/app/firebase/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import Image from 'next/image'; // Импортируем Image из next/image
+import Image from 'next/image';
 
 export default function OwnerSetupPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('ownerSetup');
   const { user } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -45,45 +45,39 @@ export default function OwnerSetupPage() {
     let profileImageUrl = '';
 
     try {
-      // Загружаем фото, если есть
       if (profileImage) {
         const imageRef = ref(storage, `owners/${user.uid}/profile.jpg`);
         await uploadBytes(imageRef, profileImage);
         profileImageUrl = await getDownloadURL(imageRef);
       }
 
-      // Собираем данные
       const ownerProfile = {
         uid: user.uid,
         ...formData,
         profileImageUrl: profileImageUrl || '',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-
-        // Стартовые метрики (можно потом обновить из админки)
         metrics: {
           listingsCount: 0,
           completedRentals: 0,
           averageRating: 0,
-          responseTime: '30 минут',
+          responseTime: '30 минут', // метрика, не UI
         },
       };
 
-      // Сохраняем в Firestore
       await setDoc(doc(db, 'owner', user.uid), ownerProfile);
 
-      // Уведомление и переход
-      alert(t('ownerSetup.successMessage', 'Профиль успешно сохранён!'));
+      alert(t('successMessage'));
 
       if (user?.uid) {
         router.push(`/profile/owner/${user.uid}`);
       } else {
-        console.error('UID пользователя не найден');
-        alert(t('ownerSetup.errorMessage', 'Ошибка: не удалось определить пользователя.'));
+        console.error('UID not found');
+        alert(t('errorMessageUser'));
       }
     } catch (error) {
-      console.error('Ошибка при сохранении профиля:', error);
-      alert(t('ownerSetup.errorMessage', 'Ошибка при сохранении профиля'));
+      console.error('Save error:', error);
+      alert(t('errorMessage'));
     } finally {
       setIsSubmitting(false);
     }
@@ -91,32 +85,22 @@ export default function OwnerSetupPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // Handle nested socialLinks fields
     if (name === 'instagram' || name === 'telegram') {
       setFormData((prev) => ({
         ...prev,
-        socialLinks: {
-          ...prev.socialLinks,
-          [name]: value,
-        },
+        socialLinks: { ...prev.socialLinks, [name]: value },
       }));
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  // Handle profile image file input
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setProfileImage(file);
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewUrl(reader.result as string);
-      };
+      reader.onloadend = () => setPreviewUrl(reader.result as string);
       reader.readAsDataURL(file);
     } else {
       setPreviewUrl(null);
@@ -130,24 +114,24 @@ export default function OwnerSetupPage() {
         className="w-full max-w-2xl space-y-8 bg-card p-8 rounded-2xl shadow-md border"
       >
         <h1 className="text-2xl font-bold text-center">
-          {t('ownerSetup.title', 'Настройка профиля владельца')}
+          {t('title')}
         </h1>
 
         {/* Фото профиля */}
         <div className="flex flex-col items-center gap-4">
-          <Label>{t('ownerSetup.photo', 'Фото профиля')}</Label>
+          <Label>{t('photo')}</Label>
           <div className="w-32 h-32 rounded-full overflow-hidden border shadow">
             {previewUrl ? (
               <Image
                 src={previewUrl}
-                alt="Avatar"
+                alt={t('avatarAlt')}
                 width={120}
                 height={120}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                {t('ownerSetup.noPhoto', 'Нет фото')}
+                {t('noPhoto')}
               </div>
             )}
           </div>
@@ -162,19 +146,19 @@ export default function OwnerSetupPage() {
         <Separator />
 
         <div className="space-y-2">
-          <Label htmlFor="fullName">{t('ownerSetup.fullName', 'Имя или ник')}</Label>
+          <Label htmlFor="fullName">{t('fullName')}</Label>
           <Input
             id="fullName"
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
             required
-            placeholder="Ирина Коваль"
+            placeholder={t('placeholderFullName')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="bio">{t('ownerSetup.bio', 'О себе')}</Label>
+          <Label htmlFor="bio">{t('bio')}</Label>
           <Textarea
             id="bio"
             name="bio"
@@ -182,64 +166,64 @@ export default function OwnerSetupPage() {
             onChange={handleChange}
             maxLength={300}
             required
-            placeholder="Сдаю жильё более 5 лет, предпочитаю долгосрочных арендаторов..."
+            placeholder={t('placeholderBio')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city">{t('ownerSetup.city', 'Город')}</Label>
+          <Label htmlFor="city">{t('city')}</Label>
           <Input
             id="city"
             name="city"
             value={formData.city}
             onChange={handleChange}
             required
-            placeholder="Киев"
+            placeholder={t('placeholderCity')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contactPhone">{t('ownerSetup.phone', 'Телефон')}</Label>
+          <Label htmlFor="contactPhone">{t('phone')}</Label>
           <Input
             id="contactPhone"
             name="contactPhone"
             value={formData.contactPhone}
             onChange={handleChange}
-            placeholder="+380501234567"
+            placeholder={t('placeholderPhone')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="contactEmail">Email</Label>
+          <Label htmlFor="contactEmail">{t('email')}</Label>
           <Input
             id="contactEmail"
             name="contactEmail"
             value={formData.contactEmail}
             onChange={handleChange}
             type="email"
-            placeholder="owner@email.com"
+            placeholder={t('placeholderEmail')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="instagram">Instagram</Label>
+          <Label htmlFor="instagram">{t('instagram')}</Label>
           <Input
             id="instagram"
             name="instagram"
             value={formData.socialLinks.instagram}
             onChange={handleChange}
-            placeholder="https://instagram.com/..."
+            placeholder={t('placeholderInstagram')}
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="telegram">Telegram</Label>
+          <Label htmlFor="telegram">{t('telegram')}</Label>
           <Input
             id="telegram"
             name="telegram"
             value={formData.socialLinks.telegram}
             onChange={handleChange}
-            placeholder="@owner"
+            placeholder={t('placeholderTelegram')}
           />
         </div>
 
@@ -248,9 +232,7 @@ export default function OwnerSetupPage() {
           disabled={isSubmitting}
           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-base py-6 rounded-xl mt-4 transition"
         >
-          {isSubmitting
-            ? t('ownerSetup.saving', 'Сохраняем...')
-            : t('ownerSetup.save', 'Сохранить и продолжить')}
+          {isSubmitting ? t('saving') : t('save')}
         </Button>
       </form>
     </div>

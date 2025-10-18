@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -9,63 +9,58 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import app from '@/app/firebase/firebase';
+import app, { db } from '@/app/firebase/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { FcGoogle } from 'react-icons/fc';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/app/firebase/firebase';
+import { useTranslation } from 'react-i18next';
 
-type Language = 'ru' | 'en' | 'ua';
-
-interface AuthFormProps {
-  language: Language;
-}
-
-export const AuthForm = ({ language }: AuthFormProps) => {
+export const AuthForm = () => {
+  const { t } = useTranslation('auth'); // <-- ВАЖНО: неймспейс auth
   const auth = getAuth(app);
   const router = useRouter();
+
   const [isRegistering, setIsRegistering] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [errorCode, setErrorCode] = useState<string | null>(null);
 
-  const texts = {
-    ru: {
-      email: 'Электронная почта',
-      password: 'Пароль',
-      signIn: 'Войти',
-      register: 'Зарегистрироваться',
-      toggleToRegister: 'Нет аккаунта? Зарегистрироваться',
-      toggleToSignIn: 'Уже есть аккаунт? Войти',
-      googleSignIn: 'Войти через Google',
-    },
-    en: {
-      email: 'Email',
-      password: 'Password',
-      signIn: 'Sign In',
-      register: 'Register',
-      toggleToRegister: "Don't have an account? Register",
-      toggleToSignIn: 'Already have an account? Sign in',
-      googleSignIn: 'Sign in with Google',
-    },
-    ua: {
-      email: 'Електронна пошта',
-      password: 'Пароль',
-      signIn: 'Увійти',
-      register: 'Зареєструватися',
-      toggleToRegister: 'Немає акаунта? Зареєструватися',
-      toggleToSignIn: 'Вже є акаунт? Увійти',
-      googleSignIn: 'Увійти через Google',
-    },
+  const submitLabel = useMemo(
+    () => (isRegistering ? t('register') : t('signIn')),
+    [isRegistering, t]
+  );
+
+  const translateAuthError = (code?: string) => {
+    // Мягкая подмена дефолтных ошибок Firebase на локализованные ключи
+    // Ключи добавим следующим шагом (auth.errors.*)
+    switch (code) {
+      case 'auth/invalid-email':
+        return t('errors.invalidEmail');
+      case 'auth/missing-password':
+      case 'auth/weak-password':
+        return t('errors.passwordInvalid');
+      case 'auth/email-already-in-use':
+        return t('errors.emailInUse');
+      case 'auth/invalid-credential':
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return t('errors.invalidCredentials');
+      case 'auth/popup-closed-by-user':
+        return t('errors.popupClosed');
+      case 'auth/network-request-failed':
+        return t('errors.network');
+      default:
+        return t('errors.unexpected');
+    }
   };
-
-  const t = texts[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrorCode(null);
+    setLoading(true);
     try {
       if (isRegistering) {
         await createUserWithEmailAndPassword(auth, email, password);
@@ -74,11 +69,9 @@ export const AuthForm = ({ language }: AuthFormProps) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const uid = userCredential.user.uid;
 
-        const ownerDocRef = doc(db, 'owner', uid);
-        const renterDocRef = doc(db, 'renter', uid);
         const [ownerSnap, renterSnap] = await Promise.all([
-          getDoc(ownerDocRef),
-          getDoc(renterDocRef),
+          getDoc(doc(db, 'owner', uid)),
+          getDoc(doc(db, 'renter', uid)),
         ]);
 
         if (ownerSnap.exists()) {
@@ -89,26 +82,24 @@ export const AuthForm = ({ language }: AuthFormProps) => {
           router.push('/select-role');
         }
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (err: any) {
+      setErrorCode(err?.code || 'auth/unexpected');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    setErrorCode(null);
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
       const uid = userCredential.user.uid;
 
-      const ownerDocRef = doc(db, 'owner', uid);
-      const renterDocRef = doc(db, 'renter', uid);
       const [ownerSnap, renterSnap] = await Promise.all([
-        getDoc(ownerDocRef),
-        getDoc(renterDocRef),
+        getDoc(doc(db, 'owner', uid)),
+        getDoc(doc(db, 'renter', uid)),
       ]);
 
       if (ownerSnap.exists()) {
@@ -118,12 +109,10 @@ export const AuthForm = ({ language }: AuthFormProps) => {
       } else {
         router.push('/select-role');
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred');
-      }
+    } catch (err: any) {
+      setErrorCode(err?.code || 'auth/unexpected');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,36 +121,46 @@ export const AuthForm = ({ language }: AuthFormProps) => {
       <form onSubmit={handleSubmit} className="space-y-4 text-left">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-left block">
-            {t.email}
+            {t('email')}
           </Label>
           <Input
             id="email"
             type="email"
-            placeholder={t.email}
+            placeholder={t('emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
             required
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="password" className="text-left block">
-            {t.password}
+            {t('password')}
           </Label>
           <Input
             id="password"
             type="password"
-            placeholder={t.password}
+            placeholder={t('passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete={isRegistering ? 'new-password' : 'current-password'}
             required
           />
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {errorCode && (
+          <p className="text-red-500 text-sm">
+            {translateAuthError(errorCode)}
+          </p>
+        )}
 
-        <Button type="submit" className="w-full bg-orange-400 hover:bg-orange-500 text-white">
-          {isRegistering ? t.register : t.signIn}
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-orange-400 hover:bg-orange-500 text-white"
+        >
+          {loading ? t('loading') : submitLabel}
         </Button>
       </form>
 
@@ -170,7 +169,7 @@ export const AuthForm = ({ language }: AuthFormProps) => {
           onClick={() => setIsRegistering(!isRegistering)}
           className="text-sm text-blue-600 hover:underline"
         >
-          {isRegistering ? t.toggleToSignIn : t.toggleToRegister}
+          {isRegistering ? t('toggleToSignIn') : t('toggleToRegister')}
         </button>
       </div>
 
@@ -179,9 +178,10 @@ export const AuthForm = ({ language }: AuthFormProps) => {
           variant="outline"
           className="w-full flex items-center gap-2 justify-center"
           onClick={handleGoogleSignIn}
+          disabled={loading}
         >
           <FcGoogle size={20} />
-          {t.googleSignIn}
+          {t('googleSignIn')}
         </Button>
       </div>
     </div>
