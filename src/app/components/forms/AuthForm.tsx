@@ -82,11 +82,16 @@ export const AuthForm = () => {
           router.push('/select-role');
         }
       }
-    } catch (err: any) {
-      setErrorCode(err?.code || 'auth/unexpected');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: unknown) {
+  if (err && typeof err === 'object' && 'code' in err) {
+    const error = err as { code?: string };
+    setErrorCode(error.code || 'auth/unexpected');
+  } else {
+    setErrorCode('auth/unexpected');
+  }
+} finally {
+  setLoading(false);
+}
   };
 
   const handleGoogleSignIn = async () => {
@@ -109,11 +114,16 @@ export const AuthForm = () => {
       } else {
         router.push('/select-role');
       }
-    } catch (err: any) {
-      setErrorCode(err?.code || 'auth/unexpected');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: unknown) {
+  if (err && typeof err === 'object' && 'code' in err) {
+    const error = err as { code?: string };
+    setErrorCode(error.code || 'auth/unexpected');
+  } else {
+    setErrorCode('auth/unexpected');
+  }
+} finally {
+  setLoading(false);
+}
   };
 
   return (
