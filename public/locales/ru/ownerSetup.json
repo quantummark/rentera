@@ -21,5 +21,21 @@
   "placeholderPhone": "+380501234567",
   "placeholderEmail": "owner@email.com",
   "placeholderInstagram": "https://instagram.com/...",
-  "placeholderTelegram": "@owner"
+  "placeholderTelegram": "@owner",
+
+  "choosePhoto": "Выбрать фото",
+  "noFile": "Файл не выбран",
+  "photoHint": "Макс. размер — {{size}}",
+  "photoFormats": "Форматы: {{formats}}",
+
+  "errors": {
+    "fullNameRequired": "Введите имя",
+    "bioMax": "Не более 300 символов",
+    "cityRequired": "Введите город",
+    "phoneInvalid": "Некорректный номер телефона",
+    "emailInvalid": "Некорректный email",
+    "instagramInvalid": "Некорректная ссылка или ник Instagram",
+    "telegramInvalid": "Некорректная ссылка или ник Telegram",
+    "photoMax": "Макс. размер — 2 МБ"
+  }
 }

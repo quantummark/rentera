@@ -21,5 +21,21 @@
   "placeholderPhone": "+380501234567",
   "placeholderEmail": "owner@email.com",
   "placeholderInstagram": "https://instagram.com/...",
-  "placeholderTelegram": "@owner"
+  "placeholderTelegram": "@owner",
+
+  "choosePhoto": "Обрати фото",
+  "noFile": "Файл не вибрано",
+  "photoHint": "Макс. розмір — {{size}}",
+  "photoFormats": "Формати: {{formats}}",
+
+  "errors": {
+    "fullNameRequired": "Вкажіть ім'я",
+    "bioMax": "Не більше 300 символів",
+    "cityRequired": "Вкажіть місто",
+    "phoneInvalid": "Невірний номер телефону",
+    "emailInvalid": "Невірний email",
+    "instagramInvalid": "Невірне посилання або нік Instagram",
+    "telegramInvalid": "Невірне посилання або нік Telegram",
+    "photoMax": "Макс. розмір — 2 МБ"
+  }
 }
