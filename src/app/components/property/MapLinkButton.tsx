@@ -24,7 +24,7 @@ export default function MapLinkButton({ address }: MapLinkButtonProps) {
       className="text-base px-0 inline-flex items-center gap-1 text-primary hover:underline"
     >
       <Map className="w-4 h-4" />
-      {t('listing.viewOnMap', 'Посмотреть на карте')}
+      {t('listing:viewOnMap')}
     </Button>
   );
 }

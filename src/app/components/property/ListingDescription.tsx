@@ -10,7 +10,7 @@ interface ListingDescriptionProps {
 }
 
 export default function ListingDescription({ listing }: ListingDescriptionProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('listing');
   const { description } = listing;
 
   const hasDescription = description?.trim();
@@ -21,7 +21,7 @@ export default function ListingDescription({ listing }: ListingDescriptionProps)
       <div className="flex items-center gap-2">
         <Info className="w-5 h-5 text-blue-500 dark:text-blue-300" />
         <h2 className="text-xl font-semibold text-foreground">
-          {t('listing.descriptionTitle', 'Описание объекта')}
+          {t('listing:descriptionTitle')}
         </h2>
       </div>
 
@@ -33,7 +33,7 @@ export default function ListingDescription({ listing }: ListingDescriptionProps)
           ) : (
             <div className="italic flex items-center gap-2 text-muted-foreground">
               <span>📝</span>
-              <span>{t('listing.noDescription', 'Владелец пока не добавил описание к этому объекту.')}</span>
+              <span>{t('listing:noDescription')}</span>
             </div>
           )}
         </CardContent>

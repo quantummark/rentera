@@ -51,19 +51,19 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
         {/* Цена и условия */}
         <div className="space-y-2 text-base text-foreground pt-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-primary">💰 {listing.price} ₴ / мес</span>
+            <span className="text-xl font-bold text-primary">💰 {t('listing:pricePerMonth', { price: listing.price })}</span>
           </div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-green-600" />
             {listing.useInsurance
-              ? t('listing.insuranceEnabled', 'Страхование включено')
-              : t('listing.insuranceDisabled', 'Без страхования')}
+              ? t('listing:insuranceEnabled')
+              : t('listing:insuranceDisabled')}
           </div>
           <div className="flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-indigo-500" />
             {listing.onlinePayment
-              ? t('listing.onlinePaymentEnabled', 'Онлайн-оплата доступна')
-              : t('listing.onlinePaymentDisabled', 'Оплата только наличными')}
+              ? t('listing:onlinePaymentEnabled')
+              : t('listing:onlinePaymentDisabled')}
           </div>
         </div>
 
@@ -74,35 +74,34 @@ export default function ListingHeader({ listing }: ListingHeaderProps) {
             onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
             variant="outline" className="w-full rounded-full flex items-center justify-center gap-2">
             <MessageCircle className="w-4 h-4" />
-            {t('listing.contactOwner', 'Написать владельцу')}
+            {t('listing:contactOwner')}
           </Button>
         </div>
 
         {/* Владелец */}
-<div className="flex items-center justify-between border-t pt-4">
-  {/* левая группа */}
+<div className="border-t pt-4">
   <div className="flex items-center gap-4">
     <Image
       src={listing.ownerAvatar || '/avatar-placeholder.png'}
       alt={listing.ownerName}
-      width={40}
-      height={40}
-      className="rounded-full object-cover"
+      width={56}
+      height={56}
+      className="w-14 h-14 rounded-full object-cover"
     />
-    <div>
-      <p className="text-sm font-medium">{listing.ownerName}</p>
-      <p className="text-xs text-muted-foreground">
-        ⭐ {listing.ownerRating?.toFixed(1)} / 5
-      </p>
+    <div className="flex-1">
+      <p className="text-base font-medium leading-tight">{listing.ownerName}</p>
+      <p className="text-sm text-muted-foreground">⭐ {listing.ownerRating?.toFixed(1)} / 5</p>
+
+      {/* Кнопка под именем */}
+      <div className="mt-3 justify-center">
+        <Button asChild variant="ghost" size="sm" className="text-primary hover:underline rounded-full px-3">
+          <Link href={`/profile/owner/${listing.ownerId}`}>
+            {t('listing:viewOwnerProfile')}
+          </Link>
+        </Button>
+      </div>
     </div>
   </div>
-
-  {/* ссылка прижата вправо */}
-  <Link href={`/profile/owner/${listing.ownerId}`} passHref>
-  <Button asChild variant="ghost" className="text-sm sm:text-xs text-primary px-2 hover:underline">
-    <span>{t('listing.viewOwnerProfile', 'Смотреть профиль')}</span>
-  </Button>
-</Link>
 </div>
       </div>
     </div>

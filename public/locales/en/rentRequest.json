@@ -1,0 +1,24 @@
+{
+  "cta": {
+    "rentOnline": "💰 Rent online"
+  },
+  "status": {
+    "pending": "⏳ Request sent",
+    "accepted": "✅ Accepted",
+    "signed": "📄 Contract signed"
+  },
+  "toast": {
+    "alreadySent": {
+      "title": "Request already sent",
+      "desc": "Please wait for the owner’s response."
+    },
+    "sent": {
+      "title": "Request sent",
+      "desc": "You can track it on the contracts page."
+    },
+    "error": {
+      "title": "Error",
+      "desc": "Failed to send the request."
+    }
+  }
+}
