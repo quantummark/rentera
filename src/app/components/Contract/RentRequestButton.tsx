@@ -44,7 +44,7 @@ export default function RentRequestButton({ listingId, ownerId }: RentRequestBut
         if (data.status === 'signed') setStatus('signed');
         else if (data.status === 'active') setStatus('active');
         else setStatus('pending');
-      } catch (e) {
+      } catch {
         // можно добавить лог/тост при желании
       }
     })();
@@ -70,7 +70,7 @@ export default function RentRequestButton({ listingId, ownerId }: RentRequestBut
 
       setStatus('pending');
       addToast({ title: t('toast.sent.title'), description: t('toast.sent.desc') });
-    } catch (err) {
+    } catch {
       addToast({ title: t('toast.error.title'), description: t('toast.error.desc') });
     } finally {
       setLoading(false);
