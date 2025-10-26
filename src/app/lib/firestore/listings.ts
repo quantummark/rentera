@@ -6,6 +6,7 @@ import { doc, getDoc } from 'firebase/firestore';
 export interface Listing {
   id: string;
   title: string;
+  country: string;
   city: string;
   district: string;
   address: string;
@@ -13,6 +14,8 @@ export interface Listing {
   area: number;
   rooms: number;
   price: number;
+  currency: string;
+  paymentMethod: "cash" | "card" | "crypto" | null;
   onlinePayment: boolean;
   useInsurance: boolean;
   deposit: number;
