@@ -37,6 +37,9 @@ interface Listing {
 
   createdAt: Date;
   ownerId: string;
+  country: string;
+  currency: string;
+  paymentMethod: "cash" | "card" | "crypto" | null;
 
   owner: {
   avatar: string;
@@ -137,7 +140,7 @@ export default function OwnerListings({ ownerId, currentUserId }: OwnerListingsP
         {listings.map((listing) => (
           <ListingCard
             key={listing.id}
-            listing={{
+            listing={{ 
               ...listing,
               listingId: listing.id ?? '',
               ownerName: listing.owner?.name ?? '',
