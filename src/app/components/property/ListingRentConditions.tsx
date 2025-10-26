@@ -40,6 +40,13 @@ export default function ListingConditions({ listing }: ListingConditionsProps) {
     house: t('listing:house'),
     villa: t('listing:villa'),
     studio: t('listing:studio'),
+    townhouse: t('listing:townhouse'),
+    penthouse: t('listing:penthouse'),
+    loft: t('listing:loft'),
+    duplex: t('listing:duplex'),
+    cottage: t('listing:cottage'),
+    room: t('listing:room'),
+    apartmentSuite: t('listing:apartmentSuite'),
   };
 
   const items = [

@@ -2,5 +2,12 @@
   "apartment": "Apartment",
   "house": "House",
   "room": "Room",
-  "studio": "Studio"
+  "studio": "Studio",
+  "villa": "Villa",
+  "townhouse": "Townhouse",
+  "penthouse": "Penthouse",
+  "loft": "Loft",
+  "duplex": "Duplex",
+  "cottage": "Cottage",
+  "apartmentSuite": "Apartment Suite"
 }

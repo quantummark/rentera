@@ -27,8 +27,15 @@
   "unlimited": "Unlimited",
   "apartment": "Apartment",
   "house": "House",
-  "villa": "Villa",
+  "room": "Room",
   "studio": "Studio",
+  "townhouse": "Townhouse",
+  "villa": "Villa",
+  "loft": "Loft",
+  "duplex": "Duplex",
+  "penthouse": "Penthouse",
+  "cottage": "Cottage",
+  "apartmentSuite": "Apartment suite",
   "descriptionTitle": "Property description",
   "noDescription": "The owner has not added a description for this property yet.",
   "insuranceEnabled": "Insurance included",
@@ -39,5 +46,27 @@
   "viewOwnerProfile": "View owner profile",
   "pricePerMonth": "{{price}} ₴ / month",
   "address": "{{city}}, {{district}}, {{address}}",
-  "viewOnMap": "View on map"
+  "viewOnMap": "View on map",
+  "back": "Back",
+  "next": "Next",
+  "publish": "Publish",
+  "authLoading": "Please wait...",
+  "authRequired": "You must be logged in to publish a listing.",
+  "successMessage": "Listing published successfully!",
+  "errorMessage": "An error occurred. Please try again later.",
+  "addTitle": "Add a new listing",
+  "addDescription": "Fill out the form in 4 simple steps, it will take you a couple of minutes and help the renter better understand your property.",
+  "descriptionAndAmenities": {
+    "title": "3. Description & amenities",
+    "descriptionLabel": "Property description",
+    "descriptionPlaceholder": "Tell about the property, area, highlights...",
+    "amenitiesLabel": "Amenities"
+  },
+  "photos": {
+    "title": "4. Add property photos",
+    "invalidType": "Please select an image file.",
+    "limitReached": "You can upload up to 10 photos.",
+    "alt": "Photo",
+    "note": "Up to 10 photos allowed. Click to upload."
+  }
 }

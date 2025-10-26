@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Plus, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useListingForm } from '@/context/ListingFormContext';
-import Image from 'next/image'; // Импортируем Image
+import Image from 'next/image'; 
 
 export default function StepPhotos() {
   const { t } = useTranslation();
@@ -15,48 +15,41 @@ export default function StepPhotos() {
   // Очистка object URLs при размонтировании
   useEffect(() => {
     const urls = data.photos.map((file) => URL.createObjectURL(file));
-    return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url));
-    };
+    return () => urls.forEach(URL.revokeObjectURL);
   }, [data.photos]);
 
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Проверка на тип файла
     if (!file.type.startsWith('image/')) {
-      alert(t('listing.photos.invalidType', 'Пожалуйста, выберите изображение.'));
+      alert(t('listing:photos.invalidType'));
       return;
     }
 
     if (data.photos.length >= 10) {
-      alert(t('listing.photos.limitReached', 'Вы можете загрузить максимум 10 фото.'));
+      alert(t('listing:photos.limitReached'));
       return;
     }
 
-    const updated = [...data.photos, file];
-    updateData({ photos: updated });
+    updateData({ photos: [...data.photos, file] });
 
-    // сброс input
     e.target.value = '';
   };
 
   const removeImage = (index: number) => {
-    const updated = data.photos.filter((_, i) => i !== index);
-    updateData({ photos: updated });
+    updateData({ photos: data.photos.filter((_, i) => i !== index) });
   };
 
   return (
     <div className="space-y-4">
       <Label className="text-lg font-semibold block">
-        {t('listing.photos.title', '4. Добавьте фото объекта')}
+        {t('listing:photos.title')}
       </Label>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
         {data.photos.map((file, index) => {
           const url = URL.createObjectURL(file);
-
           return (
             <div
               key={index}
@@ -64,14 +57,14 @@ export default function StepPhotos() {
             >
               <Image
                 src={url}
-                alt={`${t('listing.photos.alt', 'Фото')} ${index + 1}`}
+                alt={`${t('listing:photos.alt')} ${index + 1}`}
                 className="object-cover w-full h-full"
-                layout="fill"
+                fill
               />
               <button
                 type="button"
                 onClick={() => removeImage(index)}
-                className="absolute top-1 right-1 bg-black bg-opacity-50 hover:bg-opacity-80 rounded-full p-1 text-white"
+                className="absolute top-1 right-1 bg-black/50 hover:bg-black/80 rounded-full p-1 text-white transition"
               >
                 <X size={16} />
               </button>
@@ -94,7 +87,7 @@ export default function StepPhotos() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        {t('listing.photos.note', 'Максимум 10 фотографий. Нажмите, чтобы загрузить.')}
+        {t('listing:photos.note')}
       </p>
     </div>
   );

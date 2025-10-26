@@ -2,6 +2,7 @@ export interface Listing {
   id?: string;
   listingId: string; // уникальный идентификатор объявления
   title: string;
+  country: string;
   city: string;
   district: string;
   address: string;
@@ -10,6 +11,8 @@ export interface Listing {
   rooms: number;
 
   price: number;
+  currency: string;
+  paymentMethod: 'cash' | 'card' | 'crypto' | null;
   onlinePayment: boolean;
   useInsurance: boolean;
   deposit: number;

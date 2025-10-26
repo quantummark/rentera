@@ -50,7 +50,7 @@ export default function RentRequestButton({ listingId, ownerId }: RentRequestBut
     })();
   }, [requestDocRef]);
 
-  if (!renterId) return null; // не показываем кнопку неавторизованным
+  if (!renterId) return <Button disabled>{t('cta.rentOnline')}</Button>; // показываем кнопку неавторизованным, но при нажатии ведем на страницу login
 
   const handleClick = async () => {
     if (status === 'pending') {

@@ -13,7 +13,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '@/hooks/useAuth'; // ✅ новый импорт
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; 
 
 const steps = [
   { component: StepBasicInfo },
@@ -40,12 +40,12 @@ function ListingFormInner() {
 
   const handlePublish = async () => {
   if (loading) {
-    alert(t('listing.authLoading', 'Подождите, идёт загрузка профиля...'));
+    alert(t('listing:authLoading'));
     return;
   }
 
   if (!user) {
-    alert(t('listing.authRequired', 'Вы должны быть авторизованы, чтобы опубликовать объект.'));
+    alert(t('listing:authRequired'));
     return;
   }
 
@@ -87,12 +87,12 @@ function ListingFormInner() {
     updatedAt: serverTimestamp(),
   });
 
-    alert(t('listing.successMessage', 'Объект успешно опубликован!'));
+    alert(t('listing:successMessage'));
     resetData();
     router.push(`/listing/${docRef.id}`);
   } catch (error) {
     console.error('Ошибка при сохранении:', error);
-    alert(t('listing.errorMessage', 'Произошла ошибка при публикации. Попробуйте позже.'));
+    alert(t('listing:errorMessage'));
   }
 };
 
@@ -110,7 +110,7 @@ function ListingFormInner() {
         )}>
           {step > 0 ? (
             <Button variant="outline" onClick={prevStep}>
-              {t('listing.back', 'Назад')}
+              {t('listing:back')}
             </Button>
           ) : (
             <div />
@@ -118,7 +118,7 @@ function ListingFormInner() {
 
           {step < steps.length - 1 ? (
             <Button onClick={nextStep} className="bg-orange-500 hover:bg-orange-600 text-white">
-              {t('listing.next', 'Далее')}
+              {t('listing:next')}
             </Button>
           ) : (
             <Button
@@ -126,7 +126,7 @@ function ListingFormInner() {
               className="bg-green-600 hover:bg-green-700 text-white"
               disabled={loading}
             >
-              {t('listing.publish', 'Опубликовать')}
+              {t('listing:publish')}
             </Button>
           )}
         </div>

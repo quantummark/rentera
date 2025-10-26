@@ -29,6 +29,13 @@
   "house": "Будинок",
   "villa": "Вілла",
   "studio": "Студія",
+  "room": "Кімната",
+  "townhouse": "Таунхаус",
+  "loft": "Лофт",
+  "duplex": "Дуплекс",
+  "penthouse": "Пентхаус",
+  "cottage": "Котедж",
+  "apartmentSuite": "Апартаменти",
   "descriptionTitle": "Опис об'єкта",
   "noDescription": "Власник поки не додав опис до цього об'єкта.",
   "insuranceEnabled": "Страхування включено",
@@ -36,8 +43,31 @@
   "onlinePaymentEnabled": "Доступна онлайн-оплата",
   "onlinePaymentDisabled": "Оплата лише готівкою",
   "contactOwner": "Написати власнику",
-  "viewOwnerProfile": "Переглянути профіль власника",
+  "viewOwnerProfile": "Переглянути профіль",
   "pricePerMonth": "{{price}} ₴ / міс",
   "address": "{{city}}, {{district}}, {{address}}",
-  "viewOnMap": "Переглянути на карті"
+  "viewOnMap": "Переглянути на карті",
+  "back": "Назад",
+  "next": "Далі",
+  "publish": "Опублікувати",
+  "authLoading": "Будь ласка, зачекайте...",
+  "authRequired": "Ви повинні бути авторизовані, щоб опублікувати оголошення.",
+  "successMessage": "Об'єкт успішно опубліковано!",
+  "errorMessage": "Сталася помилка при публікації. Спробуйте пізніше.",
+  "addTitle": "Додавання нового об'єкта",
+  "addDescription": "Заповніть форму в 4 простих кроки, це у вас займе пару хвилин, і допоможе орендарю краще зрозуміти ваш об'єкт.",
+
+  "descriptionAndAmenities": {  
+    "title": "3. Опис і зручності",
+    "descriptionLabel": "Опис об'єкта",
+    "descriptionPlaceholder": "Розкажіть про житло, район, переваги...",
+    "amenitiesLabel": "Зручності"
+  },
+  "photos": {
+    "title": "4. Додайте фото об'єкта",
+    "invalidType": "Будь ласка, оберіть зображення.",
+    "limitReached": "Ви можете завантажити максимум 10 фото.",
+    "alt": "Фото",
+    "note": "Максимум 10 фотографій. Натисніть, щоб завантажити."
+  }
 }

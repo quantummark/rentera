@@ -2,5 +2,12 @@
   "apartment": "Квартира",
   "house": "Дом",
   "room": "Комната",
-  "studio": "Студия"
+  "studio": "Студия",
+  "villa": "Вилла",
+  "townhouse": "Таунхаус",
+  "penthouse": "Пентхаус",
+  "loft": "Лофт",
+  "duplex": "Дуплекс",
+  "cottage": "Котедж",
+  "apartmentSuite": "Апартамент-люкс"
 }

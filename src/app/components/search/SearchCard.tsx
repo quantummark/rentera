@@ -126,6 +126,13 @@ export default function SearchCard() {
               { value: 'house', label: t('types:house') },
               { value: 'room', label: t('types:room') },
               { value: 'studio', label: t('types:studio') },
+              { value: 'villa', label: t('types:villa') },
+              { value: 'townhouse', label: t('types:townhouse') },
+              { value: 'penthouse', label: t('types:penthouse') },
+              { value: 'loft', label: t('types:loft') },
+              { value: 'duplex', label: t('types:duplex') },
+              { value: 'cottage', label: t('types:cottage') },
+              { value: 'apartmentSuite', label: t('types:apartmentSuite') },
             ]}
           />
         </div>
@@ -196,6 +203,10 @@ export default function SearchCard() {
               { value: 'usd', label: 'USD' },
               { value: 'eur', label: 'EUR' },
               { value: 'uah', label: 'UAH' },
+              { value: 'btc', label: 'BTC' },
+              { value: 'eth', label: 'ETH' },
+              { value: 'usdt', label: 'USDT' },
+              { value: 'solana', label: 'SOL' },
             ]}
           />
         </div>

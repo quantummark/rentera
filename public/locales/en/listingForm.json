@@ -1,0 +1,21 @@
+{
+  "sections": { "basic": "1. Basic info" },
+  "fields": {
+    "title": "Title",
+    "country": "Country",
+    "city": "City",
+    "district": "District",
+    "address": "Address",
+    "type": "Property type",
+    "area": "Area (m²)",
+    "rooms": "Rooms"
+  },
+  "placeholders": {
+    "title": "Bright flat near the metro",
+    "country": "Ukraine",
+    "city": "Kyiv",
+    "district": "Shevchenkivskyi",
+    "address": "10 Sichovykh Striltsiv St.",
+    "type": "Select type"
+  }
+}

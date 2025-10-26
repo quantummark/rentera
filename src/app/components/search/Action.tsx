@@ -32,17 +32,27 @@ export default function Action() {
           {t('action:subtitle')}
         </p>
 
-        <div className="flex flex-col md:flex-row justify-center gap-4">
+        {/* CTA-кнопки — овальные как просили */}
+        <div className="flex justify-center gap-3 flex-col md:flex-row">
           <Link
             href="/login"
-            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-6 py-3 rounded-xl transition"
+            className={cn(
+              'rounded-full text-white font-semibold inline-flex items-center justify-center transition',
+              'bg-gradient-to-r from-orange-500 to-orange-600 hover:scale-[1.03] hover:shadow-lg',
+              'text-sm md:text-base px-6 md:px-8 py-2.5 md:py-3'
+            )}
           >
             {t('action:owner')}
           </Link>
 
           <Link
             href="/login"
-            className="dark:bg-background-dark border border-input text-foreground text-sm font-medium px-6 py-3 rounded-xl hover:bg-accent transition"
+            className={cn(
+              'rounded-full font-semibold inline-flex items-center justify-center transition',
+              'border border-input text-foreground hover:bg-accent',
+              'dark:bg-background-dark/40',
+              'text-sm md:text-base px-6 md:px-8 py-2.5 md:py-3'
+            )}
           >
             {t('action:renter')}
           </Link>
