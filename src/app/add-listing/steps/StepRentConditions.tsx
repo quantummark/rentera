@@ -27,10 +27,16 @@ export default function StepRentConditions() {
   const { t, i18n } = useTranslation('StepRentConditions');
   const locale = i18n.language === 'ru' ? ru : i18n.language === 'uk' ? uk : enUS;
 
-  const handleCheckbox = (field: keyof typeof data) => {
-    // @ts-ignore — в форме эти поля булевые
-    updateData({ [field]: !data[field] });
-  };
+  type BooleanFields =
+  | 'onlinePayment'
+  | 'useInsurance'
+  | 'allowPets'
+  | 'allowKids'
+  | 'allowSmoking';
+
+const handleCheckbox = (field: BooleanFields) => {
+  updateData({ [field]: !data[field] });
+};
 
   return (
     <div className="space-y-6">
