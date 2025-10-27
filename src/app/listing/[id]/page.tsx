@@ -10,11 +10,10 @@ import ListingDescription from '@/app/components/property/ListingDescription';
 import ListingAmenities from '@/app/components/property/ListingAmenities';
 import CommentSection from '@/app/components/comments/CommentSection';
 import { Separator } from '@/components/ui/separator';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function ListingPage() {
-  const { t } = useTranslation();
+
   const params = useParams();
   const listingId = params?.id as string;
 
