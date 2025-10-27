@@ -1,0 +1,20 @@
+{
+  "title": "Comments",
+  "count": "{{count}}",
+  "empty": "No comments yet. Sign in to start the discussion.",
+  "emptyAuthorized": "No comments yet. Be the first!",
+  "loginToComment": "Sign in to leave a comment.",
+  "placeholder": "Write a comment...",
+  "replyPlaceholder": "Write your reply...",
+  "send": "Send",
+  "cancel": "Cancel",
+  "clear": "Clear",
+  "onlyRenterCanComment": "Only the renter can comment here.",
+  "onlyOwnerCanComment": "Only the owner can comment here.",
+  "ownerReply": "Owner’s reply:",
+  "renterReply": "Renter’s reply:",
+  "replyToOwner": "Reply to the owner",
+  "replyToRenter": "Reply to the renter",
+  "noDate": "Unknown date",
+  "anonymousUser": "User"
+}

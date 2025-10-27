@@ -33,7 +33,11 @@ export default function ListingPage() {
   }, [listingId]);
 
   if (!listing || loading) {
-    return <p className="text-center py-10">{t('listing.loading', 'Загрузка объекта...')}</p>;
+    return (
+      <div className="flex justify-center items-center mt-10">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-500 border-solid"></div>
+      </div>
+    );
   }
   
 
