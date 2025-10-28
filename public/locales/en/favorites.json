@@ -4,5 +4,7 @@
   "removedTitle": "Removed from favorites",
   "removedDesc": "This listing is no longer in your favorites.",
   "addAria": "Add to favorites",
-  "removeAria": "Remove from favorites"
+  "removeAria": "Remove from favorites",
+  "myFavorites": "My Favorites",
+  "empty": "You have no favorites yet. Find something you like — click ❤️, and it will appear here."
 }

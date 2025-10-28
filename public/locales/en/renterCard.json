@@ -1,0 +1,15 @@
+{
+  "cat": "Cat",
+  "dog": "Dog",
+  "noPets": "No",
+  "noBio": "The renter hasn’t added a bio yet.",
+  "parameters": "Renter’s parameters",
+  "rentDuration": "Rental term",
+  "budget": "Budget",
+  "occupation": "Job",
+  "pets": "Pets",
+  "kids": "Kids",
+  "smoking": "Smoking",
+  "contact": "Message",
+  "locationSince": "{{city}} · with us since {{date}}"
+}

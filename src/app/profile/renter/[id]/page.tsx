@@ -67,12 +67,26 @@ export default function RenterProfilePage() {
   const isrenter = user?.uid === id; // Проверяем, является ли текущий пользователь владельцем профиля
 
   return (
-      <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-        <RenterCard renter={renter} isCurrentUser={isrenter} />
-        <Separator className="my-4" />
-        <FavoriteListings userId={String(id)} />
-        <Separator className="my-4" />
-        <CommentSection contextType="renter" contextId={typeof id === 'string' ? id : ''} />
-      </div>
-  );
+  <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
+    {/* full-bleed только на мобильном */}
+    <div className="-mx-4 md:mx-0">
+      <RenterCard renter={renter} isCurrentUser={isrenter} />
+    </div>
+
+    <Separator className="my-4 -mx-4 md:mx-0" />
+
+    <div className="-mx-4 md:mx-0">
+      <FavoriteListings userId={String(id)} />
+    </div>
+
+    <Separator className="my-4 -mx-4 md:mx-0" />
+
+    <div className="-mx-4 md:mx-0">
+      <CommentSection
+        contextType="renter"
+        contextId={typeof id === 'string' ? id : ''}
+      />
+    </div>
+  </div>
+);
 }

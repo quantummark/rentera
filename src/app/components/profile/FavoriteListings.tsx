@@ -19,7 +19,7 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<Listing[]>([]); // Используем тип Listing вместо any
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t } = useTranslation('favorites');
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -37,7 +37,7 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
         const favListings = snapshot.docs.map((doc) => doc.data().listing);
         setFavorites(favListings);
       } catch (error) {
-        console.error('Ошибка при получении избранных:', error);
+        console.error('Error getting favorites:', error);
       } finally {
         setLoading(false);
       }
@@ -47,7 +47,11 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
   }, [user, userId]); // Зависимость от user и userId
 
   if (loading) {
-    return <p className="text-muted-foreground text-center py-10">{t('favorites.loading', 'Загрузка избранных...')}</p>;
+    return (
+      <div className="flex justify-center items-center mt-10">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-500 border-solid"></div>
+      </div>
+    );
   }
 
   return (
@@ -55,13 +59,13 @@ export default function FavoriteListings({ userId }: FavoriteListingsProps) {
       {favorites.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-3">
           <FolderHeart className="w-12 h-12 text-muted-foreground" />
-          <p className="text-base">{t('favorites.empty', 'У вас ещё нет избранных. Находите то, что нравится — нажимайте ❤️, и они появятся здесь.')}</p>
+          <p className="text-base">{t('favorites:empty')}</p>
         </div>
       ) : (
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500" />
-            <h2 className="text-xl font-semibold text-foreground">{t('favorites.myFavorites', 'Мои избранные')}</h2>
+            <h2 className="text-xl font-semibold text-foreground">{t('favorites:myFavorites')}</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {favorites.map((listing) => (
