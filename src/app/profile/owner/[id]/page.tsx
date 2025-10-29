@@ -51,10 +51,10 @@ export default function OwnerProfilePage() {
         if (docSnap.exists()) {
           setOwner(docSnap.data() as OwnerProfile); // Приводим данные к типу OwnerProfile
         } else {
-          console.warn('Профиль владельца не найден');
+          console.warn('Owner profile not found');
         }
       } catch (error) {
-        console.error('Ошибка при загрузке профиля:', error);
+        console.error('Error loading profile:', error);
       } finally {
         setLoading(false);
       }
@@ -66,25 +66,46 @@ export default function OwnerProfilePage() {
   }, [id, authLoading]);
 
   if (authLoading || loading) {
-    return <p className="text-center mt-10 text-muted-foreground">Загрузка профиля...</p>;
+    return (
+      <div className="flex justify-center items-center mt-10">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-500 border-solid"></div>
+      </div>
+    );
   }
 
   if (!owner) {
-    return <p className="text-center mt-10 text-destructive">Профиль не найден</p>;
+    return <p className="text-center mt-10 text-destructive">Profile not found</p>;
   }
 
-  const isOwner = user?.uid === id; // 🔑 ты просматриваешь свой профиль?
-
   return (
-    <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-      <OwnerCard owner={owner} isCurrentUser={isOwner} />
-      <Separator className="my-4" />
-      <OwnerListings ownerId={typeof id === 'string' ? id : ''} currentUserId={user?.uid ?? ''} />
-      <Separator className="my-4" />
+  <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
+
+    {/* OwnerCard full-bleed на мобилке */}
+    <div className="-mx-4 md:mx-0">
+      <OwnerCard owner={owner} />
+    </div>
+
+    {/* Разделитель также full-bleed */}
+    <Separator className="my-4 -mx-4 md:mx-0" />
+
+    {/* Список объектов владельца */}
+    <div className="-mx-4 md:mx-0">
+      <OwnerListings
+        ownerId={typeof id === 'string' ? id : ''}
+        currentUserId={user?.uid ?? ''}
+      />
+    </div>
+
+    <Separator className="my-4 -mx-4 md:mx-0" />
+
+    {/* Комментарии к профилю владельца */}
+    <div className="-mx-4 md:mx-0">
       <CommentSection
         contextType="owner"
         contextId={typeof id === 'string' ? id : ''}
       />
     </div>
-  );
+
+  </div>
+);
 }

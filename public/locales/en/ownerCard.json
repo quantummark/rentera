@@ -1,0 +1,13 @@
+{
+  "parameters": "Owner’s parameters",
+  "locationSince": "{{city}} · with us since {{date}}",
+  "noBio": "The owner hasn’t added a bio yet.",
+  "listings": "Listings",
+  "completedRentals": "Completed rentals",
+  "rating": "Rating",
+  "responseTime": "Response time",
+  "responseRate": "Response rate",
+  "contact": "Message",
+  "superhost": "Top Host",
+  "newHost": "New Owner"
+}

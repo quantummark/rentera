@@ -1,0 +1,13 @@
+{
+  "parameters": "Параметры владельца",
+  "locationSince": "г. {{city}} · с нами с {{date}}",
+  "noBio": "Владелец пока не добавил описание.",
+  "listings": "Объекты",
+  "completedRentals": "Завершённые аренды",
+  "rating": "Рейтинг",
+  "responseTime": "Скорость ответа",
+  "responseRate": "Ответы",
+  "contact": "Написать",
+  "superhost": "Топ-хост",
+  "newHost": "Новый владелец"
+}

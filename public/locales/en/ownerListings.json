@@ -1,0 +1,12 @@
+{
+  "title": {
+    "mine": "My Listings",
+    "owner": "Owner’s Listings"
+  },
+  "addNew": "Add new listing",
+  "empty": {
+    "guest": "Sign in to view the owner’s listings and more details.",
+    "mine": "You don’t have any listings yet. Click “Add new listing” to publish your first one.",
+    "owner": "This owner hasn’t published any listings yet."
+  }
+}

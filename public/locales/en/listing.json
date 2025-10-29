@@ -56,6 +56,8 @@
   "errorMessage": "An error occurred. Please try again later.",
   "addTitle": "Add a new listing",
   "addDescription": "Fill out the form in 4 simple steps, it will take you a couple of minutes and help the renter better understand your property.",
+  "confirmDelete": "Are you sure you want to delete this listing?",
+  "deleteError": "Failed to delete the listing. Please try again later.",
   "descriptionAndAmenities": {
     "title": "3. Description & amenities",
     "descriptionLabel": "Property description",

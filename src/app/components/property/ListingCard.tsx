@@ -14,6 +14,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import OwnerListingControls from './OwnerListingControls';
 import { cn } from '@/lib/utils';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '@/app/firebase/firebase';
 
 interface ListingCardProps {
   listing: Listing;
@@ -32,6 +34,15 @@ export default function ListingCard({ listing }: ListingCardProps) {
     useInsurance, onlinePayment, allowKids, allowPets, allowSmoking, ownerId,
     currency, paymentMethod
   } = listing;
+
+  const handleDelete = async (id: string) => {
+  try {
+    await deleteDoc(doc(db, 'listings', id));
+    console.log('[DELETE] Listing removed:', id);
+  } catch (error) {
+    console.error('[DELETE] Error removing listing:', error);
+  }
+};
 
   const isOwner = user?.uid === ownerId;
 
@@ -222,13 +233,19 @@ export default function ListingCard({ listing }: ListingCardProps) {
         {/* Действия */}
         <div className="pt-4 text-center">
           {isOwner ? (
-            <OwnerListingControls listingId={id ?? ''} />
+            <OwnerListingControls
+  listingId={listing.id!}
+  viewHref={`/listing/${listing.id}`}
+  editHref={`/edit-listing/${listing.id}`}
+  onDelete={(id) => handleDelete(id)}
+  compact
+/>
           ) : (
             <Link
               href={`/listing/${id}`}
               className="inline-block text-sm font-medium text-orange-600 border border-orange-300 bg-orange-50 px-4 py-2 rounded-lg hover:bg-orange-100 transition"
             >
-              {t('listing:details', 'Подробнее')} →
+              {t('listing:details')} →
             </Link>
           )}
         </div>
