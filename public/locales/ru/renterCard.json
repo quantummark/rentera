@@ -11,5 +11,9 @@
   "kids": "Дети",
   "smoking": "Курение",
   "contact": "Написать",
-  "locationSince": "г. {{city}} · с нами с {{date}}"
+  "locationSince": "г. {{city}} · с нами с {{date}}",
+  "rentDuration_1_3": "1-3 месяцев",
+  "rentDuration_3_6": "3-6 месяцев",
+  "rentDuration_6_12": "6-12 месяцев",
+  "rentDuration_12p": "12+ месяцев"
 }

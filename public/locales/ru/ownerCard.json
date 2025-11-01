@@ -9,5 +9,9 @@
   "responseRate": "Ответы",
   "contact": "Написать",
   "superhost": "Топ-хост",
-  "newHost": "Новый владелец"
+  "newHost": "Новый владелец",
+  "addPhone": "Добавить телефон",
+  "addEmail": "Добавить email",
+  "addTelegram": "Добавить Telegram",
+  "addInstagram": "Добавить Instagram"
 }

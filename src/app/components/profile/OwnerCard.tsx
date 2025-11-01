@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useMemo } from 'react';
 import { Mail, MapPin, Phone, Instagram, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { Timestamp } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
+import { useEditMode } from '@/app/components/inline/useEditMode';
+import InlineText from '@/app/components/inline/InlineText';
+import InlineTextarea from '@/app/components/inline/InlineTextarea';
+import InlineSocialLink from '@/app/components/inline/InlineSocialLink';
+import { patchOwner } from '@/app/lib/firestore/profiles';
+import InlineAvatar from '@/app/components/inline/InlineAvatar';
 
 function formatDateLocalized(ts: Timestamp, locale: string): string {
   if (!ts?.toDate) return '';
@@ -46,8 +51,42 @@ interface OwnerCardProps {
 }
 
 export default function OwnerCard({ owner }: OwnerCardProps) {
-  const { t, i18n } = useTranslation(['ownerCard']);
+  const { t, i18n } = useTranslation(['ownerCard', 'common']);
   const router = useRouter();
+  const isEdit = useEditMode();
+  const canEdit = isEdit && /* user?.uid === owner.uid */ true;
+  const onSaveFullName = async (next: string) => {
+    await patchOwner(owner.uid, { fullName: next });
+  }
+  const onSaveBio = async (next: string) => {
+    await patchOwner(owner.uid, { bio: next });
+  }
+  const onSavePhone = async (next: string) => {
+  await patchOwner(owner.uid, { contactPhone: next.trim() });
+};
+
+const onSaveEmail = async (next: string) => {
+  const val = next.trim();
+  // легкая валидация email (нестрогая)
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (val && !re.test(val)) {
+    alert(t('common:invalidEmail'));
+    return;
+  }
+  await patchOwner(owner.uid, { contactEmail: val.toLowerCase() });
+};
+
+const onSaveTelegram = async (next: string) => {
+  await patchOwner(owner.uid, { 'socialLinks.telegram': next.trim() });
+};
+
+const onSaveInstagram = async (next: string) => {
+  await patchOwner(owner.uid, { 'socialLinks.instagram': next.trim() });
+};
+
+const onChangeAvatarUrl = async (nextUrl: string) => {
+  await patchOwner(owner.uid, { profileImageUrl: nextUrl });
+};
 
   const sinceText = useMemo(
     () =>
@@ -70,7 +109,13 @@ export default function OwnerCard({ owner }: OwnerCardProps) {
         <div className="grid grid-cols-1 items-center gap-8 text-center md:grid-cols-[1fr_auto_1fr] md:text-left">
           {/* Левая колонка — имя, город+дата, био, контакты */}
           <div className="flex flex-col items-center gap-3 md:items-start">
-            <h2 className="text-2xl font-semibold text-foreground">{owner.fullName}</h2>
+            <h2 className="text-2xl font-semibold text-foreground">
+  <InlineText
+    value={owner.fullName}
+    canEdit={canEdit}
+    onSave={onSaveFullName}
+  />
+</h2>
 
             <p className="flex items-center justify-center gap-1 text-sm text-muted-foreground md:justify-start">
               <MapPin className="h-4 w-4 shrink-0 text-orange-500" />
@@ -78,68 +123,134 @@ export default function OwnerCard({ owner }: OwnerCardProps) {
             </p>
 
             <div className="max-w-prose pt-2 text-base text-foreground">
-              <p className="leading-relaxed">{owner.bio || t('ownerCard:noBio')}</p>
+              <p className="leading-relaxed">
+                <InlineTextarea
+  value={owner.bio || ''}
+  placeholder={t('ownerCard:noBio')}
+  canEdit={canEdit}
+  onSave={onSaveBio}
+/>
+              </p>
             </div>
 
-            {/* Контакты / соцсети */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-sm text-muted-foreground md:justify-start">
-              {owner.contactPhone && (
-                <span className="inline-flex items-center gap-1">
-                  <Phone className="h-4 w-4 text-green-500" />
-                  {owner.contactPhone}
-                </span>
-              )}
-              {owner.contactEmail && (
-                <span className="inline-flex items-center gap-1">
-                  <Mail className="h-4 w-4 text-blue-500" />
-                  {owner.contactEmail}
-                </span>
-              )}
-              {owner.socialLinks?.telegram && (
-                <a
-                  href={owner.socialLinks.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:underline"
-                >
-                  <Send className="h-4 w-4 text-sky-500" />
-                  Telegram
-                </a>
-              )}
-              {owner.socialLinks?.instagram && (
-                <a
-                  href={owner.socialLinks.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:underline"
-                >
-                  <Instagram className="h-4 w-4 text-pink-500" />
-                  Instagram
-                </a>
-              )}
-            </div>
+            {/* Контакты / соцсети (показываем только существующие; «Добавить …» — только в edit-режиме) */}
+<div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-base text-muted-foreground md:justify-start">
+  {/* Телефон */}
+  {owner.contactPhone ? (
+    <span className="inline-flex items-center gap-1">
+      <Phone className="h-4 w-4 text-green-500" />
+      <InlineText
+        value={owner.contactPhone}
+        canEdit={canEdit}
+        onSave={onSavePhone}
+      />
+    </span>
+  ) : (
+    canEdit && (
+      <span className="inline-flex items-center gap-1">
+        <Phone className="h-4 w-4 text-green-500" />
+        <InlineText
+          value=""
+          canEdit={canEdit}
+          onSave={onSavePhone}
+          placeholder={t('ownerCard:addPhone')}
+        />
+      </span>
+    )
+  )}
+
+  {/* Email */}
+  {owner.contactEmail ? (
+    <span className="inline-flex items-center gap-1">
+      <Mail className="h-4 w-4 text-blue-500" />
+      <InlineText
+        value={owner.contactEmail}
+        canEdit={canEdit}
+        onSave={onSaveEmail}
+      />
+    </span>
+  ) : (
+    canEdit && (
+      <span className="inline-flex items-center gap-1">
+        <Mail className="h-4 w-4 text-blue-500" />
+        <InlineText
+          value=""
+          canEdit={canEdit}
+          onSave={onSaveEmail}
+          placeholder={t('ownerCard:addEmail')}
+        />
+      </span>
+    )
+  )}
+
+  {/* Telegram */}
+{owner.socialLinks?.telegram ? (
+  <span className="inline-flex items-center gap-1">
+    <Send className="h-4 w-4 text-sky-500" />
+
+    <InlineSocialLink
+      value={owner.socialLinks.telegram}
+      canEdit={canEdit}
+      onSave={onSaveTelegram}
+      label="Telegram" // 👈 показываем красивое слово вместо ссылки
+    />
+  </span>
+) : (
+  canEdit && (
+    <span className="inline-flex items-center gap-1">
+      <Send className="h-4 w-4 text-sky-500" />
+      <InlineSocialLink
+        value=""
+        canEdit={canEdit}
+        onSave={onSaveTelegram}
+        placeholder={t('ownerCard:addTelegram')}
+      />
+    </span>
+  )
+)}
+
+  {/* Instagram */}
+{owner.socialLinks?.instagram ? (
+  <span className="inline-flex items-center gap-1">
+    <Instagram className="h-4 w-4 text-pink-500" />
+
+    <InlineSocialLink
+      value={owner.socialLinks.instagram}
+      canEdit={canEdit}
+      onSave={onSaveInstagram}
+      label="Instagram" // 👈 показываем слово вместо ссылки
+    />
+  </span>
+) : (
+  canEdit && (
+    <span className="inline-flex items-center gap-1">
+      <Instagram className="h-4 w-4 text-pink-500" />
+      <InlineSocialLink
+        value=""
+        canEdit={canEdit}
+        onSave={onSaveInstagram}
+        placeholder={t('ownerCard:addInstagram')}
+      />
+    </span>
+  )
+)}
+</div>
           </div>
 
-          {/* Центральная колонка — аватар (всегда по центру) */}
-          <div className="flex items-center justify-center">
-            {owner.profileImageUrl ? (
-              <Image
-                src={owner.profileImageUrl}
-                alt={owner.fullName}
-                width={164}
-                height={164}
-                className="h-[164px] w-[164px] rounded-full border object-cover shadow-md"
-                priority
-              />
-            ) : (
-              <div
-                className="flex h-[164px] w-[164px] items-center justify-center rounded-full border border-white/10 bg-muted text-2xl font-bold"
-                aria-label={owner.fullName}
-              >
-                {owner.fullName?.slice(0, 2).toUpperCase()}
-              </div>
-            )}
-          </div>
+          {/* Центральная колонка — аватар (с инлайн-редактированием) */}
+<div className="flex items-center justify-center">
+  <InlineAvatar
+    uid={owner.uid}
+    value={owner.profileImageUrl || ''}
+    canEdit={canEdit}
+    onChangeUrl={onChangeAvatarUrl}
+    alt={owner.fullName}
+    size={164}
+    // maxBytes={2*1024*1024} // можно поменять
+    // acceptTypes={['image/jpeg','image/png','image/webp']}
+    allowRemove
+  />
+</div>
 
           {/* Правая колонка — параметры/метрики */}
           <div>
@@ -206,10 +317,12 @@ function MetricCard({ label, value, hint }: MetricCardProps) {
     >
       <div className="min-w-0">
         <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="truncate text-foreground">
-          <span className="text-base font-semibold">{String(value)}</span>{' '}
-          {hint ? <span className="opacity-70">{hint}</span> : null}
-        </p>
+
+        {/* Вместо p → div, чтобы можно было рендерить любые элементы */}
+        <div className="truncate text-foreground">
+          <span className="text-base font-semibold">{String(value)}</span>
+          {hint ? <span className="opacity-70"> {hint}</span> : null}
+        </div>
       </div>
     </div>
   );

@@ -11,5 +11,9 @@
   "kids": "Kids",
   "smoking": "Smoking",
   "contact": "Message",
-  "locationSince": "{{city}} · with us since {{date}}"
+  "locationSince": "{{city}} · with us since {{date}}",
+  "rentDuration_1_3": "1-3 months",
+  "rentDuration_3_6": "3-6 months",
+  "rentDuration_6_12": "6-12 months",
+  "rentDuration_12p": "12+ months"
 }

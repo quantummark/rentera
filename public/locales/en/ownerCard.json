@@ -9,5 +9,9 @@
   "responseRate": "Response rate",
   "contact": "Message",
   "superhost": "Top Host",
-  "newHost": "New Owner"
+  "newHost": "New Owner",
+  "addPhone": "Add phone",
+  "addEmail": "Add email",
+  "addTelegram": "Add Telegram",
+  "addInstagram": "Add Instagram"
 }

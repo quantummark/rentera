@@ -1,4 +1,8 @@
 {
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "invalidEmail": "Invalid email",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "edit": "Edit"
 }

@@ -1,0 +1,9 @@
+{
+  "profile": "Profile",
+  "profileAria": "Open profile",
+  "editOn": "Edit",
+  "editOff": "Exit edit mode",
+  "editOnAria": "Enable edit mode",
+  "editOffAria": "Disable edit mode",
+  "logout": "Log out"
+}

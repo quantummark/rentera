@@ -1,15 +1,15 @@
-'use client'; // Этот компонент будет клиентским
+'use client';
 
-import { useQuery } from '@tanstack/react-query'; // Импортируем React Query
-import { doc, getDoc, Timestamp } from 'firebase/firestore';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { doc, getDoc, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
 import RenterCard from '@/app/components/profile/RenterCard';
 import FavoriteListings from '@/app/components/profile/FavoriteListings';
 import CommentSection from '@/app/components/comments/CommentSection';
 import { Separator } from '@/components/ui/separator';
-import { useParams } from 'next/navigation'; // Используем useParams для получения параметров URL
-// Импортируем QueryClientWrapper
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface RenterProfile {
   uid: string;
@@ -24,29 +24,62 @@ interface RenterProfile {
   budgetFrom: number;
   budgetTo: number;
   profileImageUrl?: string;
-  createdAt: Timestamp; // Указываем тип для createdAt как Timestamp из Firestore
+  createdAt: Timestamp;
 }
 
-// Функция для получения данных арендатора
+// первичная загрузка документа
 const fetchRenter = async (id: string): Promise<RenterProfile> => {
-  const docRef = doc(db, 'renter', id);
-  const docSnap = await getDoc(docRef);
-  if (!docSnap.exists()) {
+  const ref = doc(db, 'renter', id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
     throw new Error('Профиль арендатора не найден');
   }
-  return docSnap.data() as RenterProfile;
+  return snap.data() as RenterProfile;
 };
 
 export default function RenterProfilePage() {
   const { id } = useParams();
+  const stringId = typeof id === 'string' ? id : '';
   const { user, loading: authLoading } = useAuth();
+  const queryClient = useQueryClient();
+  const [subError, setSubError] = useState<string | null>(null);
 
-  // Используем React Query для загрузки данных арендатора
-  const { data: renter, isLoading, isError, error } = useQuery({
-    queryKey: ['renter', id],  // Ключ запроса
-    queryFn: () => fetchRenter(typeof id === 'string' ? id : ''),  // Функция загрузки
-    enabled: !!id && !authLoading, // Запускаем запрос только если id есть и аутентификация завершена
+  // 1) первичная загрузка через React Query
+  const {
+    data: renter,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['renter', stringId],
+    queryFn: () => fetchRenter(stringId),
+    enabled: !!stringId && !authLoading,
   });
+
+  // 2) realtime-подписка, синхронизируем кэш
+  useEffect(() => {
+    if (!stringId || authLoading) return;
+
+    const ref = doc(db, 'renter', stringId);
+    const unsubscribe = onSnapshot(
+      ref,
+      (snap) => {
+        setSubError(null);
+        if (snap.exists()) {
+          queryClient.setQueryData(['renter', stringId], snap.data() as RenterProfile);
+        } else {
+          // документ удалён — очищаем кэш
+          queryClient.removeQueries({ queryKey: ['renter', stringId], exact: true });
+        }
+      },
+      (err) => {
+        console.error('[RenterProfilePage] onSnapshot error:', err);
+        setSubError('Не удалось получить обновления профиля в реальном времени.');
+      }
+    );
+
+    return () => unsubscribe();
+  }, [stringId, authLoading, queryClient]);
 
   if (authLoading || isLoading) {
     return (
@@ -57,36 +90,41 @@ export default function RenterProfilePage() {
   }
 
   if (isError) {
-    return <p className="text-center mt-10 text-destructive">{error.message}</p>;
+    return <p className="text-center mt-10 text-destructive">{(error as Error).message}</p>;
   }
 
-  if (!renter) {
+  const data = renter;
+  if (!data) {
     return <p className="text-center mt-10 text-destructive">Профиль не найден</p>;
   }
 
-  const isrenter = user?.uid === id; // Проверяем, является ли текущий пользователь владельцем профиля
+  const isRenter = user?.uid === stringId;
 
   return (
-  <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
-    {/* full-bleed только на мобильном */}
-    <div className="-mx-4 md:mx-0">
-      <RenterCard renter={renter} isCurrentUser={isrenter} />
+    <div className="min-h-screen bg-background py-8 px-4 md:px-10 space-y-8">
+      {/* уведомление о проблеме с подпиской (если вдруг) */}
+      {subError && (
+        <div className="rounded-md border border-yellow-300/50 bg-yellow-500/10 px-4 py-2 text-sm text-yellow-800 dark:text-yellow-200">
+          {subError}
+        </div>
+      )}
+
+      {/* full-bleed только на мобильном */}
+      <div className="-mx-4 md:mx-0">
+        <RenterCard renter={data} isCurrentUser={isRenter} />
+      </div>
+
+      <Separator className="my-4 -mx-4 md:mx-0" />
+
+      <div className="-mx-4 md:mx-0">
+        <FavoriteListings userId={stringId} />
+      </div>
+
+      <Separator className="my-4 -mx-4 md:mx-0" />
+
+      <div className="-mx-4 md:mx-0">
+        <CommentSection contextType="renter" contextId={stringId} />
+      </div>
     </div>
-
-    <Separator className="my-4 -mx-4 md:mx-0" />
-
-    <div className="-mx-4 md:mx-0">
-      <FavoriteListings userId={String(id)} />
-    </div>
-
-    <Separator className="my-4 -mx-4 md:mx-0" />
-
-    <div className="-mx-4 md:mx-0">
-      <CommentSection
-        contextType="renter"
-        contextId={typeof id === 'string' ? id : ''}
-      />
-    </div>
-  </div>
-);
+  );
 }

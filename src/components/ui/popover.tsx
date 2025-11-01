@@ -17,7 +17,12 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        'z-50 rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-none animate-in fade-in slide-in-from-top-2',
+        // === Наш адаптивный красивый glass-popover ===
+        'z-50 rounded-xl border border-border/40 backdrop-blur-lg shadow-xl',
+        'bg-background/80 dark:bg-zinc-900/70', // полупрозрачный фон под темы
+        'text-popover-foreground',
+        'animate-in fade-in-80 zoom-in-75 duration-150',
+        'outline-none',
         className
       )}
       {...props}

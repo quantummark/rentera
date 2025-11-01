@@ -1,0 +1,8 @@
+{
+  "change": "Change",
+  "uploading": "Uploading…",
+  "remove": "Remove photo",
+  "errorType": "Invalid file type. Allowed: JPG, PNG, WebP",
+  "errorSize": "File is too large. Max {{mb}} MB",
+  "errorUpload": "Failed to upload photo. Try again later."
+}
