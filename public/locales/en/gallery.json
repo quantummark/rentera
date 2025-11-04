@@ -1,0 +1,30 @@
+{
+  "gallery": {
+    "uploading": "Uploading...",
+    "addPhotos": "Add photos",
+    "fileInputAria": "Select image files",
+    "counter": "{{current}}/{{max}}",
+    "openPreview": "Open preview",
+    "preview": "Preview",
+
+    "cover": "Cover",
+    "coverTitle": "Current cover photo",
+    "makeCover": "Set as cover",
+    "makeCoverTitle": "Set this photo as cover",
+    "photoN": "Photo {{n}}",
+    "openPhotoN": "Open photo {{n}}",
+    "photoAltN": "Photo {{n}}",
+
+    "drag": "Drag",
+    "moveLeft": "Move left",
+    "moveRight": "Move right",
+    "delete": "Delete",
+
+    "dropTitle": "Add new photos",
+    "dropHint": "Drag files or click to choose",
+    "dropTypes": "PNG/JPG/WebP, up to {{max}} photos",
+
+    "viewerPrev": "Previous photo",
+    "viewerNext": "Next photo"
+  }
+}

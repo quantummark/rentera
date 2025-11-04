@@ -10,7 +10,7 @@ import React from 'react';
 interface OwnerListingControlsProps {
   listingId: string;
 
-  /** Если задать href — используется <Link asChild>. Если не задан, используется onView */
+  /** Если задать href — используется <Link asChild>. Если не задан, используем onView/onEdit или дефолтные маршруты */
   viewHref?: string;
   editHref?: string;
 
@@ -55,6 +55,10 @@ export default function OwnerListingControls({
     if (ok) onDelete?.(listingId);
   };
 
+  // Дефолтные маршруты
+  const defaultViewHref = `/listing/${listingId}`;
+  const defaultEditHref = `/listing/${listingId}?edit=1`;
+
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
       {/* View */}
@@ -64,12 +68,17 @@ export default function OwnerListingControls({
           variant="outline"
           className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
         >
-          <Link href={viewHref} aria-label={t('ownerListingControls:viewAria')} onClick={(e) => stopPropagation && e.stopPropagation()}>
+          <Link
+            href={viewHref}
+            prefetch={false}
+            aria-label={t('ownerListingControls:viewAria')}
+            onClick={(e) => stopPropagation && e.stopPropagation()}
+          >
             <Eye className="h-4 w-4" />
             <span className="whitespace-nowrap">{t('ownerListingControls:view')}</span>
           </Link>
         </Button>
-      ) : (
+      ) : onView ? (
         <Button
           type="button"
           variant="outline"
@@ -81,6 +90,22 @@ export default function OwnerListingControls({
           <Eye className="h-4 w-4" />
           <span className="whitespace-nowrap">{t('ownerListingControls:view')}</span>
         </Button>
+      ) : (
+        <Button
+          asChild
+          variant="outline"
+          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
+        >
+          <Link
+            href={defaultViewHref}
+            prefetch={false}
+            aria-label={t('ownerListingControls:viewAria')}
+            onClick={(e) => stopPropagation && e.stopPropagation()}
+          >
+            <Eye className="h-4 w-4" />
+            <span className="whitespace-nowrap">{t('ownerListingControls:view')}</span>
+          </Link>
+        </Button>
       )}
 
       {/* Edit */}
@@ -90,12 +115,17 @@ export default function OwnerListingControls({
           variant="outline"
           className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
         >
-          <Link href={editHref} aria-label={t('ownerListingControls:editAria')} onClick={(e) => stopPropagation && e.stopPropagation()}>
+          <Link
+            href={editHref}
+            prefetch={false}
+            aria-label={t('ownerListingControls:editAria')}
+            onClick={(e) => stopPropagation && e.stopPropagation()}
+          >
             <Pencil className="h-4 w-4" />
             <span className="whitespace-nowrap">{t('ownerListingControls:edit')}</span>
           </Link>
         </Button>
-      ) : (
+      ) : onEdit ? (
         <Button
           type="button"
           variant="outline"
@@ -106,6 +136,22 @@ export default function OwnerListingControls({
         >
           <Pencil className="h-4 w-4" />
           <span className="whitespace-nowrap">{t('ownerListingControls:edit')}</span>
+        </Button>
+      ) : (
+        <Button
+          asChild
+          variant="outline"
+          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
+        >
+          <Link
+            href={defaultEditHref}
+            prefetch={false}
+            aria-label={t('ownerListingControls:editAria')}
+            onClick={(e) => stopPropagation && e.stopPropagation()}
+          >
+            <Pencil className="h-4 w-4" />
+            <span className="whitespace-nowrap">{t('ownerListingControls:edit')}</span>
+          </Link>
         </Button>
       )}
 

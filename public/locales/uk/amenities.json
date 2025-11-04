@@ -1,0 +1,22 @@
+{
+  "wifi": "Wi-Fi",
+    "washingMachine": "Пральна машина",
+    "parking": "Паркування",
+    "balcony": "Балкон",
+    "airConditioner": "Кондиціонер",
+    "elevator": "Ліфт",
+    "heating": "Опалення",
+    "furniture": "Меблі",
+    "oven": "Духовка",
+    "stove": "Плита",
+    "microwave": "Мікрохвильовка",
+    "fridge": "Холодильник",
+    "dishwasher": "Посудомийна машина",
+    "boiler": "Бойлер / Водонагрівач",
+    "tv": "Смарт-ТБ",
+    "nearMetro": "Поруч із метро",
+    "soundproof": "Шумоізоляція",
+    "modernComplex": "Сучасний житловий комплекс",
+    "securedArea": "Охоронювана територія",
+    "concierge": "Консьєрж / охорона"
+}

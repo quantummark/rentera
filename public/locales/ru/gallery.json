@@ -1,0 +1,30 @@
+{
+  "gallery": {
+    "uploading": "Загрузка...",
+    "addPhotos": "Добавить фото",
+    "fileInputAria": "Выбрать файлы изображений",
+    "counter": "{{current}}/{{max}}",
+    "openPreview": "Открыть предпросмотр",
+    "preview": "Просмотр",
+
+    "cover": "Обложка",
+    "coverTitle": "Текущее обложечное фото",
+    "makeCover": "Сделать обложкой",
+    "makeCoverTitle": "Сделать это фото обложкой",
+    "photoN": "Фото {{n}}",
+    "openPhotoN": "Открыть фото {{n}}",
+    "photoAltN": "Фото {{n}}",
+
+    "drag": "Перетащи",
+    "moveLeft": "Сдвинуть влево",
+    "moveRight": "Сдвинуть вправо",
+    "delete": "Удалить",
+
+    "dropTitle": "Добавить новые фото",
+    "dropHint": "Перетащи файлы или нажми, чтобы выбрать",
+    "dropTypes": "PNG/JPG/WebP, до {{max}} фото",
+
+    "viewerPrev": "Предыдущее фото",
+    "viewerNext": "Следующее фото"
+  }
+}

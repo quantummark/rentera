@@ -236,7 +236,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
             <OwnerListingControls
   listingId={listing.id!}
   viewHref={`/listing/${listing.id}`}
-  editHref={`/edit-listing/${listing.id}`}
+  editHref={`/listing/${listing.id}?edit=1`}
   onDelete={(id) => handleDelete(id)}
   compact
 />

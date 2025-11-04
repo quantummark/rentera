@@ -153,7 +153,9 @@ if (resolvedPresentation === 'popover') {
   return (
     <Popover open={editing} onOpenChange={(open) => (open ? start() : cancel())}>
       <PopoverTrigger asChild>
-        <div className={cn('group inline-flex items-center gap-2 cursor-text', className)}>
+        <span
+          className={cn('group inline-flex cursor-text items-center gap-2 align-middle', className)}
+        >
           <span>{renderView(value)}</span>
           {canEdit && (
             <button
@@ -162,34 +164,42 @@ if (resolvedPresentation === 'popover') {
                 e.preventDefault();
                 start();
               }}
-              className={cn('text-muted-foreground hover:text-foreground transition', iconVisibility)}
+              className={cn(
+                'inline-flex text-muted-foreground transition hover:text-foreground',
+                iconVisibility
+              )}
               aria-label="Edit field"
               title="Edit"
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="h-4 w-4" aria-hidden="true" />
             </button>
           )}
-        </div>
+        </span>
       </PopoverTrigger>
 
       <PopoverContent
-        className="z-[60] w-[min(96vw,560px)] max-h-[80vh] overflow-auto p-4 sm:p-5"
+        /* ❗️НЕ скроллим сам Content — это ломает translate у Switch */
+        className="z-[60] inline-block w-fit max-w-[min(96vw,720px)] p-0"
         align="start"
-        sideOffset={10}
+        side="bottom"
+        sideOffset={12}
+        avoidCollisions
+        collisionPadding={12}
+        updatePositionStrategy="always"
       >
-        {/* Контент + действия разнесены по вертикали */}
+        {/* Внутренний контейнер со скроллом */}
         <div
-          className="space-y-4"
+          className="max-h-[80vh] overflow-auto p-4 sm:p-5"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) save();
             if (e.key === 'Escape') cancel();
           }}
         >
-          {/* редактор на всю ширину, без сжатия */}
-          <div className="w-full">{renderEditor(draft, setDraft)}</div>
+          {/* редактор на всю ширину */}
+          <div className="w-full min-w-[280px]">{renderEditor(draft, setDraft)}</div>
 
-          {/* футер с кнопками отдельно, чисто и опрятно */}
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          {/* футер с кнопками */}
+          <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button size="sm" variant="ghost" onClick={cancel} disabled={loading}>
               <X className="mr-1 h-4 w-4" /> {t('common:cancel')}
             </Button>

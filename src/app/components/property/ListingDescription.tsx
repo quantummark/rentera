@@ -4,14 +4,22 @@ import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Listing } from '@/app/types/listing';
 import { Card, CardContent } from '@/components/ui/card';
+import InlineTextarea from '@/app/components/inline/InlineTextarea';
+import { patchListing } from '@/app/lib/firestore/profiles';
+
 
 interface ListingDescriptionProps {
   listing: Listing;
+  canEdit: boolean;
 }
 
-export default function ListingDescription({ listing }: ListingDescriptionProps) {
+export default function ListingDescription({ listing, canEdit }: ListingDescriptionProps) {
   const { t } = useTranslation('listing');
   const { description } = listing;
+
+  const onSaveDescription = async (next: string) => {
+  await patchListing(listing.listingId, { description: next });
+};
 
   const hasDescription = description?.trim();
 
@@ -27,17 +35,25 @@ export default function ListingDescription({ listing }: ListingDescriptionProps)
 
       {/* Контент в карточке */}
       <Card className="rounded-2xl shadow-sm bg-muted">
-        <CardContent className="p-4 text-base leading-relaxed text-muted-foreground max-h-[300px] overflow-auto">
-          {hasDescription ? (
-            <p className="whitespace-pre-line">{description}</p>
-          ) : (
-            <div className="italic flex items-center gap-2 text-muted-foreground">
-              <span>📝</span>
-              <span>{t('listing:noDescription')}</span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+  <CardContent className="p-4 text-base leading-relaxed text-muted-foreground max-h-[300px] overflow-auto">
+
+    {hasDescription || canEdit ? (
+      <InlineTextarea
+        value={description ?? ''}
+        canEdit={canEdit}
+        onSave={onSaveDescription}
+        placeholder={t('listing:noDescription')}
+        className="whitespace-pre-line"
+      />
+    ) : (
+      <div className="italic flex items-center gap-2 text-muted-foreground">
+        <span>📝</span>
+        <span>{t('listing:noDescription')}</span>
+      </div>
+    )}
+
+  </CardContent>
+</Card>
     </section>
   );
 }

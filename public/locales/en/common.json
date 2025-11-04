@@ -4,5 +4,9 @@
   "invalidEmail": "Invalid email",
   "ok": "OK",
   "cancel": "Cancel",
-  "edit": "Edit"
+  "edit": "Edit",
+  "done": "Done",
+  "editMode": "Edit Mode",
+  "clear": "Clear",
+  "selectAll": "Select All"
 }

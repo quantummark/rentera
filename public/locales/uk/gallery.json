@@ -1,0 +1,30 @@
+{
+  "gallery": {
+    "uploading": "Завантаження...",
+    "addPhotos": "Додати фото",
+    "fileInputAria": "Вибрати файли зображень",
+    "counter": "{{current}}/{{max}}",
+    "openPreview": "Відкрити перегляд",
+    "preview": "Перегляд",
+
+    "cover": "Обкладинка",
+    "coverTitle": "Поточне фото-обкладинка",
+    "makeCover": "Зробити обкладинкою",
+    "makeCoverTitle": "Зробити це фото обкладинкою",
+    "photoN": "Фото {{n}}",
+    "openPhotoN": "Відкрити фото {{n}}",
+    "photoAltN": "Фото {{n}}",
+
+    "drag": "Перетягни",
+    "moveLeft": "Перемістити вліво",
+    "moveRight": "Перемістити вправо",
+    "delete": "Видалити",
+
+    "dropTitle": "Додати нові фото",
+    "dropHint": "Перетягни файли або натисни, щоб вибрати",
+    "dropTypes": "PNG/JPG/WebP, до {{max}} фото",
+
+    "viewerPrev": "Попереднє фото",
+    "viewerNext": "Наступне фото"
+  }
+}

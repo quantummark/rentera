@@ -123,15 +123,15 @@ const onChangeAvatarUrl = async (nextUrl: string) => {
             </p>
 
             <div className="max-w-prose pt-2 text-base text-foreground">
-              <p className="leading-relaxed">
-                <InlineTextarea
-  value={owner.bio || ''}
-  placeholder={t('ownerCard:noBio')}
-  canEdit={canEdit}
-  onSave={onSaveBio}
-/>
-              </p>
-            </div>
+  <div className="leading-relaxed">
+    <InlineTextarea
+      value={owner.bio || ''}
+      placeholder={t('ownerCard:noBio')}
+      canEdit={canEdit}
+      onSave={onSaveBio}
+    />
+  </div>
+</div>
 
             {/* Контакты / соцсети (показываем только существующие; «Добавить …» — только в edit-режиме) */}
 <div className="flex flex-wrap items-center justify-center gap-3 pt-3 text-base text-muted-foreground md:justify-start">

@@ -1,0 +1,22 @@
+{
+  "wifi": "Wi-Fi",
+    "washingMachine": "Washing machine",
+    "parking": "Parking",
+    "balcony": "Balcony",
+    "airConditioner": "Air conditioner",
+    "elevator": "Elevator",
+    "heating": "Heating",
+    "furniture": "Furniture",
+    "oven": "Oven",
+    "stove": "Stovetop",
+    "microwave": "Microwave",
+    "fridge": "Refrigerator",
+    "dishwasher": "Dishwasher",
+    "boiler": "Boiler / Water heater",
+    "tv": "Smart TV",
+    "nearMetro": "Near metro",
+    "soundproof": "Soundproofing",
+    "modernComplex": "Modern residential complex",
+    "securedArea": "Secured area",
+    "concierge": "Concierge / Security"
+}

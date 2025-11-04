@@ -1,92 +1,127 @@
 'use client';
 
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Listing } from '@/app/types/listing';
-import React, { useState } from 'react';
+import type { Listing } from '@/app/types/listing';
+import InlineAmenitiesEditor, {
+  type AmenityOption,
+} from '@/app/components/inline/InlineAmenitiesEditor';
+import { patchListing } from '@/app/lib/firestore/profiles';
+
 import {
-  Wifi, WashingMachine, ParkingSquare, KeyRound, Snowflake, GanttChartSquare,
-  Flame, BedDouble, Croissant, CookingPot, Microwave, Refrigerator, Utensils,
-  ShowerHead, Tv2, TrainFrontTunnel, VolumeX, Building2, ShieldCheck,
-  ConciergeBell, Plus,
+  Wifi,
+  WashingMachine,
+  ParkingSquare,
+  KeyRound,
+  Snowflake,
+  GanttChartSquare,
+  Flame,
+  BedDouble,
+  Croissant,
+  CookingPot,
+  Microwave,
+  Refrigerator,
+  Utensils,
+  ShowerHead,
+  Tv2,
+  TrainFrontTunnel,
+  VolumeX,
+  Building2,
+  ShieldCheck,
+  ConciergeBell,
 } from 'lucide-react';
 
 interface ListingAmenitiesProps {
   listing: Listing;
+  canEdit: boolean;
 }
 
-const amenityList = [
-  { key: 'wifi', icon: Wifi, bg: 'bg-blue-100 dark:bg-blue-900', color: 'text-blue-600 dark:text-blue-300' },
-  { key: 'washingMachine', icon: WashingMachine, bg: 'bg-indigo-100 dark:bg-indigo-900', color: 'text-indigo-600 dark:text-indigo-300' },
-  { key: 'parking', icon: ParkingSquare, bg: 'bg-gray-100 dark:bg-gray-900', color: 'text-gray-600 dark:text-gray-300' },
-  { key: 'balcony', icon: KeyRound, bg: 'bg-yellow-100 dark:bg-yellow-900', color: 'text-yellow-600 dark:text-yellow-300' },
-  { key: 'airConditioner', icon: Snowflake, bg: 'bg-sky-100 dark:bg-sky-900', color: 'text-sky-600 dark:text-sky-300' },
-  { key: 'elevator', icon: GanttChartSquare, bg: 'bg-gray-200 dark:bg-gray-800', color: 'text-gray-700 dark:text-gray-300' },
-  { key: 'heating', icon: Flame, bg: 'bg-red-100 dark:bg-red-900', color: 'text-red-600 dark:text-red-300' },
-  { key: 'furniture', icon: BedDouble, bg: 'bg-rose-100 dark:bg-rose-900', color: 'text-rose-600 dark:text-rose-300' },
-  { key: 'oven', icon: Croissant, bg: 'bg-orange-100 dark:bg-orange-900', color: 'text-orange-600 dark:text-orange-300' },
-  { key: 'stove', icon: CookingPot, bg: 'bg-yellow-100 dark:bg-yellow-900', color: 'text-yellow-600 dark:text-yellow-300' },
-  { key: 'microwave', icon: Microwave, bg: 'bg-pink-100 dark:bg-pink-900', color: 'text-pink-600 dark:text-pink-300' },
-  { key: 'fridge', icon: Refrigerator, bg: 'bg-cyan-100 dark:bg-cyan-900', color: 'text-cyan-600 dark:text-cyan-300' },
-  { key: 'dishwasher', icon: Utensils, bg: 'bg-purple-100 dark:bg-purple-900', color: 'text-purple-600 dark:text-purple-300' },
-  { key: 'boiler', icon: ShowerHead, bg: 'bg-lime-100 dark:bg-lime-900', color: 'text-lime-600 dark:text-lime-300' },
-  { key: 'tv', icon: Tv2, bg: 'bg-violet-100 dark:bg-violet-900', color: 'text-violet-600 dark:text-violet-300' },
-  { key: 'nearMetro', icon: TrainFrontTunnel, bg: 'bg-fuchsia-100 dark:bg-fuchsia-900', color: 'text-fuchsia-600 dark:text-fuchsia-300' },
-  { key: 'soundproof', icon: VolumeX, bg: 'bg-stone-100 dark:bg-stone-900', color: 'text-stone-600 dark:text-stone-300' },
-  { key: 'modernComplex', icon: Building2, bg: 'bg-green-100 dark:bg-green-900', color: 'text-green-600 dark:text-green-300' },
-  { key: 'securedArea', icon: ShieldCheck, bg: 'bg-emerald-100 dark:bg-emerald-900', color: 'text-emerald-600 dark:text-emerald-300' },
-  { key: 'concierge', icon: ConciergeBell, bg: 'bg-teal-100 dark:bg-teal-900', color: 'text-teal-600 dark:text-teal-300' }
+/** Жёстко типизируем коды удобств под твои ключи */
+type AmenityCode =
+  | 'wifi'
+  | 'washingMachine'
+  | 'parking'
+  | 'balcony'
+  | 'airConditioner'
+  | 'elevator'
+  | 'heating'
+  | 'furniture'
+  | 'oven'
+  | 'stove'
+  | 'microwave'
+  | 'fridge'
+  | 'dishwasher'
+  | 'boiler'
+  | 'tv'
+  | 'nearMetro'
+  | 'soundproof'
+  | 'modernComplex'
+  | 'securedArea'
+  | 'concierge';
+
+/** Иконки для опций редактирования */
+const AMENITY_OPTIONS: AmenityOption[] = [
+  { value: 'wifi', icon: Wifi },
+  { value: 'washingMachine', icon: WashingMachine },
+  { value: 'parking', icon: ParkingSquare },
+  { value: 'balcony', icon: KeyRound },
+  { value: 'airConditioner', icon: Snowflake },
+  { value: 'elevator', icon: GanttChartSquare },
+  { value: 'heating', icon: Flame },
+  { value: 'furniture', icon: BedDouble },
+  { value: 'oven', icon: Croissant },
+  { value: 'stove', icon: CookingPot },
+  { value: 'microwave', icon: Microwave },
+  { value: 'fridge', icon: Refrigerator },
+  { value: 'dishwasher', icon: Utensils },
+  { value: 'boiler', icon: ShowerHead },
+  { value: 'tv', icon: Tv2 },
+  { value: 'nearMetro', icon: TrainFrontTunnel },
+  { value: 'soundproof', icon: VolumeX },
+  { value: 'modernComplex', icon: Building2 },
+  { value: 'securedArea', icon: ShieldCheck },
+  { value: 'concierge', icon: ConciergeBell },
 ];
 
-export default function ListingAmenities({ listing }: ListingAmenitiesProps) {
-  const { t } = useTranslation('listingAmenities');
-  const [showAll, setShowAll] = useState(false);
-  const { amenities } = listing;
+export default function ListingAmenities({ listing, canEdit }: ListingAmenitiesProps) {
+  const { t } = useTranslation(['listing', 'listingAmenities', 'common']);
 
-  if (!amenities || amenities.length === 0) return null;
+  const amenities = (listing.amenities ?? []) as AmenityCode[];
+  const hasAny = amenities.length > 0;
 
-  const fullList = amenityList.filter((item) => amenities.includes(item.key));
-  const visibleAmenities = showAll ? fullList : fullList.slice(0, 6);
+  const onSave = (next: AmenityCode[]) =>
+    patchListing(listing.listingId, { amenities: next });
 
   return (
-    <section className="py-8 px-4 md:px-10 space-y-6 max-w-8xl mx-auto">
+    <section className="mx-auto max-w-8xl space-y-4 px-4 py-8 md:px-10">
       <h2 className="text-xl font-semibold text-foreground">
-        {t('title')}
+        {t('listing:amenitiesTitle')}
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {visibleAmenities.map(({ key, icon: Icon, bg, color }) => (
-          <Card key={key} className="rounded-2xl p-4 flex items-center gap-4 bg-muted shadow-sm">
-            <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', bg)}>
-              <Icon className={cn('w-5 h-5', color)} />
-            </div>
-            <CardContent className="p-0">
-              <p className="text-base font-medium text-foreground">{t(`items.${key}`)}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Card className="rounded-2xl bg-muted shadow-sm">
+        <CardContent className="p-4">
+          {/* Инлайн-редактор: делает Popover на десктопе и Sheet на мобилке */}
+          <InlineAmenitiesEditor
+            value={amenities}
+            options={AMENITY_OPTIONS}
+            canEdit={canEdit}
+            onSave={onSave}
+            title={t('listing:editAmenities')}
+          />
 
-      {fullList.length > 6 && (
-        <>
-          <Separator className="my-2" />
-          <div className="text-center">
-            <Button
-              variant="secondary"
-              onClick={() => setShowAll(!showAll)}
-              className="flex items-center justify-center text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100 rounded-lg mx-auto"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              {showAll
-                ? t('showLess')
-                : t('showAll')}
-            </Button>
-          </div>
-        </>
-      )}
+          {/* Пустое состояние для просмотра (когда не редактируем и пусто) */}
+          {!hasAny && !canEdit && (
+            <>
+              <Separator className="my-3" />
+              <p className="text-sm italic text-muted-foreground">
+                {t('listing:noAmenities')}
+              </p>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </section>
   );
 }
