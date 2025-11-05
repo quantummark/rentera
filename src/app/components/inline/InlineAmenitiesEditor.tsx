@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import React from 'react';
+import {  useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -80,6 +81,14 @@ export default function InlineAmenitiesEditor({
   const { t } = useTranslation(['listing', 'amenities', 'common']);
   const [query, setQuery] = useState('');
 
+  const filtered = React.useMemo(() => {
+  if (!query.trim()) return options;
+  const q = query.toLowerCase();
+  return options.filter((o) =>
+    t(`amenities:${o.value}`).toLowerCase().includes(q)
+  );
+}, [options, query, t]);
+
   // Цвета иконок по коду удобства
 const AMENITY_COLORS: Record<AmenityCode, string> = {
   wifi: 'text-blue-600 dark:text-blue-400',
@@ -139,68 +148,62 @@ const renderView = (vals: AmenityCode[]) => {
 };
 
   // Редактор: поиск + сетка
-  const renderEditor = (vals: AmenityCode[], setVals: (next: AmenityCode[]) => void) => {
-    const filtered = useMemo(() => {
-      if (!query.trim()) return options;
-      const q = query.toLowerCase();
-      return options.filter(o => t(`amenities:${o.value}`).toLowerCase().includes(q));
-    }, [options, query, t]);
-
-    const toggle = (code: AmenityCode) => {
-      setVals(vals.includes(code) ? vals.filter(v => v !== code) : [...vals, code]);
-    };
-
-    const selectAll = () => setVals(filtered.map(f => f.value));
-    const clearAll = () => setVals([]);
-
-    return (
-      <div className="w-[min(92vw,560px)]">
-        {/* Поиск + действия */}
-        <div className="mb-3 flex items-center gap-2">
-          <div className="relative w-full">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('listing:searchAmenities')}
-              className="pl-9"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={t('common:clear')}
-                title={t('common:clear')}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-          <Button variant="ghost" size="sm" onClick={selectAll}>
-            {t('common:selectAll')}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={clearAll}>
-            {t('common:clear')}
-          </Button>
-        </div>
-
-        {/* Сетка чекбоксов/чипов */}
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {filtered.map(({ value: code, icon: Icon }) => {
-            const active = vals.includes(code);
-            return (
-              <Chip key={code} active={active} onClick={() => toggle(code)}>
-                {Icon ? <Icon className="h-4 w-4" /> : null}
-                <span className="truncate">{t(`amenities:${code}`)}</span>
-                {active && <Check className="h-4 w-4" />}
-              </Chip>
-            );
-          })}
-        </div>
-      </div>
-    );
+const renderEditor = (vals: AmenityCode[], setVals: (next: AmenityCode[]) => void) => {
+  const toggle = (code: AmenityCode) => {
+    setVals(vals.includes(code) ? vals.filter((v) => v !== code) : [...vals, code]);
   };
+
+  const selectAll = () => setVals(filtered.map((f) => f.value));
+  const clearAll  = () => setVals([]);
+
+  return (
+    <div className="w-[min(92vw,560px)]">
+      {/* Поиск + действия */}
+      <div className="mb-3 flex items-center gap-2">
+        <div className="relative w-full">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('listing:searchAmenities')}
+            className="pl-9"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label={t('common:clear')}
+              title={t('common:clear')}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        <Button variant="ghost" size="sm" onClick={selectAll}>
+          {t('common:selectAll')}
+        </Button>
+        <Button variant="ghost" size="sm" onClick={clearAll}>
+          {t('common:clear')}
+        </Button>
+      </div>
+
+      {/* Сетка чекбоксов/чипов */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {filtered.map(({ value: code, icon: Icon }) => {
+          const active = vals.includes(code);
+          return (
+            <Chip key={code} active={active} onClick={() => toggle(code)}>
+              {Icon ? <Icon className="h-4 w-4" /> : null}
+              <span className="truncate">{t(`amenities:${code}`)}</span>
+              {active && <Check className="h-4 w-4" />}
+            </Chip>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
   return (
     <InlineEdit<AmenityCode[]>

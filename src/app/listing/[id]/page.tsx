@@ -92,15 +92,6 @@ export default function ListingPage() {
     };
   }, [listingId]);
 
-  // переходы в/из режима редактирования (меняем query без скролла)
-  const enterEdit = () => {
-    if (!listingId) return;
-    const sp = new URLSearchParams(search.toString());
-    sp.set('edit', '1');
-    router.replace(`/listing/${listingId}?${sp.toString()}`, { scroll: false });
-    setEditMode(true);
-  };
-
   const exitEdit = () => {
     if (!listingId) return;
     const sp = new URLSearchParams(search.toString());

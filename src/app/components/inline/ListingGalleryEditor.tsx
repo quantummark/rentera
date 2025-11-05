@@ -128,10 +128,10 @@ export default function ListingGalleryEditor({
     e.dataTransfer.setData('text/plain', String(idx));
   };
 
-  const onDragOver = (_idx: number) => (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
+  const onDragOver = () => (e: React.DragEvent) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+};
 
   const onDrop = (idx: number) => (e: React.DragEvent) => {
     e.preventDefault();
@@ -233,7 +233,7 @@ export default function ListingGalleryEditor({
             )}
             draggable
             onDragStart={onDragStart(idx)}
-            onDragOver={onDragOver(idx)}
+            onDragOver={onDragOver()}
             onDrop={onDrop(idx)}
           >
             {/* Изображение: на мобиле aspect выше для ощущения полноэкранности */}
