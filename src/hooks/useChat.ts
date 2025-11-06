@@ -19,10 +19,18 @@ type Message = {
   id?: string;
   text: string;
   senderId: string;
-  timestamp: Timestamp; // Используем тип Timestamp
+  createdAt: Timestamp;   // было: timestamp
   read: boolean;
   lastMessage?: string;
   lastUpdated?: Timestamp; // Используем тип Timestamp для последнего обновления
+};
+
+type MessageDoc = {
+  text: string;
+  senderId: string;
+  read: boolean;
+  createdAt?: Timestamp;
+  timestamp?: Timestamp; // старое поле
 };
 
 export function useChat(currentUserId: string, otherUserId: string) {
@@ -44,25 +52,35 @@ export function useChat(currentUserId: string, otherUserId: string) {
     const chatSnap = await getDoc(chatRef);
 
     if (!chatSnap.exists()) {
-      await setDoc(chatRef, {
-        participants: [currentUserId, otherUserId],
-        lastMessage: '',
-        lastUpdated: serverTimestamp(),
-      });
+      // при создании чата
+await setDoc(chatRef, {
+  participants: [currentUserId, otherUserId],
+  lastMessage: '',
+  createdAt: serverTimestamp(),
+  updatedAt: serverTimestamp(),   // было lastUpdated
+}, { merge: true });
     }
 
     // Подписка на сообщения
     const messagesRef = collection(db, 'chats', id, 'messages');
-    const q = query(messagesRef, orderBy('timestamp', 'asc'));
+    const q = query(messagesRef, orderBy('createdAt', 'asc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs: Message[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...(doc.data() as Message),
-      }));
-      setMessages(msgs);
-      setIsLoading(false);
-    });
+  const msgs: Message[] = snapshot.docs.map((docSnap) => {
+    const data = docSnap.data() as MessageDoc;
+
+    return {
+      id: docSnap.id,
+      text: data.text,
+      senderId: data.senderId,
+      read: data.read ?? false,
+      createdAt: data.createdAt ?? data.timestamp!, // фолбэк на старое поле
+    };
+  });
+
+  setMessages(msgs);
+  setIsLoading(false);
+});
 
     return unsubscribe; // Возвращаем функцию отписки
   }, [currentUserId, otherUserId, generateChatId]);
@@ -74,7 +92,7 @@ export function useChat(currentUserId: string, otherUserId: string) {
     const message = {
       text,
       senderId: currentUserId,
-      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
       read: false,
     };
 
@@ -84,7 +102,7 @@ export function useChat(currentUserId: string, otherUserId: string) {
         doc(db, 'chats', chatId),
         {
           lastMessage: text,
-          lastUpdated: serverTimestamp(),
+          updatedAt: serverTimestamp(),
         },
         { merge: true }
       );
@@ -94,20 +112,25 @@ export function useChat(currentUserId: string, otherUserId: string) {
   };
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
+  let active = true;
+  let unsubscribe: (() => void) | undefined;
 
-    if (currentUserId && otherUserId) {
-      initChat().then((unsub) => {
-        unsubscribe = unsub;
-      });
-    }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe(); // Отписываемся от подписки при размонтировании компонента
+  if (currentUserId && otherUserId) {
+    initChat().then((unsub) => {
+      if (!active) {
+        // если эффект уже размонтировался
+        unsub?.();
+        return;
       }
-    };
-  }, [initChat, currentUserId, otherUserId]);
+      unsubscribe = unsub;
+    });
+  }
+
+  return () => {
+    active = false;
+    unsubscribe?.();
+  };
+}, [initChat, currentUserId, otherUserId]);
 
   return {
     messages,

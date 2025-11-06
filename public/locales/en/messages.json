@@ -1,0 +1,21 @@
+{
+    "messages": {
+        "title": "Your Chats",
+        "unknownUser": "User",
+        "noMessages": "No messages",
+        "deleteChat": "Delete chat",
+        "blocked": "Block user",
+        "reported": "Report user",
+        "selectChat": "Select a chat to start a conversation",
+        "userLoginPrompt": "Log in to view your messages",
+        "login": "Log in",
+        "noChat": "You have no messages yet, start a conversation!",
+        "menuLabel": "Chat menu",
+        "online": "Online",
+        "offline": "Offline",
+        "delete": "Delete chat",
+        "back": "Back",
+        "block": "Block user",
+        "report": "Report user"
+    }
+}

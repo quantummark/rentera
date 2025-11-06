@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Users as UsersIcon } from 'lucide-react';
@@ -24,6 +24,12 @@ interface Chat {
   updatedAt: Timestamp;  // Заменили any на Timestamp
 }
 
+interface ChatDoc {
+  participants: string[];
+  lastMessage: string;
+  updatedAt: Timestamp;
+}
+
 interface ChatListProps {
   lastMessage?: string;
   selectedUserId: string | null;
@@ -32,24 +38,39 @@ interface ChatListProps {
 
 export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation('messages');
   const [chats, setChats] = useState<Chat[]>([]);
   const [profiles, setProfiles] = useState<Record<string, UserProfile>>({});
   const [loading, setLoading] = useState(true);
 
   // 1. Подписка на чаты
   useEffect(() => {
-    if (!user?.uid) return;
-    const q = query(
-      collection(db, 'users', user.uid, 'chats'),
-      orderBy('updatedAt', 'desc')
-    );
-    const unsub = onSnapshot(q, snap => {
-      setChats(snap.docs.map(d => ({ ...(d.data() as Chat), id: d.id })));
-      setLoading(false);
+  if (!user?.uid) return;
+
+  const q = query(
+    collection(db, 'chats'),
+    where('participants', 'array-contains', user.uid),
+    orderBy('updatedAt', 'desc')
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const list: Chat[] = snapshot.docs.map((docSnap) => {
+      const data = docSnap.data() as ChatDoc; // строго типизируем
+
+      return {
+        id: docSnap.id,
+        participants: data.participants,
+        lastMessage: data.lastMessage || '',
+        updatedAt: data.updatedAt,
+      };
     });
-    return unsub;
-  }, [user?.uid]);
+
+    setChats(list);
+    setLoading(false);
+  });
+
+  return unsubscribe;
+}, [user?.uid]);
 
   // 2. Загрузка профилей собеседников
   useEffect(() => {
@@ -83,7 +104,7 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
       <div className="flex items-center mb-4">
         <UsersIcon className="w-6 h-6 text-foreground mr-2" />
         <h2 className="text-lg font-semibold text-foreground dark:text-foreground-dark">
-          {t('chat.list.title', 'Ваши чаты')}
+          {t('messages.title')}
         </h2>
       </div>
 
@@ -95,9 +116,9 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
 
           // Получаем профиль собеседника из списка профилей
           const userProfile = profiles[otherId];
-          const name = userProfile?.fullName || t('chat.unknownUser', 'Пользователь');
+          const name = userProfile?.fullName || t('messages.unknownUser');
           const avatar = userProfile?.profileImageUrl || '';
-          const preview = chat.lastMessage?.trim() ? chat.lastMessage : t('chat.noMessages', 'Нет сообщений');
+          const preview = chat.lastMessage?.trim() ? chat.lastMessage : t('messages.noMessages');
 
           return (
             <li

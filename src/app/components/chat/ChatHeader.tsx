@@ -26,7 +26,7 @@ export function ChatHeader({
   onBlockUser,
   onReportUser,
 }: ChatHeaderProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('messages');
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +53,7 @@ export function ChatHeader({
         <button
           onClick={onBack}
           className="p-2 rounded-full hover:bg-muted/20 md:hidden"
-          aria-label={t('chat.header.back', 'Back')}
+          aria-label={t('messages.back')}
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
@@ -78,8 +78,8 @@ export function ChatHeader({
           )}
         >
           {isOnline
-            ? t('chat.header.online', 'Online')
-            : t('chat.header.offline', 'Offline')}
+            ? t('messages.online')
+            : t('messages.offline')}
         </span>
       </div>
 
@@ -87,7 +87,7 @@ export function ChatHeader({
         <button
           onClick={() => setMenuOpen((o) => !o)}
           className="p-2 rounded-full hover:bg-muted/20"
-          aria-label={t('chat.header.menuLabel', 'Chat menu')}
+          aria-label={t('messages.menuLabel')}
         >
           <MoreHorizontal className="w-5 h-5 text-foreground" />
         </button>
@@ -101,19 +101,19 @@ export function ChatHeader({
               onClick={onDeleteChat}
               className="block w-full px-4 py-2 text-sm text-red-500 hover:bg-muted/20 text-left"
             >
-              {t('chat.header.delete', 'Удалить чат')}
+              {t('messages.delete')}
             </button>
             <button
               onClick={onBlockUser}
               className="block w-full px-4 py-2 text-sm text-orange-500 hover:bg-muted/20 text-left"
             >
-              {t('chat.header.block', 'Блокировать пользователя')}
+              {t('messages.block')}
             </button>
             <button
               onClick={onReportUser}
               className="block w-full px-4 py-2 text-sm text-blue-500 hover:bg-muted/20 text-left"
             >
-              {t('chat.header.report', 'Пожаловаться на пользователя')}
+              {t('messages.report')}
             </button>
           </div>
         )}

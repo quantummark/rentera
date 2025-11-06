@@ -24,12 +24,12 @@ const ChatWindow = dynamic<ChatWindowProps>(
       .then((mod) => mod.ChatWindow),
   {
     ssr: false,
-    loading: () => <div className="p-4 text-center">Загрузка чата…</div>,
+    loading: () => <div className="p-4 text-center">Loading chat…</div>,
   }
 );
 
 export default function MessagesPage() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('messages');
   const { user } = useAuth();
   const [isClient, setIsClient] = useState(false); // Проверка на клиентский рендеринг
 
@@ -59,11 +59,11 @@ export default function MessagesPage() {
       const snap = await getDoc(ref);
       if (!snap.exists()) {
         await setDoc(ref, {
-          participants: [user.uid, selectedUserId],
-          lastMessage: '',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
+  participants: [user.uid, selectedUserId],
+  lastMessage: '',
+  createdAt: serverTimestamp(),
+  updatedAt: serverTimestamp(),
+}, { merge: true });
       }
     };
     ensureChat();
@@ -71,6 +71,24 @@ export default function MessagesPage() {
 
   if (!isClient) {
     return <div>Loading...</div>; // Пока не смонтирован, показываем "Загрузка..."
+  }
+
+  // Если пользователь не авторизован – показать экран входа
+  if (isClient && !user) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] text-center space-y-4">
+        <p className="text-lg font-medium text-muted-foreground">
+          {t('messages.userLoginPrompt')}
+        </p>
+
+        <a
+          href="/login"
+          className="px-4 py-2 bg-orange-500 hover:bg-orange-600 transition text-white rounded-lg text-sm font-semibold"
+        >
+          {t('messages.login')}
+        </a>
+      </div>
+    );
   }
 
   return (
@@ -106,7 +124,7 @@ export default function MessagesPage() {
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground text-base px-4">
-            {t('messages.selectChat', 'Выберите чат, чтобы начать общение')}
+            {t('messages.selectChat')}
           </div>
         )}
       </div>
