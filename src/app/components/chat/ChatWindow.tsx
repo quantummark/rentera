@@ -4,7 +4,16 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useChat } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
+import {
+  doc,
+  getDoc,
+  deleteDoc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  Timestamp,
+} from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { Loader2, MessageCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +22,8 @@ import { ChatHeader } from '@/app/components/chat/ChatHeader';
 import { MessageBubble } from '@/app/components/chat/MessageBubble';
 import { ChatInput } from '@/app/components/chat/ChatInput';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
+
+import { dayLabel, resolveLocale, normalizeDate, isSameDay } from '@/app/utils/date';
 
 interface ChatWindowProps {
   otherUserId: string;
@@ -27,42 +38,59 @@ interface UserProfile {
   isOnline?: boolean;
 }
 
+type ReadCursors = Record<string, Timestamp | undefined>;
+
+function DayDivider({ label }: { label: string }) {
+  return (
+    <div className="my-3 flex items-center justify-center">
+      <span className="px-3 py-1 text-xs rounded-full bg-muted/40 text-muted-foreground">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export function ChatWindow({
   otherUserId,
-  otherUserName = 'Пользователь',
+  otherUserName = 'User',
   otherUserAvatar,
   onBack,
 }: ChatWindowProps) {
   const router = useRouter();
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
+  const uiLocale = resolveLocale(i18n.language);
 
-  // стабильный chatId (для ссылок/удаления и просто удобства)
+  // стабильный chatId
   const chatId = useMemo(() => {
     if (!user?.uid || !otherUserId) return null;
     return [user.uid, otherUserId].sort().join('_');
   }, [user?.uid, otherUserId]);
 
-  // не дергаем useChat, пока нет uid
+  // сообщения
   const { messages, isLoading, sendMessage } = useChat(user?.uid ?? '', otherUserId);
 
   // профиль собеседника
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [newMsg, setNewMsg] = useState('');
   const [sending, setSending] = useState(false);
-  const { t } = useTranslation('messages');
 
-  // мой профиль (owner/renter) — для корректного аватара отправителя
+  // мой профиль (owner/renter) — для аватарки/имени отправителя
   const [, myProfile] = useUserTypeWithProfile();
-
   const myAvatar =
     (myProfile && 'profileImageUrl' in myProfile && typeof myProfile.profileImageUrl === 'string'
       ? myProfile.profileImageUrl
       : '') || user?.photoURL || '';
-
   const myName =
     (myProfile && 'fullName' in myProfile ? myProfile.fullName : '') ||
     user?.displayName ||
     'You';
+
+  // presence: "печатает..."
+  const [isTyping, setIsTyping] = useState(false);
+
+  // read cursors: { [uid]: Timestamp }
+  const [readCursors, setReadCursors] = useState<ReadCursors>({});
 
   // — автоскролл —
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -95,11 +123,33 @@ export function ChatWindow({
       }
     }
 
-    if (otherUserId) loadProfile(otherUserId);
+    if (otherUserId) void loadProfile(otherUserId);
     return () => {
       cancelled = true;
     };
   }, [otherUserId]);
+
+  // подписка на чат-документ: считываем readCursors
+  useEffect(() => {
+    if (!chatId) return;
+    const unsub = onSnapshot(doc(db, 'chats', chatId), (snap) => {
+      const data = snap.data() as { readCursors?: ReadCursors } | undefined;
+      setReadCursors(data?.readCursors ?? {});
+    });
+    return unsub;
+  }, [chatId]);
+
+  // подписка на presence собеседника (typing)
+  useEffect(() => {
+    if (!chatId || !otherUserId) return;
+    const unsub = onSnapshot(doc(db, 'chats', chatId, 'presence', otherUserId), (snap) => {
+      const d = snap.data() as { typing?: boolean; updatedAt?: Timestamp } | undefined;
+      const fresh =
+        d?.updatedAt instanceof Timestamp ? Date.now() - d.updatedAt.toMillis() < 6000 : false;
+      setIsTyping(!!d?.typing && fresh);
+    });
+    return unsub;
+  }, [chatId, otherUserId]);
 
   // автоскролл вниз (только если пользователь уже внизу)
   useEffect(() => {
@@ -114,6 +164,41 @@ export function ChatWindow({
     updateIsAtBottom();
   }, [updateIsAtBottom]);
 
+  // обновление своего readCursor
+  const touchReadCursor = useCallback(async () => {
+    if (!chatId || !user?.uid) return;
+    try {
+      await updateDoc(doc(db, 'chats', chatId), {
+        [`readCursors.${user.uid}`]: serverTimestamp(),
+      });
+    } catch {
+      // no-op
+    }
+  }, [chatId, user?.uid]);
+
+  // при входе в чат — отметить прочитанным
+  useEffect(() => {
+    void touchReadCursor();
+  }, [touchReadCursor]);
+
+  // при новых сообщениях — если окно активно и пользователь «внизу» — тоже
+  useEffect(() => {
+    if (document.visibilityState === 'visible' && isAtBottomRef.current) {
+      void touchReadCursor();
+    }
+  }, [messages, touchReadCursor]);
+
+  // реакция на восстановление видимости
+  useEffect(() => {
+    const onVis = () => {
+      if (document.visibilityState === 'visible') {
+        void touchReadCursor();
+      }
+    };
+    document.addEventListener('visibilitychange', onVis);
+    return () => document.removeEventListener('visibilitychange', onVis);
+  }, [touchReadCursor]);
+
   // отправка
   const handleSend = useCallback(async () => {
     if (!newMsg.trim() || sending) return;
@@ -123,18 +208,37 @@ export function ChatWindow({
       setNewMsg('');
       const el = scrollRef.current;
       el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+      // обновим курсор на всякий случай
+      void touchReadCursor();
     } finally {
       setSending(false);
     }
-  }, [newMsg, sendMessage, sending]);
+  }, [newMsg, sendMessage, sending, touchReadCursor]);
 
-  // удаление чата (внимание: подколлекции не удаляются)
+  // удалить чат (подколлекции не удаляются)
   const handleDeleteChat = useCallback(async () => {
     if (!chatId) return;
-    if (!confirm(t('messages.deleteChat'))) return;
+    if (!confirm(t('messages.deleteChat', 'Удалить чат?'))) return;
     await deleteDoc(doc(db, 'chats', chatId));
     router.back();
-  }, [chatId, router]);
+  }, [chatId, router, t]);
+
+  // писать presence: typing
+  const setTyping = useCallback(
+    async (state: boolean) => {
+      if (!chatId || !user?.uid) return;
+      try {
+        await setDoc(
+          doc(db, 'chats', chatId, 'presence', user.uid),
+          { typing: state, updatedAt: serverTimestamp() },
+          { merge: true }
+        );
+      } catch {
+        // no-op
+      }
+    },
+    [chatId, user?.uid]
+  );
 
   if (!user?.uid) {
     return (
@@ -147,17 +251,25 @@ export function ChatWindow({
   const displayName = profile?.fullName || otherUserName;
   const displayAvatar = profile?.profileImageUrl || otherUserAvatar || '';
 
+  // другой пользователь: курсор прочтения
+  const otherReadAt = readCursors[otherUserId];
+
   return (
-    <div className="flex flex-col h-[80vh] md:h/full w-full max-w-2xl mx-auto">
+    <div className="flex flex-col h-[80vh] md:h-full w-full max-w-2xl mx-auto">
       <ChatHeader
         otherUserName={displayName}
         otherUserAvatar={displayAvatar}
         isOnline={!!profile?.isOnline}
         onBack={onBack}
         onDeleteChat={handleDeleteChat}
-        onBlockUser={() => alert(t('messages.blocked'))}
-        onReportUser={() => alert(t('messages.reported'))}
+        onBlockUser={() => alert(t('messages.blocked', 'Заблокировано'))}
+        onReportUser={() => alert(t('messages.reported', 'Жалоба отправлена'))}
       />
+
+      {/* typing indicator */}
+      {isTyping && (
+        <div className="px-4 pt-1 text-xs text-muted-foreground">{t('messages.typing', 'Печатает…')}</div>
+      )}
 
       <div
         ref={scrollRef}
@@ -171,31 +283,56 @@ export function ChatWindow({
         ) : messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
             <MessageCircle className="w-8 h-8 opacity-30" />
-            <p>{t('messages.noChat')}</p>
+            <p>{t('messages.noChat', 'У вас пока нет сообщений')}</p>
           </div>
         ) : (
-          messages.map((msg, idx) => {
-            const isMine = msg.senderId === user.uid;
-            const next = messages[idx + 1];
-            const showAvatar = !next || next.senderId !== msg.senderId;
+          <>
+            {messages.map((msg, idx) => {
+              const isMine = msg.senderId === user.uid;
+              const previous = messages[idx - 1];
+              const currentDate = normalizeDate(msg.createdAt);
+              const needDivider =
+                !previous || !isSameDay(currentDate, normalizeDate(previous.createdAt));
 
-            const senderAvatar = isMine ? myAvatar : displayAvatar;
-            const senderName = isMine ? myName : displayName;
+              const next = messages[idx + 1];
+              const showAvatar = !next || next.senderId !== msg.senderId;
 
-            // без any: если нет id (старые доки) — используем детерминированный ключ
-            const key = msg.id ?? `${msg.senderId}-${msg.createdAt.toMillis()}`;
+              const senderAvatar = isMine ? myAvatar : displayAvatar;
+              const senderName = isMine ? myName : displayName;
 
-            return (
-              <MessageBubble
-                key={key}
-                text={msg.text}
-                isMine={isMine}
-                showAvatar={showAvatar}
-                avatarUrl={senderAvatar}
-                userName={senderName}
-              />
-            );
-          })
+              // статус: прочитано, если у другого readCursor >= времени моего сообщения
+              let status: 'sent' | 'delivered' | 'read' | undefined;
+              if (isMine) {
+                if (otherReadAt instanceof Timestamp) {
+                  status = msg.createdAt.toMillis() <= otherReadAt.toMillis() ? 'read' : 'sent';
+                } else {
+                  status = 'sent';
+                }
+              }
+
+              const key = msg.id ?? `${msg.senderId}-${msg.createdAt.toMillis()}`;
+
+              return (
+                <div key={key}>
+                  {needDivider && (
+                    <DayDivider label={dayLabel(currentDate, { 
+                      locale: uiLocale, 
+                      t: (key: string, defaultValue?: string) => t(key, defaultValue || key)
+                    })} />
+                  )}
+                  <MessageBubble
+                    text={msg.text}
+                    isMine={isMine}
+                    showAvatar={showAvatar}
+                    avatarUrl={senderAvatar}
+                    userName={senderName}
+                    time={msg.createdAt}
+                    status={status}
+                  />
+                </div>
+              );
+            })}
+          </>
         )}
       </div>
 
@@ -204,8 +341,8 @@ export function ChatWindow({
         onMessageChange={setNewMsg}
         onSend={handleSend}
         onAttachFile={(f) => console.log('attach file', f)}
-        onAttachPhoto={(f) => console.log('attach photo', f)}
         isSending={sending}
+        onTyping={setTyping}
       />
     </div>
   );
