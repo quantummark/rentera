@@ -58,7 +58,7 @@ export function ChatWindow({
 }: ChatWindowProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('messages');
   const uiLocale = resolveLocale(i18n.language);
 
   // стабильный chatId
@@ -218,7 +218,7 @@ export function ChatWindow({
   // удалить чат (подколлекции не удаляются)
   const handleDeleteChat = useCallback(async () => {
     if (!chatId) return;
-    if (!confirm(t('messages.deleteChat', 'Удалить чат?'))) return;
+    if (!confirm(t('messages.deleteChat'))) return;
     await deleteDoc(doc(db, 'chats', chatId));
     router.back();
   }, [chatId, router, t]);
@@ -255,27 +255,28 @@ export function ChatWindow({
   const otherReadAt = readCursors[otherUserId];
 
   return (
-    <div className="flex flex-col h-[80vh] md:h-full w-full max-w-2xl mx-auto">
+    <div className="flex flex-col w-full max-w-2xl mx-auto h-full">
       <ChatHeader
         otherUserName={displayName}
         otherUserAvatar={displayAvatar}
         isOnline={!!profile?.isOnline}
         onBack={onBack}
         onDeleteChat={handleDeleteChat}
-        onBlockUser={() => alert(t('messages.blocked', 'Заблокировано'))}
-        onReportUser={() => alert(t('messages.reported', 'Жалоба отправлена'))}
+        onBlockUser={() => alert(t('messages.blocked'))}
+        onReportUser={() => alert(t('messages.reported'))}
       />
 
       {/* typing indicator */}
       {isTyping && (
-        <div className="px-4 pt-1 text-xs text-muted-foreground">{t('messages.typing', 'Печатает…')}</div>
+        <div className="px-4 pt-1 text-xs text-muted-foreground">{t('messages.typing')}</div>
       )}
 
       <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-transparent"
-      >
+  ref={scrollRef}
+  onScroll={handleScroll}
+  className="flex-1 overflow-y-auto px-4 py-3 space-y-2 bg-transparent"
+  style={{ maxHeight: 'calc(100vh - 140px)' }} // ← ключевой момент
+>
         {isLoading ? (
           <div className="flex h-full items-center justify-center text-muted-foreground">
             <Loader2 className="animate-spin w-8 h-8" />
@@ -283,7 +284,7 @@ export function ChatWindow({
         ) : messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
             <MessageCircle className="w-8 h-8 opacity-30" />
-            <p>{t('messages.noChat', 'У вас пока нет сообщений')}</p>
+            <p>{t('messages.noChat')}</p>
           </div>
         ) : (
           <>

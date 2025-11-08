@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { Paperclip, Send } from 'lucide-react';
@@ -13,10 +12,9 @@ interface ChatInputProps {
   onSend: () => void;
   onAttachFile: (file: File) => void;
   isSending?: boolean;
-  /** Для presence: true при наборе, false — при паузе/blur */
   onTyping?: (state: boolean) => void;
-  /** Таймаут «тихого режима» (мс) после последнего ввода */
   typingIdleMs?: number;
+  maxRows?: number;
 }
 
 export function ChatInput({
@@ -27,13 +25,15 @@ export function ChatInput({
   isSending = false,
   onTyping,
   typingIdleMs = 3000,
+  maxRows = 6,
 }: ChatInputProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('messages');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimerRef = useRef<number | null>(null);
   const lastValueRef = useRef<string>(message);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Очистка таймера
+  // typing timers
   const clearTypingTimer = useCallback(() => {
     if (typingTimerRef.current !== null) {
       window.clearTimeout(typingTimerRef.current);
@@ -41,7 +41,6 @@ export function ChatInput({
     }
   }, []);
 
-  // Запустить/перезапустить idle-таймер
   const kickTypingIdle = useCallback(() => {
     clearTypingTimer();
     if (!onTyping) return;
@@ -51,44 +50,52 @@ export function ChatInput({
     }, typingIdleMs);
   }, [clearTypingTimer, onTyping, typingIdleMs]);
 
-  // Обработчик файла
+  // file
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (f) onAttachFile(f);
-    // сброс для повторной загрузки одного и того же файла
     e.target.value = '';
   };
 
-  // Изменение текста + триггер onTyping(true)
+  // autosize textarea
+  const autosize = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = '0px';
+    const lineHeight = parseFloat(getComputedStyle(el).lineHeight || '20');
+    const maxHeight = lineHeight * maxRows;
+    const next = Math.min(el.scrollHeight, maxHeight);
+    el.style.height = `${next}px`;
+  }, [maxRows]);
+
+  useEffect(() => {
+    autosize();
+  }, [message, autosize]);
+
   const handleChange = (val: string) => {
     onMessageChange(val);
     if (!onTyping) return;
     const prev = lastValueRef.current;
     lastValueRef.current = val;
-
-    // Если реально появилась активность
     if (val !== prev) {
       onTyping(true);
       kickTypingIdle();
     }
   };
 
-  // Отправка по Enter (без Shift)
-  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       onSend();
     }
   };
 
-  // При потере фокуса — перестаём «печатать»
   const handleBlur = () => {
     if (!onTyping) return;
     clearTypingTimer();
     onTyping(false);
   };
 
-  // Очистить таймеры на размонтировании
   useEffect(() => {
     return () => {
       clearTypingTimer();
@@ -98,51 +105,50 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        'flex items-center gap-2 px-4 py-3',
-        'bg-card shadow-sm',
-        'sticky bottom-0 z-10'
+        'flex items-center gap-3 px-4 py-3',
+        'bg-card shadow-sm'
       )}
     >
       {/* attach file */}
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="p-2 rounded-full hover:bg-muted/20"
-        aria-label={t('chat.input.attachFile', 'Attach file')}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-lg hover:bg-muted/20 transition-colors"
+        aria-label={t('messages.attachFile')}
       >
-        <Paperclip className="w-5 h-5 text-foreground" aria-hidden="true" />
+        <Paperclip className="h-5 w-5 text-foreground" />
       </button>
-      <input
-        ref={fileInputRef}
-        type="file"
-        className="hidden"
-        onChange={handleFile}
-      />
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFile} />
 
-      {/* message input — шире и выше */}
-      <Input
-        value={message}
-        onChange={(e) => handleChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={handleBlur}
-        placeholder={t('chat.input.placeholder', 'Напишите сообщение...')}
-        className={cn(
-          'flex-1 text-sm',
-          'h-11 md:h-12', // повыше поля
-          'rounded-full px-4' // более «мессенджерный» вид
-        )}
-        disabled={isSending}
-        aria-label={t('chat.input.placeholder', 'Напишите сообщение...')}
-      />
+      {/* textarea — прямоугольная с мягким скруглением */}
+      <div className="flex-1 flex items-center">
+        <textarea
+          ref={textareaRef}
+          value={message}
+          onChange={(e) => handleChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
+          placeholder={t('messages.input')}
+          className={cn(
+            'w-full resize-none overflow-y-auto',
+            'rounded-lg bg-background px-3 py-2 text-sm leading-6',
+            'text-foreground placeholder:text-muted-foreground',
+            'focus:outline-none focus:ring-2 focus:ring-orange-500/40'
+          )}
+          rows={1}
+          maxLength={4000}
+          disabled={isSending}
+        />
+      </div>
 
       {/* send */}
       <Button
         onClick={onSend}
         disabled={isSending || !message.trim()}
-        className="p-2 rounded-full bg-orange-500 hover:bg-orange-600 text-white"
-        aria-label={t('chat.input.send', 'Send')}
+        className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 hover:bg-orange-600 text-white transition-colors"
+        aria-label={t('messages.send')}
       >
-        <Send className="w-5 h-5" aria-hidden="true" />
+        <Send className="h-5 w-5" />
       </Button>
     </div>
   );

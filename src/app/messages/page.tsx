@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import router from 'next/router';
 
 // Динамическая загрузка компонента, который использует useRouter
 import dynamic from 'next/dynamic';
@@ -81,12 +82,12 @@ export default function MessagesPage() {
           {t('messages.userLoginPrompt')}
         </p>
 
-        <a
-          href="/login"
+        <button
+          onClick={() => router.push('/login')}
           className="px-4 py-2 bg-orange-500 hover:bg-orange-600 transition text-white rounded-lg text-sm font-semibold"
         >
           {t('messages.login')}
-        </a>
+        </button>
       </div>
     );
   }

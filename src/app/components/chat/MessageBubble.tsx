@@ -59,7 +59,7 @@ export function MessageBubble({
           'rounded-2xl',
           isMine
             ? 'bg-orange-500 text-white rounded-br-none'
-            : 'bg-gray-200 dark:bg-neutral-700 text-gray-900 dark:text-gray-100 rounded-bl-none'
+            : 'bg-gray-200 dark:bg-gray-200 text-gray-900 dark:text-gray-900 rounded-bl-none'
         )}
       >
         {/* хвостик */}
@@ -68,7 +68,7 @@ export function MessageBubble({
             'absolute bottom-0',
             isMine
               ? 'right-[-6px] border-[6px] border-transparent border-b-orange-500'
-              : 'left-[-6px] border-[6px] border-transparent border-b-gray-200 dark:border-b-neutral-700'
+              : 'left-[-6px] border-[6px] border-transparent border-b-gray-200 dark:border-b-gray-200'
           )}
           style={{ borderBottomWidth: 8 }}
         />

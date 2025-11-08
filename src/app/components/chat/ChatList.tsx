@@ -188,9 +188,9 @@ export default function ChatList({ selectedUserId, onSelect }: ChatListProps) {
               key={chat.id}
               onClick={() => onSelect(otherId, name, avatar)}
               className={cn(
-                'flex items-center gap-3 p-3 rounded-xl transition cursor-pointer',
-                'bg-card hover:bg-muted/10 dark:bg-gray-800 dark:hover:bg-gray-700',
-                isSelected && 'bg-muted/20 dark:bg-gray-700'
+                'flex items-center gap-3 p-3 rounded-xl border border-gray-300 bg-white/5 backdrop-blur-sm transition cursor-pointer',
+                'bg-card hover:bg-muted/10 dark:bg-background-dark dark:hover:bg-background-dark/50',
+                isSelected && 'bg-muted/20 dark:bg-background-dark/70',
               )}
             >
               {/* Аватар + online */}

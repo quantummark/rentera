@@ -16,6 +16,10 @@
         "delete": "Delete chat",
         "back": "Back",
         "block": "Block user",
-        "report": "Report user"
+        "report": "Report user",
+        "input": "Type a message...",
+        "send": "Send",
+        "attachFile": "Attach file",
+        "typing": "Typing..."
     }
 }

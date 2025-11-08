@@ -64,7 +64,7 @@ export default function UserMenu() {
       <Link href={profileUrl} aria-label={t('menu:profileAria')}>
         <button
           type="button"
-          className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm transition hover:bg-gray-100 dark:hover:bg-zinc-800"
+          className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm transition hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background"
         >
           <Home className="h-4 w-4" />
           {t('menu:profile')}
@@ -75,7 +75,7 @@ export default function UserMenu() {
       <button
         type="button"
         onClick={toggleEdit}
-        className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm transition hover:bg-gray-100 dark:hover:bg-zinc-800"
+        className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm transition hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background"
         aria-pressed={isEdit}
         aria-label={isEdit ? t('menu:editOffAria') : t('menu:editOnAria')}
         title={isEdit ? t('menu:editOff') : t('menu:editOn')}
@@ -88,7 +88,7 @@ export default function UserMenu() {
       <button
         type="button"
         onClick={handleLogout}
-        className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm text-red-500 transition hover:bg-gray-100 dark:hover:bg-zinc-800"
+        className="flex w-full items-center gap-2 rounded-md px-4 py-2 text-left text-sm text-red-500 transition hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background"
       >
         <LogOut className="h-4 w-4" />
         {t('menu:logout')}

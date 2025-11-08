@@ -29,11 +29,11 @@ export default function LoginPage() {
         <AuthForm /> {/* уже локализован через namespace "auth" */}
 
         {/* Магическая карточка уведомления */}
-        <div className="mt-4 p-4 rounded-xl border border-orange-400 bg-orange-50 dark:bg-orange-900 dark:border-orange-700 text-left shadow-md">
+        <div className="mt-4 p-4 rounded-xl border border-orange-400 bg-orange-50 dark:bg-orange-50 dark:border-orange-400 text-left shadow-md">
           <h2 className="text-lg font-bold text-orange-600 dark:text-orange-300 mb-2">
             {t('magicTitle')}
           </h2>
-          <p className="text-sm text-orange-800 dark:text-orange-200">
+          <p className="text-base text-orange-800 dark:text-orange-300">
             {t('magicText')}
           </p>
         </div>

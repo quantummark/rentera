@@ -71,8 +71,8 @@ export const LanguageSwitcher = () => {
           key={code}
           onClick={() => change(code)}
           role="menuitem"
-          className={`w-full text-left px-4 py-2 text-sm hover:bg-accent rounded-md ${
-            current === code ? 'font-semibold text-primary' : 'text-foreground'
+          className={`w-full text-left rounded-md px-4 py-2 text-sm hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background ${
+            current === code ? 'font-semibold text-primary text-orange-500' : 'text-foreground'
           }`}
         >
           {label}
