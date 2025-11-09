@@ -34,6 +34,7 @@ interface AgreementUser {
   fullName?: string;
   email?: string;
   phone?: string;
+  currency?: string;
   [key: string]: unknown;
 }
 
@@ -46,6 +47,7 @@ interface Agreement {
   renterId?: string;
   owner?: AgreementUser;
   renter?: AgreementUser;
+  currency?: string;
   signatures?: {
     owner?: string;
     renter?: string;
@@ -75,7 +77,7 @@ export default function AgreementTextForm({ agreementId }: AgreementFormProps) {
 
   
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation(['AgreementForm', 'common']);
 
   // Ссылки на canvas-подписи
   const ownerSignRef = useRef<SignatureCanvas>(null);
@@ -127,7 +129,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
           lastUpdated: serverTimestamp(),
         });
       } catch (err: unknown) {
-        console.error('Ошибка автосохранения:', err);
+        console.error('Auto-save error:', err);
       } finally {
         setIsSaving(false);
       }
@@ -135,7 +137,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
     700
   );
 
-  if (loading) return <p>Загрузка договора…</p>;
+  if (loading) return <p>{t('common:loading')}</p>;
 
   const isOwner = currentUserType === 'owner';
   const isRenter = currentUserType === 'renter';
@@ -198,7 +200,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       setUrl(rawUrl);
       setOwnerSaved(true);
     } catch (err: unknown) {
-      console.error('Ошибка сохранения подписи:', err);
+      console.error(t('AgreementForm:errorSavingSignature'), err);
     } finally {
       setOwnerSaving(false);
     }
@@ -230,11 +232,12 @@ const [, setIsSavedRenter] = useState<boolean>(false);
         rentAmount: typeof agreement.rentAmount === 'string' || typeof agreement.rentAmount === 'number' ? agreement.rentAmount : undefined,
         additionalTerms: typeof agreement.additionalTerms === 'string' ? agreement.additionalTerms : undefined,
         signatures: agreement.signatures,
+        currency: typeof agreement.currency === 'string' ? agreement.currency : undefined,
       },
       agreementId
     );
     } catch (err: unknown) {
-      console.error('Ошибка заморозки договора:', err);
+      console.error(t('AgreementForm:errorFreezingAgreement'), err);
     }
   };
 
@@ -247,7 +250,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       });
       setAgreement((prev) => ({ ...(prev ?? {}), isFrozen: false }));
     } catch (err: unknown) {
-      console.error('Ошибка разморозки договора:', err);
+      console.error(t('AgreementForm:errorUnfreezingAgreement'), err);
     }
   };
 
@@ -403,10 +406,10 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       lastUpdated: serverTimestamp(),
     })
 
-    console.log('PDF успешно создан и сохранён:', pdfUrl)
+    console.log(t('AgreementForm:pdfCreatedAndSaved'), pdfUrl)
     return pdfUrl
   } catch (error: unknown) {
-    console.error('Ошибка генерации PDF:', error)
+    console.error(t('AgreementForm:errorGeneratingPDF'), error)
     throw error
   }
 }
@@ -418,45 +421,46 @@ const [, setIsSavedRenter] = useState<boolean>(false);
   <div className="w-full py-12 md:py-16 lg:py-20 bg-background dark:bg-background-dark rounded-lg shadow-md">
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-0 space-y-6">
       <h2 className="text-3xl font-bold text-center text-foreground dark:text-foreground-dark">
-        Договор аренды
+        {t('AgreementForm:title')}
       </h2>
       <p className="text-sm text-center text-foreground/70 dark:text-foreground-dark/70">
-        Изменения сохраняются автоматически.
+        {t('AgreementForm:changesSavedAutomatically')}
       </p>
 
       {/* Текст договора с полями */}
 <div className="space-y-6 text-foreground dark:text-foreground-dark">
   <p className="flex flex-wrap items-center gap-2">
-    Этот договор заключён между
+    {t('AgreementForm:thisAgreementIsMadeBetween')}
     <Input
       className="inline w-full sm:w-60 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
       value={agreement?.owner?.fullName ?? ''}
       onChange={e => handleInputChange('owner.fullName', e.target.value)}
       disabled={!isOwner || formDisabled}
-      placeholder="ФИО владельца"
+      placeholder={t('AgreementForm:ownerFullName')}
     />
-    (в дальнейшем &quot;Владелец&quot;)
-    и
+    ({t('AgreementForm:owner')})
+    {'  '}
+    {t('AgreementForm:and')}
     <Input
       className="inline w-full sm:w-60 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
       value={agreement?.renter?.fullName ?? ''}
       onChange={e => handleInputChange('renter.fullName', e.target.value)}
       disabled={!isRenter || formDisabled}
-      placeholder="ФИО арендатора"
+      placeholder={t('AgreementForm:renterFullName')}
     />
-    (в дальнейшем &quot;Арендатор&quot;).
+    ({t('AgreementForm:renter')})
   </p>
 
   <p className="flex flex-wrap items-center gap-2">
-    Владелец предоставляет Арендатору в аренду недвижимое имущество по адресу
+    {t('AgreementForm:ownerProvidesRentalPropertyAt')}
     <Input
       className="inline w-full sm:w-80 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
       value={typeof agreement?.address === 'string' ? agreement.address : ''}
       onChange={e => handleInputChange('address', e.target.value)}
       disabled={formDisabled}
-      placeholder="Адрес объекта"
+      placeholder={t('AgreementForm:propertyAddress')}
     />
-    на срок с
+    {t('AgreementForm:forThePeriodFrom')}
     <Input
       type="date"
       className="inline w-full sm:w-40 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
@@ -464,7 +468,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       onChange={e => handleInputChange('rentalStart', e.target.value)}
       disabled={formDisabled}
     />
-    по
+    {t('AgreementForm:to')}
     <Input
       type="date"
       className="inline w-full sm:w-40 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
@@ -475,7 +479,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
   </p>
 
   <p className="flex flex-col sm:flex-row sm:items-center gap-2">
-    Месячная арендная плата составляет
+    {t('AgreementForm:monthlyRentAmountIs')}
     <Input
       type="number"
       className="inline w-full sm:w-32 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
@@ -485,41 +489,57 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       }
       disabled={formDisabled}
     />
-    грн.
   </p>
+
+
+  <p className="flex flex-col sm:flex-row sm:items-center gap-2">
+    {t('AgreementForm:currencyOfRentIs')}
+    <Input
+      type="text"
+      className="inline w-full sm:w-32 px-3 py-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
+      value={agreement?.currency ?? ''}
+      onChange={e =>
+        handleInputChange('currency', e.target.value)
+      }
+      disabled={formDisabled}
+      placeholder="UAH, USD, EUR..."
+    />
+  </p>
+  
+  
 
   <Textarea
     className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
     value={typeof agreement?.additionalTerms === 'string' ? agreement.additionalTerms : ''}
     onChange={e => handleInputChange('additionalTerms', e.target.value)}
-    placeholder="Дополнительные условия: правила проживания, курение, животные..."
+    placeholder={t('AgreementForm:additionalTermsPlaceholder')}
     disabled={formDisabled}
   />
 
   <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
     <div className="flex-1 flex flex-col">
       <Label className="text-foreground dark:text-foreground-dark">
-        Контактные данные владельца
+        {t('AgreementForm:ownerContactDetails')}
       </Label>
       <Input
         className="w-full px-3 py-2 mt-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
         value={agreement?.owner?.phone ?? ''}
         onChange={e => handleInputChange('owner.phone', e.target.value)}
         disabled={!isOwner || formDisabled}
-        placeholder="Телефон владельца"
+        placeholder={t('AgreementForm:ownerPhonePlaceholder')}
       />
     </div>
 
     <div className="flex-1 flex flex-col">
       <Label className="text-foreground dark:text-foreground-dark">
-        Контактные данные арендатора
+        {t('AgreementForm:renterContactDetails')}
       </Label>
       <Input
         className="w-full px-3 py-2 mt-1 rounded-lg border border-gray-300 dark:border-gray-700 bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark shadow-sm focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
         value={agreement?.renter?.phone ?? ''}
         onChange={e => handleInputChange('renter.phone', e.target.value)}
         disabled={!isRenter || formDisabled}
-        placeholder="Телефон арендатора"
+        placeholder={t('AgreementForm:renterPhonePlaceholder')}
       />
     </div>
   </div>
@@ -530,7 +550,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
   {/* Владелец */}
   <div className="flex flex-col">
     <Label className="text-foreground dark:text-foreground-dark">
-      Подпись владельца
+      {t('AgreementForm:ownerSignature')}
     </Label>
 
     {/* Если не заморожено и это владелец — показываем пад, иначе статичное изображение */}
@@ -539,7 +559,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
         {ownerSigUrl ? (
           <img
             src={ownerSigUrl}
-            alt="Подпись владельца"
+            alt= {t('AgreementForm:ownerSignature')}
             className="w-full h-32 border border-gray-300 dark:border-gray-700 rounded-lg object-contain"
           />
         ) : (
@@ -559,7 +579,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
               className="text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100"
               onClick={() => ownerSignRef.current?.clear()}
             >
-              Очистить
+              {t('AgreementForm:clear')}
             </Button>
           )}
           <Button
@@ -575,10 +595,10 @@ const [, setIsSavedRenter] = useState<boolean>(false);
             onClick={() => saveSignature('owner')}
           >
             {isSavingOwner
-              ? 'Сохраняем…'
+              ? t('AgreementForm:saving')
               : ownerSigUrl
-              ? 'Сохранено'
-              : 'Сохранить'}
+              ? t('AgreementForm:saved')
+              : t('AgreementForm:save')}
           </Button>
         </div>
       </>
@@ -587,7 +607,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       agreement?.signatures?.owner && (
         <img
           src={agreement.signatures.owner}
-          alt="Подпись владельца"
+          alt={t('AgreementForm:ownerSignature')}
           className="w-full h-32 border border-gray-300 dark:border-gray-700 rounded-lg object-contain"
         />
       )
@@ -597,7 +617,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
   {/* Арендатор */}
   <div className="flex flex-col">
     <Label className="text-foreground dark:text-foreground-dark">
-      Подпись арендатора
+      {t('AgreementForm:renterSignature')}
     </Label>
 
     {!isFrozen && isRenter ? (
@@ -605,7 +625,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
         {renterSigUrl ? (
           <img
             src={renterSigUrl}
-            alt="Подпись арендатора"
+            alt={t('AgreementForm:renterSignature')}
             className="w-full h-32 border border-gray-300 dark:border-gray-700 rounded-lg object-contain"
           />
         ) : (
@@ -625,7 +645,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
               className="text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100"
               onClick={() => renterSignRef.current?.clear()}
             >
-              Очистить
+              {t('AgreementForm:clear')}
             </Button>
           )}
           <Button
@@ -641,10 +661,10 @@ const [, setIsSavedRenter] = useState<boolean>(false);
             onClick={() => saveSignature('renter')}
           >
             {isSavingRenter
-              ? 'Сохраняем…'
+              ? t('AgreementForm:saving')
               : renterSigUrl
-              ? 'Сохранено'
-              : 'Сохранить'}
+              ? t('AgreementForm:saved')
+              : t('AgreementForm:save')}
           </Button>
         </div>
       </>
@@ -652,7 +672,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       agreement?.signatures?.renter && (
         <img
           src={agreement.signatures.renter}
-          alt="Подпись арендатора"
+          alt={t('AgreementForm:renterSignature')}
           className="w-full h-32 border border-gray-300 dark:border-gray-700 rounded-lg object-contain"
         />
       )
@@ -673,8 +693,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
     className="text-sm text-foreground/70 dark:text-foreground-dark/70"
   >
     {t(
-      'agreement.confirmRules',
-      'Я подтверждаю, что ознакомлен с правилами платформы Rentera и согласен с ними'
+      'AgreementForm:confirmRulesAcknowledgment'
     )}
   </label>
 </div>
@@ -686,7 +705,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
     disabled={!bothSigned || !isChecked}
     className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white"
   >
-    Подписать и сохранить договор
+    {t('AgreementForm:signAndSaveAgreement')}
   </Button>
 ) : (
   <div className="mt-6 flex flex-col items-center">
@@ -696,7 +715,7 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       disabled
       className="w-full bg-green-500 hover:bg-green-600 text-white"
     >
-      Договор сохранён
+      {t('AgreementForm:agreementSaved')}
     </Button>
 
     {/* 2) «Разморозить договор» — под первой, по центру */}
@@ -706,17 +725,17 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       disabled={!isOwner}
       className="mt-2 text-red-600 border border-red-300 bg-red-50 hover:bg-red-100"
     >
-      Разморозить договор
+      {t('AgreementForm:unfreezeAgreement')}
     </Button>
   </div>
 )}
 <p className="mt-2 text-sm text-center text-foreground/70 dark:text-foreground-dark/70">
-  Кнопка станет активной, после сохранения обеих подписей и подтверждения правил.
+  {t('AgreementForm:buttonActivationInfo')}
 </p>
 
       {isSaving && (
         <p className="text-base text-foreground/70 dark:text-foreground-dark/70 mt-2">
-          Сохраняем изменения...
+          {t('AgreementForm:savingChanges')}
         </p>
       )}
     </div>

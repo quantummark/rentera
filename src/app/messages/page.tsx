@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
 import { useAuth } from '@/hooks/useAuth';
-import router from 'next/router';
+import Link from 'next/link';
 
 // Динамическая загрузка компонента, который использует useRouter
 import dynamic from 'next/dynamic';
+import { Button } from '@/components/ui/button';
 
 interface ChatWindowProps {
   otherUserId: string;
@@ -79,15 +80,14 @@ export default function MessagesPage() {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] text-center space-y-4">
         <p className="text-lg font-medium text-muted-foreground">
-          {t('messages.userLoginPrompt')}
+          {t('messages.userLoginPrompt')} 🙂
         </p>
 
-        <button
-          onClick={() => router.push('/login')}
-          className="px-4 py-2 bg-orange-500 hover:bg-orange-600 transition text-white rounded-lg text-sm font-semibold"
-        >
-          {t('messages.login')}
-        </button>
+        <Link href="/login">
+          <Button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 transition text-white rounded-lg text-sm font-semibold">
+            {t('messages.login')}
+          </Button>
+        </Link>
       </div>
     );
   }

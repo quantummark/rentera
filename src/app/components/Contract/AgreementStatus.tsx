@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { useAgreement, AgreementStatus as AgreementStatusType } from '@/hooks/useAgreement';
+import { useTranslation } from 'react-i18next';
 
 interface AgreementStatusProps {
   agreementId: string; // мы передаём id договора, хук подхватит весь объект
@@ -16,6 +17,7 @@ interface AgreementStatusProps {
 export default function AgreementStatus({ agreementId, userType }: AgreementStatusProps) {
   // Хук работы с договором
   const { agreement, respondToRequest } = useAgreement(agreementId);
+  const { t } = useTranslation(['contracts', 'common']);
 
   const [status, setStatus] = useState<AgreementStatusType>('pending');
 
@@ -44,7 +46,7 @@ export default function AgreementStatus({ agreementId, userType }: AgreementStat
       await respondToRequest(newStatus);
       setStatus(newStatus);
     } catch (err) {
-      console.error('Ошибка обновления статуса договора:', err);
+      console.error('Contract status update error:', err);
     }
   };
 
@@ -70,11 +72,11 @@ export default function AgreementStatus({ agreementId, userType }: AgreementStat
                 />
               )}
               <div>
-                <p className="font-medium">{participant.fullName || 'Без имени'}</p>
+                <p className="font-medium">{participant.fullName || 'No name'}</p>
               </div>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Загрузка данных участника...</p>
+            <p className="text-sm text-muted-foreground">{t('common:loading')}</p>
           )}
         </div>
 
@@ -93,14 +95,14 @@ export default function AgreementStatus({ agreementId, userType }: AgreementStat
             className="flex items-center gap-2"
             onClick={() => handleStatusChange('active')}
           >
-            <CheckCircle2 className="w-4 h-4 text-green-600" /> Принять
+            <CheckCircle2 className="w-4 h-4 text-green-600" /> {t('contracts:accept')}
           </Button>
           <Button
             variant="outline"
             className="flex items-center gap-2"
             onClick={() => handleStatusChange('declined')}
           >
-            <XCircle className="w-4 h-4 text-red-600" /> Отклонить
+            <XCircle className="w-4 h-4 text-red-600" /> {t('contracts:decline')}
           </Button>
         </div>
       )}

@@ -7,4 +7,5 @@ export interface GeneratePdfData {
   rentAmount?: string | number
   additionalTerms?: string
   signatures?: { owner?: string; renter?: string }
+  currency?: string; 
 }

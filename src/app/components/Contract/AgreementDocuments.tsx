@@ -5,6 +5,7 @@ import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import { db } from '@/app/firebase/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { Download, CreditCard } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface AgreementDocument {
   id: string;
@@ -20,6 +21,7 @@ export default function AgreementDocuments() {
   // игнорим первый элемент из useUserTypeWithProfile, берём только профиль и loading
   const [, userProfile, userLoading] = useUserTypeWithProfile();
   const currentUid = userProfile?.uid ?? '';
+  const { t } = useTranslation(['contracts', 'common']);
 
   const [documents, setDocuments] = useState<AgreementDocument[]>([]);
   const [loadingDocs, setLoadingDocs] = useState<boolean>(true);
@@ -40,7 +42,7 @@ export default function AgreementDocuments() {
               id: d.id,
               ownerId: data.ownerId || '',
               renterId: data.renterId || '',
-              title: data.title || 'Договор',
+              title: data.title || t('contracts:Agreement'),
               lastUpdated: data.lastUpdated
                 ? new Date(data.lastUpdated.seconds * 1000).toLocaleDateString()
                 : '',
@@ -63,13 +65,13 @@ export default function AgreementDocuments() {
   }, []);
 
   if (userLoading || loadingDocs) {
-    return <p className="text-center py-4">Загрузка документов...</p>;
+    return <p className="text-center py-4">{t('common:loading')}</p>;
   }
 
   if (documents.length === 0) {
     return (
       <p className="text-center py-4 text-muted-foreground">
-        У вас пока что нет ни одного PDF
+        {t('contracts:noActiveContracts')}
       </p>
     );
   }
@@ -92,7 +94,7 @@ export default function AgreementDocuments() {
               {doc.title}
             </h3>
             <p className="text-sm text-muted-foreground dark:text-muted-foreground-dark mt-1">
-              Дата: {doc.lastUpdated}
+              {t('contracts:Date')} {doc.lastUpdated}
             </p>
 
             {isOwner && (
@@ -106,7 +108,7 @@ export default function AgreementDocuments() {
                              text-primary-foreground dark:text-primary-foreground-dark
                              rounded-md text-sm font-medium hover:opacity-90 transition"
                 >
-                  <Download className="w-5 h-5" /> Скачать PDF
+                  <Download className="w-5 h-5" /> {t('contracts:downloadPDF')}
                 </a>
 
                 <span
@@ -128,7 +130,7 @@ export default function AgreementDocuments() {
                   className="flex items-center gap-2 text-sm font-medium
                              text-primary dark:text-primary-dark hover:underline"
                 >
-                  <Download className="w-5 h-5" /> Скачать PDF
+                  <Download className="w-5 h-5" /> {t('contracts:downloadPDF')}
                 </a>
 
                 {!isPaid ? (
@@ -138,10 +140,10 @@ export default function AgreementDocuments() {
                                px-4 py-2 rounded-md text-sm font-medium
                                hover:bg-orange-600 transition"
                   >
-                    <CreditCard className="w-4 h-4" /> Оплатить
+                    <CreditCard className="w-4 h-4" /> {t('contracts:pay')}
                   </button>
                 ) : (
-                  <span className="text-green-600 font-semibold">Оплачено</span>
+                  <span className="text-green-600 font-semibold">{t('contracts:paid')}</span>
                 )}
               </div>
             )}

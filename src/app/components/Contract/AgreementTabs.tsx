@@ -7,6 +7,7 @@ import AgreementDocuments from './AgreementDocuments';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 import { useAgreement, AgreementStatus as AgreementStatusType } from '@/hooks/useAgreement';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
+import { useTranslation } from 'react-i18next';
 
 interface AgreementTabsProps {
   agreementId: string;
@@ -17,11 +18,12 @@ interface AgreementTabsProps {
 export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
   const [userType] = useUserTypeWithProfile();
   const { agreement, loading } = useAgreement(agreementId);
+  const { t } = useTranslation(['contracts', 'common']);
 
   const [activeTab, setActiveTab] = useState<'status' | 'form' | 'documents'>('status');
 
-  if (loading) return <div>Загрузка...</div>;
-  if (!agreement) return <div>Договор не найден</div>;
+  if (loading) return <div>{t('common:loading')}</div>;
+  if (!agreement) return <div>{t('contracts:notFound')}</div>;
 
   return (
     <div className="w-full px-4 mx-auto">
@@ -38,19 +40,19 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
           value="status"
           className="flex-1 min-w-[100px] text-center rounded-lg data-[state=active]:bg-primary data-[state=active]:!text-orange-500 transition"
         >
-          Статус
+          {t('contracts:status')}
         </TabsTrigger>
         <TabsTrigger
           value="form"
           className="flex-1 min-w-[120px] text-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-orange-500 transition"
         >
-          Подписание договора
+          {t('contracts:form')}
         </TabsTrigger>
         <TabsTrigger
           value="documents"
           className="flex-1 min-w-[120px] text-center rounded-lg data-[state=active]:bg-primary data-[state=active]:text-orange-500 transition"
         >
-          Мои документы
+          {t('contracts:documents')}
         </TabsTrigger>
       </TabsList>
 
@@ -58,7 +60,7 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
         { (userType === 'owner' || userType === 'renter') && agreement ? (
           <AgreementStatus agreementId={agreementId} userType={userType} />
         ) : (
-          <p className="text-center py-4">Загрузка данных...</p>
+          <p className="text-center py-4">{t('common:loading')}</p>
         )}
       </TabsContent>
 
@@ -66,7 +68,7 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
         { (userType === 'owner' || userType === 'renter') ? (
           <AgreementForm agreementId={agreementId} />
         ) : (
-          <p className="text-center py-4">Нет доступа к форме</p>
+          <p className="text-center py-4">{t('common:noAccess')}</p>
         )}
       </TabsContent>
 

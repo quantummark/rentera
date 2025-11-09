@@ -1,0 +1,50 @@
+{
+    "errorSavingSignature": "Помилка під час збереження підпису. Спробуйте ще раз.",
+    "renterSignature": "Підпис орендаря",
+    "saving": "Збереження…",
+    "saved": "Збережено",
+    "save": "Зберегти",
+    "confirmRulesAcknowledgment": "Підтверджую, що ознайомлений з правилами платформи Renterya та погоджуюсь з ними",
+    "signAndSaveAgreement": "Підписати та зберегти договір",
+    "agreementSaved": "Договір збережено",
+    "unfreezeAgreement": "Розморозити договір",
+    "buttonActivationInfo": "Кнопка стане активною, після збереження обох підписів та підтвердження правил.",
+    "savingChanges": "Збереження змін...",
+    "errorFreezingAgreement": "Помилка під час заморожування договору. Спробуйте ще раз.",
+    "errorUnfreezingAgreement": "Помилка під час розморожування договору. Спробуйте ще раз.",
+    "freezeAgreement": "Заморозити договір",
+    "agreementFrozen": "Договір заморожено",
+    "agreementIsFrozen": "Договір заморожено. Щоб внести зміни, розморозьте його.",
+    "savingAgreement": "Збереження договору…",
+    "errorSavingAgreement": "Помилка під час збереження договору. Спробуйте ще раз.",
+    "bothSignaturesRequired": "Потрібні обидва підписи, щоб підписати та зберегти договір.",
+    "ownerSignature": "Підпис власника",
+    "pdfCreatedAndSaved": "PDF створено та збережено.",
+    "errorGeneratingPDF": "Помилка під час створення PDF. Спробуйте ще раз.",
+    "title": "Форма договору",
+    "changesSavedAutomatically": "Зміни зберігаються автоматично.",
+    "thisAgreementIsMadeBetween": "Цей договір укладено між",
+    "and": "та",
+    "renter": "Орендарем",
+    "owner": "Власником",
+    "ownerFullName": "Повне ім'я власника",
+    "renterFullName": "Повне ім'я орендаря",
+    "ownerProvidesRentalPropertyAt": "Власник надає орендовану нерухомість за адресою",
+    "propertyAddress": "Адреса нерухомості",
+    "forThePeriodFrom": "на період з",
+    "to": "по",
+    "monthlyRentAmountIs": "Щомісячна орендна плата становить",
+    "currencyOfRentIs": "валюта орендної плати",
+    "additionalTermsPlaceholder": "Введіть будь-які додаткові умови або положення тут...",
+    "ownerContactDetails": "Контактні дані власника",
+    "ownerPhonePlaceholder": "Телефон власника",
+    "renterContactDetails": "Контактні дані орендаря",
+    "renterPhonePlaceholder": "Телефон орендаря",
+    "clear": "Очистити"
+    
+
+
+
+
+
+}
