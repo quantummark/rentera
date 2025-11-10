@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import ListingCard from '@/app/components/property/ListingCard';
 
 interface Listing {
-  id?: string;
+  id: string;
   title: string;
   city: string;
   district: string;
