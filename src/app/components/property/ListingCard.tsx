@@ -16,6 +16,7 @@ import OwnerListingControls from './OwnerListingControls';
 import { cn } from '@/lib/utils';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/firebase';
+import FavoriteToggle from '@/app/components/property/FavoriteToggle'; // проверь путь у себя
 
 interface ListingCardProps {
   listing: Listing;
@@ -127,6 +128,24 @@ export default function ListingCard({ listing }: ListingCardProps) {
               </div>
             </>
           )}
+
+          {/* Сердечко избранного (верхний правый угол). Не показываем владельцу */}
+{!isOwner && (
+  <div className="absolute right-2 top-2 z-20">
+    <div className="
+      flex items-center justify-center
+      w-10 h-10                 /* Круг фиксированного размера */
+      rounded-full
+      bg-black/40               /* чуть глубже, чем было */
+      backdrop-blur-md
+      hover:bg-black/55
+      transition-colors
+      shadow-sm
+    ">
+      <FavoriteToggle listing={listing} />
+    </div>
+  </div>
+)}
         </div>
       </Link>
 

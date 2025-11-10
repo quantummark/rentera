@@ -1,44 +1,48 @@
 'use client';
 
-import { useState, useEffect, MouseEvent } from 'react';
+import { MouseEvent, useMemo } from 'react';
 import { Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
-import { Listing } from '@/app/types/listing';
+import type { Listing } from '@/app/types/listing';
 import { useToast } from '@/components/ui/ToastContext';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
-  listing: Listing;
-};
+// Универсальный входной тип: поддерживаем listing.id и legacy listing.listingId
+type ListingInput = Listing | (Omit<Listing, 'id'> & { listingId: string });
+
+interface Props {
+  listing: ListingInput;
+}
 
 export default function FavoriteToggle({ listing }: Props) {
   const { t } = useTranslation('favorites');
   const { isFavorite, addToFavorites, removeFromFavorites } = useFavorites();
-  const [fav, setFav] = useState(false);
   const { addToast } = useToast();
 
-  useEffect(() => {
-    if (listing.id) {
-      isFavorite(listing.id).then(setFav);
-    } else {
-      setFav(false);
-    }
-  }, [listing.id, isFavorite]);
+  // Аккуратно и строго извлекаем id
+  const listingId = useMemo(() => {
+    if ('id' in listing && listing.id) return listing.id.trim();
+    if ('listingId' in listing && listing.listingId) return listing.listingId.trim();
+    return '';
+  }, [listing]);
 
-  const toggle = async (e: MouseEvent) => {
+  // Пока id нет — не показываем кнопку
+  if (!listingId) return null;
+
+  const fav = isFavorite(listingId);
+
+  const toggle = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
+
     if (fav) {
-      if (listing.id) {
-        await removeFromFavorites(listing.id);
-        setFav(false);
-        addToast({
-          title: t('favorites:removedTitle'),
-          description: t('favorites:removedDesc'),
-        });
-      }
+      await removeFromFavorites(listingId);
+      addToast({
+        title: t('favorites:removedTitle'),
+        description: t('favorites:removedDesc'),
+      });
     } else {
+      // ✅ Без any — тип ListingInput полностью совместим с addToFavorites
       await addToFavorites(listing);
-      setFav(true);
       addToast({
         title: t('favorites:addedTitle'),
         description: t('favorites:addedDesc'),
@@ -53,7 +57,7 @@ export default function FavoriteToggle({ listing }: Props) {
       className="p-1 transition-colors hover:text-red-500"
     >
       <Heart
-        className="w-6 h-6"
+        className="h-6 w-6"
         style={{
           fill: fav ? 'currentColor' : 'none',
           color: fav ? 'rgb(239, 68, 68)' : 'currentColor',

@@ -1,5 +1,5 @@
 export interface Listing {
-  id?: string;
+  id: string;
   listingId: string; // уникальный идентификатор объявления
   title: string;
   country: string;
