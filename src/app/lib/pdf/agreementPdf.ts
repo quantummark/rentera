@@ -3,6 +3,7 @@
 
 import { PDFDocument, rgb, PageSizes, PDFFont, PDFPage, PDFImage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+import { createHash } from 'crypto';
 
 // ====== Типы входных данных ======
 export type CurrencyCode = 'UAH' | 'USD' | 'EUR' | 'BTC' | 'ETH' | 'USDT' | 'SOL';
@@ -303,7 +304,7 @@ function drawHeader(
   const { bold, logoPng, x, yTop, title, contentWidth } = args;
 
   // Начальная точка
-  let y = yTop;
+  const y = yTop;
 
   // --- ЛОГОТИП ---
   const logoMaxHeight = 60;   // стало больше, но аккуратно
@@ -644,18 +645,18 @@ async function drawSignatures(
 }
 
 // ====== Хэширующая утилита ======
-async function computeSha256Hex(input: string): Promise<string> {
-  // Браузерный Web Crypto
-  if (typeof window !== 'undefined' && window.crypto?.subtle) {
-    const enc = new TextEncoder().encode(input);
-    const buf = await window.crypto.subtle.digest('SHA-256', enc);
-    return Array.from(new Uint8Array(buf))
+export async function computeSha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+
+  // 🔥 1. Если есть WebCrypto (браузер, edge-runtime, Vercel), используем его
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hashBuffer))
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
   }
-  // Node (если нужно)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { createHash } = require('crypto');
+
+  // 🔥 2. Node.js fallback (SSR, build, API routes)
   return createHash('sha256').update(input).digest('hex');
 }
 
