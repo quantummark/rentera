@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import ListingCard from '@/app/components/property/ListingCard';
 import { useListingsSearch } from '@/hooks/useListingsSearch';
 import { useTranslation } from 'react-i18next';
+import DropdownMenu from '@/components/ui/DropdownMenu';
 
 export default function ListingsGrid() {
   const { t } = useTranslation('listings');
@@ -36,20 +37,21 @@ export default function ListingsGrid() {
   }, [results, sort]);
 
   const visibleListings = sortedListings.slice(0, page * itemsPerPage);
+  
 
   return (
     <div className="space-y-6">
-      {/* Сортировка */}
-      <div className="flex justify-end">
-        <select
-          className="border rounded-md px-3 py-2 text-base dark:bg-zinc-900 dark:text-white"
-          value={sort}
-          onChange={(e) => setSort(e.target.value as typeof sort)}
+      {/* Сортировка с использованием DropdownMenu */}
+      <div className="flex rounded-md border-gray-200 justify-end">
+        <DropdownMenu
+          trigger={
+            <Button variant="outline">{t(`sort.${sort}`)}</Button>
+          }
         >
-          <option value="new">{t('sort.new')}</option>
-          <option value="expensive">{t('sort.expensive')}</option>
-          <option value="cheap">{t('sort.cheap')}</option>
-        </select>
+          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('new')}>{t('sort.new')}</div>
+          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('expensive')}>{t('sort.expensive')}</div>
+          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('cheap')}>{t('sort.cheap')}</div>
+        </DropdownMenu>
       </div>
 
       {/* Сетка карточек */}

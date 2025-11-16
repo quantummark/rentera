@@ -15,9 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import debounce from 'lodash/debounce';
-import { PDFDocument, rgb } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';                // общий тип договора
-import { GeneratePdfData } from '@/app/types/pdfTypes' // новый тип для PDF
 import {
   getStorage,
   ref as storageRef,
@@ -28,6 +25,23 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from 'react-i18next';
 import SignaturePad, { type SignatureCanvas } from 'react-signature-canvas';
 import { trimCanvas } from '@/app/utils/trimCanvas';
+
+import {
+  createAgreementPdf,
+  type AgreementPdfData,
+  type CurrencyCode,
+} from '@/app/lib/pdf/agreementPdf';
+
+type ExtendedAgreement = Agreement & {
+  number?: string;
+  address?: string;
+  rentalStart?: Timestamp | string | Date;
+  rentalEnd?: Timestamp | string | Date;
+  currency?: string;
+  additionalTerms?: string;
+  city?: string;
+  signatures?: AgreementPdfData['signatures'];
+};
 
 // Интерфейс пользователя договора
 interface AgreementUser {
@@ -77,7 +91,8 @@ export default function AgreementTextForm({ agreementId }: AgreementFormProps) {
 
   
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const { t } = useTranslation(['AgreementForm', 'common']);
+  const { t, i18n } = useTranslation(['AgreementForm', 'common']);
+  const { t: tAgreementPdf } = useTranslation('agreementPdf');
 
   // Ссылки на canvas-подписи
   const ownerSignRef = useRef<SignatureCanvas>(null);
@@ -211,35 +226,134 @@ const [, setIsSavedRenter] = useState<boolean>(false);
     !!agreement?.signatures?.owner && !!agreement?.signatures?.renter;
   const isFrozen = agreement?.isFrozen === true;
 
+  function normalizeDateField(value: unknown): string | Date {
+  if (value instanceof Timestamp) {
+    return value.toDate();
+  }
+  if (value instanceof Date) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    return value;
+  }
+  // Фолбэк — сегодняшняя дата
+  return new Date();
+}
+
+function normalizeNumberField(value: unknown): number {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const n = Number(value.replace(',', '.'));
+    if (!Number.isNaN(n)) return n;
+  }
+  return 0;
+}
+
+function normalizeStringField(value: unknown, fallback = ''): string {
+  if (typeof value === 'string') return value;
+  return fallback;
+}
+
+
   // 6) Заморозка / разморозка договора
-  const handleFreeze = async () => {
-    if (!bothSigned) return;
-    try {
-      const docRef = doc(db, 'contracts', agreementId);
-      await updateDoc(docRef, {
-        isFrozen: true,
-        lastUpdated: serverTimestamp(),
-      });
-      setAgreement((prev) => ({ ...(prev ?? {}), isFrozen: true }));
-      // generateAndSavePdf(agreement, agreementId); // используйте нужную функцию
-      await generateAndSavePdf(
-      {
-        owner: agreement.owner,
-        renter: agreement.renter,
-        address: typeof agreement.address === 'string' ? agreement.address : undefined,
-        rentalStart: typeof agreement.rentalStart === 'string' ? agreement.rentalStart : undefined,
-        rentalEnd: typeof agreement.rentalEnd === 'string' ? agreement.rentalEnd : undefined,
-        rentAmount: typeof agreement.rentAmount === 'string' || typeof agreement.rentAmount === 'number' ? agreement.rentAmount : undefined,
-        additionalTerms: typeof agreement.additionalTerms === 'string' ? agreement.additionalTerms : undefined,
-        signatures: agreement.signatures,
-        currency: typeof agreement.currency === 'string' ? agreement.currency : undefined,
+  const handleFreeze = async (): Promise<void> => {
+  if (!bothSigned || !agreement) return;
+
+  try {
+    const contractRef = doc(db, 'contracts', agreementId);
+
+    const locale = (i18n.language as 'ru' | 'uk' | 'en') || 'uk';
+
+    // локальная переменная с расширенным типом (без any)
+    const extended: ExtendedAgreement = agreement;
+
+    // ✅ 1) Собираем данные для PDF безопасно
+    const pdfData: AgreementPdfData = {
+      agreementId,
+
+      // Если у тебя есть номер договора в agreement — используем его
+      agreementNumber:
+        typeof extended.number === 'string' ? extended.number : undefined,
+
+      owner: {
+        fullName: normalizeStringField(extended.owner?.fullName, ''),
+        phone: normalizeStringField(extended.owner?.phone, ''),
+        email: normalizeStringField(extended.owner?.email, ''),
       },
-      agreementId
+
+      renter: {
+        fullName: normalizeStringField(extended.renter?.fullName, ''),
+        phone: normalizeStringField(extended.renter?.phone, ''),
+        email: normalizeStringField(extended.renter?.email, ''),
+      },
+
+      // адрес может быть опциональным / unknown — нормализуем
+      address: normalizeStringField(extended.address, ''),
+
+      // даты могут быть Timestamp | string | Date
+      rentalStart: normalizeDateField(extended.rentalStart ?? extended.createdAt),
+      rentalEnd: normalizeDateField(extended.rentalEnd ?? extended.updatedAt),
+
+      // сумма — number | string → number
+      rentAmount: normalizeNumberField(extended.rentAmount),
+
+      // валюта — если нет, ставим, например, UAH
+      currency: normalizeStringField(extended.currency, 'UAH') as CurrencyCode,
+
+      // доп. условия — опционально
+      additionalTerms: normalizeStringField(extended.additionalTerms, '') || undefined,
+
+      // подписи — берём из agreement.signatures (то, что у тебя уже работает)
+      signatures: extended.signatures,
+
+      city: normalizeStringField(extended.city, '') || undefined,
+      generatedAt: new Date(),
+      version: '1.0',
+    };
+
+    // ✅ 2) Генерируем PDF
+    const pdfBytes = await createAgreementPdf(pdfData, tAgreementPdf, {
+      locale,
+      logoUrl: '/images/logo.png',
+      fontUrl: '/fonts/OpenSans-Regular.ttf',
+      pageMargin: 40,
+    });
+
+    // ✅ 3) Сохраняем PDF в Storage
+    const storage = getStorage();
+    const pdfRef = storageRef(storage, `agreements/${agreementId}.pdf`);
+
+    await uploadBytes(pdfRef, pdfBytes, { contentType: 'application/pdf' });
+    const pdfUrl = await getDownloadURL(pdfRef);
+
+    // ✅ 4) Обновляем контракт в Firestore
+    await updateDoc(contractRef, {
+      isFrozen: true,
+      status: 'signed' as const,
+      pdfUrl,
+      lastUpdated: serverTimestamp(),
+    });
+
+    // ✅ 5) Синхронизируем локальный стейт
+    setAgreement((prev) =>
+      prev
+        ? {
+            ...prev,
+            isFrozen: true,
+            status: 'signed',
+            pdfUrl,
+          }
+        : prev
     );
-    } catch (err: unknown) {
-      console.error(t('AgreementForm:errorFreezingAgreement'), err);
-    }
-  };
+
+    // eslint-disable-next-line no-console
+    console.log(t('AgreementForm:pdfCreatedAndSaved'), pdfUrl);
+  } catch (err: unknown) {
+    // eslint-disable-next-line no-console
+    console.error(t('AgreementForm:errorFreezingAgreement'), err);
+  }
+};
+
 
   const handleUnfreeze = async () => {
     try {
@@ -253,166 +367,6 @@ const [, setIsSavedRenter] = useState<boolean>(false);
       console.error(t('AgreementForm:errorUnfreezingAgreement'), err);
     }
   };
-
- async function generateAndSavePdf(
-  data: GeneratePdfData,
-  agreementId: string
-): Promise<string> {
-  const storage = getStorage()
-
-  try {
-    // 1. Создаём PDF
-    const pdfDoc = await PDFDocument.create()
-    pdfDoc.registerFontkit(fontkit)
-    const page = pdfDoc.addPage([595, 842])
-    const { height } = page.getSize()
-    let yPos = height - 50
-    const lineHeight = 20
-
-    // 2. Встраиваем шрифт
-    const fontBytes = await fetch('/fonts/OpenSans-Regular.ttf')
-      .then(res => res.arrayBuffer())
-    const openSans = await pdfDoc.embedFont(fontBytes, { subset: true })
-
-    // 3. Пишем заголовок
-    page.drawText('Договор аренды', {
-      x: 50,
-      y: yPos,
-      size: 20,
-      font: openSans,
-      color: rgb(0, 0, 0),
-    })
-    yPos -= lineHeight * 2
-
-    // 4. Распаковываем данные
-    const {
-      owner,
-      renter,
-      address,
-      rentalStart,
-      rentalEnd,
-      rentAmount,
-      additionalTerms,
-      signatures,
-    } = data
-
-    // 5. Рисуем текст полей
-    page.drawText(`Владелец: ${owner?.fullName ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-    page.drawText(`Телефон владельца: ${owner?.phone ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-
-    page.drawText(`Арендатор: ${renter?.fullName ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-    page.drawText(`Телефон арендатора: ${renter?.phone ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-
-    page.drawText(`Адрес объекта: ${address ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-    page.drawText(`Срок аренды: ${rentalStart ?? ''} – ${rentalEnd ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-    page.drawText(`Арендная плата: ${rentAmount ?? ''} грн.`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight
-    page.drawText(`Дополнительные условия: ${additionalTerms ?? ''}`, {
-      x: 50,
-      y: yPos,
-      size: 12,
-      font: openSans,
-    })
-    yPos -= lineHeight * 2
-
-    page.drawText('Подписи:', {
-      x: 50,
-      y: yPos,
-      size: 14,
-      font: openSans,
-    })
-    yPos -= lineHeight
-
-    // 6. Встраиваем подписи, если они есть
-    if (signatures?.owner) {
-      page.drawText('Владелец:', { x: 50, y: yPos, size: 12, font: openSans })
-      yPos -= lineHeight
-      const ownerImg = await pdfDoc.embedPng(signatures.owner)
-      page.drawImage(ownerImg, {
-        x: 50,
-        y: yPos - 50,
-        width: 150,
-        height: 50,
-      })
-      yPos -= 60
-    }
-
-    if (signatures?.renter) {
-      page.drawText('Арендатор:', { x: 50, y: yPos, size: 12, font: openSans })
-      yPos -= lineHeight
-      const renterImg = await pdfDoc.embedPng(signatures.renter)
-      page.drawImage(renterImg, {
-        x: 50,
-        y: yPos - 50,
-        width: 150,
-        height: 50,
-      })
-      yPos -= 60
-    }
-
-    // 7. Сохраняем в Storage
-    const pdfBytes = await pdfDoc.save()
-    const pdfReference = storageRef(storage, `agreements/${agreementId}.pdf`)
-    await uploadBytes(pdfReference, pdfBytes, {
-      contentType: 'application/pdf',
-    })
-    const pdfUrl = await getDownloadURL(pdfReference)
-
-    // 8. Обновляем Firestore и переводим статус в signed
-    await updateDoc(doc(db, 'contracts', agreementId), {
-      status: 'signed' as const,
-      pdfUrl,
-      lastUpdated: serverTimestamp(),
-    })
-
-    console.log(t('AgreementForm:pdfCreatedAndSaved'), pdfUrl)
-    return pdfUrl
-  } catch (error: unknown) {
-    console.error(t('AgreementForm:errorGeneratingPDF'), error)
-    throw error
-  }
-}
 
  // Если нужно дизейблить форму, задаём булевый флаг
  const formDisabled: boolean = isFrozen

@@ -1,0 +1,62 @@
+{
+  "title": "Residential Lease Agreement",
+
+  "section": {
+    "preamble": "Preamble",
+    "parties": "Parties to the Agreement",
+    "definitions": "Definitions",
+    "subject": "Subject of the Agreement",
+    "payments": "Payments and Settlements",
+    "rights": "Rights of the Parties",
+    "obligations": "Obligations of the Parties",
+    "liability": "Liability of the Parties",
+    "forceMajeure": "Force Majeure",
+    "termination": "Termination of the Agreement",
+    "misc": "Miscellaneous",
+    "signatures": "Signatures"
+  },
+
+  "preambleText": "This lease agreement is concluded between {{ownerName}} (hereinafter referred to as the \"Landlord\") and {{renterName}} (hereinafter referred to as the \"Tenant\"). The Landlord grants the Tenant the right to use the leased premises under the terms set out below.",
+
+  "def": {
+    "leaseObject": "\"Leased Premises\" means the real property located at: {{address}}.",
+    "parties": "\"Parties\" means, collectively, the Landlord and the Tenant who enter into this Agreement.",
+    "term": "\"Lease Term\" means the period of use of the premises specified in the section on term and payments."
+  },
+
+  "subjectText": "The Landlord grants to the Tenant, and the Tenant accepts, the Leased Premises located at {{address}} for temporary use and occupancy in accordance with this Agreement and applicable law.",
+
+  "paymentsText": "The monthly rent is {{amount}}. The lease term runs from {{start}} to {{end}}. All payments are to be made in {{currency}}, in the manner and within the time limits specified in this Agreement.",
+
+  "rights": {
+    "owner1": "The Landlord has the right to receive rent payments on time and in the agreed amount.",
+    "owner2": "The Landlord has the right to inspect the premises upon prior notice to the Tenant and at reasonable times."
+  },
+
+  "obligations": {
+    "renter1": "The Tenant shall treat the Leased Premises with due care and maintain them in good condition.",
+    "renter2": "The Tenant shall pay the rent and any other charges specified in this Agreement in full and on time."
+  },
+
+  "liabilityText": "Each Party is liable for failure to perform or improper performance of its obligations under this Agreement in accordance with its terms and applicable law. Any damage caused through the fault of a Party shall be compensated in full, unless otherwise provided for in this Agreement.",
+
+  "forceMajeureText": "The Parties shall not be liable for partial or total non-performance of their obligations under this Agreement if such non-performance results from force majeure events which the Parties could not reasonably foresee or prevent. The Party affected by such circumstances shall notify the other Party within a reasonable time.",
+
+  "terminationText": "This Agreement may be terminated by mutual consent of the Parties, by either Party in the event of a material breach of this Agreement by the other Party, or in other cases provided for by applicable law. The procedure for notice and the effective date of termination shall be determined by the terms of this Agreement.",
+
+  "miscText": "Any amendments or additions to this Agreement shall be valid only if made in writing and signed by both Parties. In all matters not expressly provided for in this Agreement, the Parties shall be governed by applicable law.",
+
+  "field": {
+    "owner": "Landlord",
+    "ownerPhone": "Landlord's phone",
+    "ownerEmail": "Landlord's email",
+    "renter": "Tenant",
+    "renterPhone": "Tenant's phone",
+    "renterEmail": "Tenant's email"
+  },
+
+  "footer": {
+    "page": "Page {{page}} of {{total}}",
+    "generatedAt": "Generated on: {{date}}"
+  }
+}
