@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
 import type { CommunityTopicFilter } from './CommunityTopicMenu';
 import CommunityHero from './CommunityHero';
 import CommunityTopicMenu from './CommunityTopicMenu';

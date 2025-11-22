@@ -8,7 +8,7 @@ import { db } from '@/app/firebase/firebase';
 import { cn } from '@/lib/utils';
 import { useUserTypeWithProfile } from '@/hooks/useUserType';
 import type { CommunityTopic } from '@/hooks/useCommunityPosts';
-import { Image as ImageIcon, ChevronDown } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 import type { CommunityTopicFilter } from './CommunityTopicMenu';
 
 interface CommunityPostComposerProps {
