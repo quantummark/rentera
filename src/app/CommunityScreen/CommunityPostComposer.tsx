@@ -176,8 +176,8 @@ export default function CommunityPostComposer({
   return (
     <section
       className={cn(
-        'w-full rounded-2xl md:rounded-3xl bg-card/90 dark:bg-slate-900/80',
-        'border border-slate-100/80 dark:border-slate-800/80',
+        'w-full rounded-2xl md:rounded-3xl bg-card/90',
+        'border border-slate-100/80 dark:border-slate-100/80',
         'shadow-md px-4 sm:px-5 md:px-6 py-4 sm:py-5 md:py-6',
         className,
       )}
@@ -193,8 +193,8 @@ export default function CommunityPostComposer({
             <div
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs sm:text-sm',
-                'bg-white/80 dark:bg-slate-900/80 text-slate-800 dark:text-slate-100',
-                'border-slate-200/80 dark:border-slate-700/80',
+                'bg-background/60 dark:bg-background-dark text-muted-foreground dark:text-muted-foreground',
+                'border-slate-200/80 dark:border-slate-200/80',
                 canSelectTopicInline ? 'cursor-pointer' : 'cursor-default',
               )}
             >
@@ -239,7 +239,7 @@ export default function CommunityPostComposer({
               value={city}
               onChange={event => setCity(event.target.value)}
               placeholder={t('community:composer.cityPlaceholder')}
-              className="w-full sm:w-44 rounded-full border border-slate-200/80 dark:border-slate-700/80 bg-card/90 dark:bg-slate-900/80 px-3 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+              className="w-full sm:w-44 rounded-full border border-slate-200/80 dark:border-slate-200/80 bg-background/60 dark:bg-background-dark px-3 py-1.5 text-xs sm:text-sm text-foreground placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
             />
           </div>
         </div>
@@ -251,7 +251,7 @@ export default function CommunityPostComposer({
             onChange={event => setContent(event.target.value)}
             rows={3}
             maxLength={3000}
-            className="w-full resize-none rounded-2xl border border-slate-200/80 dark:border-slate-700/80 bg-card/90 dark:bg-slate-900/80 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-foreground placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
+            className="w-full resize-none rounded-2xl border border-slate-200/80 dark:border-slate-200/80 bg-background/60 dark:bg-background-dark px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-foreground placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1"
             placeholder={t('community:composer.placeholder')}
           />
         </div>
@@ -262,7 +262,7 @@ export default function CommunityPostComposer({
             <button
               type="button"
               disabled
-              className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-900/80 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground cursor-not-allowed opacity-60"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 dark:border-slate-200/80 bg-background/60 dark:bg-background-dark px-3 py-1.5 text-xs sm:text-sm text-muted-foreground cursor-not-allowed opacity-60"
             >
               <ImageIcon className="h-4 w-4" aria-hidden="true" />
               <span>{t('community:composer.addPhotoDisabled')}</span>
@@ -283,7 +283,7 @@ export default function CommunityPostComposer({
                 'inline-flex items-center justify-center rounded-full px-5 sm:px-6 py-2 text-sm sm:text-base font-semibold transition-transform shadow-md',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-500',
                 isSubmitDisabled
-                  ? 'bg-slate-300 text-slate-600 dark:bg-slate-800 dark:text-slate-400 cursor-not-allowed'
+                  ? 'bg-slate-300 text-slate-600 dark:bg-slate-300 dark:text-slate-600 cursor-not-allowed'
                   : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:scale-[1.03] hover:shadow-lg',
               )}
             >

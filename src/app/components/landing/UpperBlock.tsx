@@ -64,17 +64,17 @@ export default function UpperBlock() {
       {/* ===== Плавающие бейджи ===== */}
       <div className="pointer-events-none absolute inset-0 overflow-visible">
         <div className="absolute left-6 sm:left-8 top-12 sm:top-16 animate-float delay-100">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-slate-800 dark:text-slate-100 ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
             {t('landing:verifiedOwners')} ✅
           </span>
         </div>
         <div className="absolute right-6 sm:right-8 top-28 sm:top-32 animate-float delay-300">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-slate-800 dark:text-slate-100 ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
             {t('landing:verifiedListings')} 📌
           </span>
         </div>
         <div className="absolute left-8 bottom-16 animate-float delay-500">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-slate-800 dark:text-slate-100 ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-base sm:text-sm font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/40 dark:ring-white/10 shadow-sm select-none">
             {t('landing:support')} 🛟
           </span>
         </div>

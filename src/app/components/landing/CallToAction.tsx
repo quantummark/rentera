@@ -81,13 +81,13 @@ export default function CallToAction() {
 
           {/* Бейджи */}
           <div className="mb-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-base">
-            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-slate-800 dark:text-slate-100 ring-1 ring-black/10 dark:ring-white/10">
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-muted-foreground dark:text-muted-foreground ring-1 ring-black/10 dark:ring-white/10">
               {t('cta:zeroPercentMiddlemen')} ✅
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-slate-800 dark:text-slate-100 ring-1 ring-black/10 dark:ring-white/10">
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-muted-foreground dark:text-muted-foreground ring-1 ring-black/10 dark:ring-white/10">
               {t('cta:onlineContract')} ✍️
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-slate-800 dark:text-slate-100 ring-1 ring-black/10 dark:ring-white/10">
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 bg-white/70 dark:bg-white/10 text-muted-foreground dark:text-muted-foreground ring-1 ring-black/10 dark:ring-white/10">
               {t('cta:support')} 🛟
             </span>
           </div>

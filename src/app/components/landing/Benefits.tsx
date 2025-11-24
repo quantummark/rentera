@@ -13,7 +13,7 @@ export default function Benefits() {
       description: t('benefits:directCommunication'),
       gradientFrom: 'from-green-400/30',
       gradientTo: 'to-green-600/30',
-      iconColor: 'text-green-600 dark:text-green-300',
+      iconColor: 'text-green-600 dark:text-green-600',
     },
     {
       icon: ShieldCheck,
@@ -21,7 +21,7 @@ export default function Benefits() {
       description: t('benefits:insuranceDescription'),
       gradientFrom: 'from-blue-400/30',
       gradientTo: 'to-blue-600/30',
-      iconColor: 'text-blue-600 dark:text-blue-300',
+      iconColor: 'text-blue-600 dark:text-blue-600',
     },
     {
       icon: CreditCard,
@@ -29,7 +29,7 @@ export default function Benefits() {
       description: t('benefits:paymentDescription'),
       gradientFrom: 'from-yellow-400/30',
       gradientTo: 'to-yellow-600/30',
-      iconColor: 'text-yellow-600 dark:text-yellow-300',
+      iconColor: 'text-yellow-600 dark:text-yellow-600',
     },
     {
       icon: Bitcoin,
@@ -37,7 +37,7 @@ export default function Benefits() {
       description: t('benefits:modernPlatformDescription'),
       gradientFrom: 'from-purple-400/30',
       gradientTo: 'to-purple-600/30',
-      iconColor: 'text-purple-600 dark:text-purple-300',
+      iconColor: 'text-purple-600 dark:text-purple-600',
     },
   ];
 

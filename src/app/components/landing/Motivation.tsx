@@ -13,7 +13,7 @@ export default function Motivation() {
       description: t('motivation:belief1Desc'),
       gradientFrom: 'from-blue-400/30',
       gradientTo: 'to-blue-600/30',
-      iconColor: 'text-blue-600 dark:text-blue-300',
+      iconColor: 'text-blue-600 dark:text-blue-600',
     },
     {
       icon: Globe,
@@ -21,7 +21,7 @@ export default function Motivation() {
       description: t('motivation:belief2Desc'),
       gradientFrom: 'from-green-400/30',
       gradientTo: 'to-green-600/30',
-      iconColor: 'text-green-600 dark:text-green-300',
+      iconColor: 'text-green-600 dark:text-green-600',
     },
     {
       icon: Store,
@@ -29,7 +29,7 @@ export default function Motivation() {
       description: t('motivation:belief3Desc'),
       gradientFrom: 'from-orange-400/30',
       gradientTo: 'to-orange-600/30',
-      iconColor: 'text-orange-600 dark:text-orange-300',
+      iconColor: 'text-orange-600 dark:text-orange-600',
     },
   ];
 

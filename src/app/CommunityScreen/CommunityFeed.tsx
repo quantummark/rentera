@@ -85,8 +85,8 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
   return (
     <article
       className={cn(
-        'w-full rounded-2xl md:rounded-3xl rounded-2xl bg-background/60 dark:bg-slate-900/60',
-        'border border-slate-100/80 dark:border-slate-800/80',
+        'w-full rounded-2xl md:rounded-3xl rounded-2xl bg-background/60 dark:bg-background-dark',
+        'border border-slate-100/80 dark:border-slate-100/80',
         'shadow-sm hover:shadow-lg transition-shadow',
         'px-4 sm:px-5 md:px-6 py-3.5 sm:py-4 md:py-5',
       )}
@@ -111,7 +111,7 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
             <span className="max-w-[60%] truncate text-sm sm:text-base font-semibold text-foreground">
               {post.authorName}
             </span>
-            <span className="rounded-full bg-slate-100/80 dark:bg-slate-800/80 px-2 py-0.5 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-300">
+            <span className="rounded-full bg-background/60 dark:bg-background-dark px-2 py-0.5 text-[10px] sm:text-xs font-medium uppercase tracking-wide text-slate-600 dark:text-slate-600">
               {post.authorRole === 'owner'
                 ? t('feed.badges.owner')
                 : t('feed.badges.renter')}
@@ -126,8 +126,8 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
 
           <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
             <span>{createdAtLabel}</span>
-            <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-            <span className="inline-flex items-center gap-1 rounded-full bg-orange-50/80 dark:bg-orange-900/30 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-orange-700 dark:text-orange-300">
+            <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-300" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-orange-50/80 dark:bg-orange-300/30 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-orange-700 dark:text-orange-700">
               {topicLabel}
             </span>
           </div>
@@ -136,12 +136,12 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
 
       {/* body */}
       <div className="mt-3 space-y-3">
-        <p className="text-sm sm:text-base text-foreground dark:text-slate-50 leading-relaxed whitespace-pre-line">
+        <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground leading-relaxed whitespace-pre-line">
           {post.content}
         </p>
 
         {firstImage && (
-          <div className="overflow-hidden rounded-xl border border-slate-100/80 dark:border-slate-800/80 bg-slate-100/80 dark:bg-slate-900/80">
+          <div className="overflow-hidden rounded-xl border border-slate-100/80 dark:border-slate-100/80 bg-slate-100/80 dark:bg-background-dark">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={firstImage}
@@ -166,7 +166,7 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
         </div>
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 dark:border-slate-700/80 bg-transparent px-3 py-1 text-xs sm:text-sm font-medium text-muted-foreground hover:bg-slate-50/80 dark:hover:bg-slate-800/80 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-full border border-slate-200/80 dark:border-slate-200/80 bg-transparent px-3 py-1 text-xs sm:text-sm font-medium text-muted-foreground hover:bg-slate-50/80 dark:hover:bg-slate-800/80 transition-colors"
         >
           <Bookmark className="h-4 w-4" aria-hidden="true" />
           <span>{t('feed.save')}</span>

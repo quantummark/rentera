@@ -91,17 +91,17 @@ export default function CommunityHero({ onCreatePostClick, stats, className }: C
       {/* ===== Плавающие бейджи ===== */}
       <div className="pointer-events-none absolute inset-0 overflow-visible">
         <div className="absolute left-6 sm:left-8 top-10 sm:top-14 animate-float delay-100">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
             {t('hero.badgeRealStories')} 📖
           </span>
         </div>
         <div className="absolute right-6 sm:right-10 top-24 sm:top-32 animate-float delay-300">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
             {t('hero.badgeTrustedCommunity')} 🛡️
           </span>
         </div>
         <div className="absolute left-10 bottom-14 sm:bottom-16 animate-float delay-500">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-slate-900 dark:text-slate-100 ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/65 dark:bg-white/10 backdrop-blur px-3 py-1.5 text-sm sm:text-base font-medium text-muted-foreground dark:text-muted-foreground ring-1 ring-white/50 dark:ring-white/15 shadow-sm select-none">
             {t('hero.badgeOwnersRenters')} 🤝
           </span>
         </div>
@@ -203,11 +203,11 @@ interface StatCardProps {
 
 function StatCard({ label, value }: StatCardProps) {
   return (
-    <div className="rounded-2xl bg-white/5 dark:bg-slate-900/80 backdrop-blur shadow-md border border-white/60 dark:border-white/10 px-4 py-3 flex flex-col gap-1 text-center">
+    <div className="rounded-2xl bg-white/5 dark:bg-background-dark backdrop-blur shadow-md border border-white/60 dark:border-white/10 px-4 py-3 flex flex-col gap-1 text-center">
       <span className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground">
         {label}
       </span>
-      <span className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-50">
+      <span className="text-lg sm:text-xl font-semibold text-muted-foreground dark:text-muted-foreground">
         {value}
       </span>
     </div>
