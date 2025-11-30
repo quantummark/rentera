@@ -7,6 +7,12 @@ import { cn } from '@/lib/utils';
 import { useCommunityPosts, type CommunityTopic, type CommunityPostWithId } from '@/hooks/useCommunityPosts';
 import type { CommunityTopicFilter } from './CommunityTopicMenu';
 import { MessageCircle, Heart, Bookmark, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+interface CommunityPostCardProps {
+  post: CommunityPostWithId;
+}
+
 
 interface CommunityFeedProps {
   activeTopic: CommunityTopicFilter;
@@ -76,19 +82,40 @@ interface CommunityPostCardProps {
 
 function CommunityPostCard({ post }: CommunityPostCardProps) {
   const { t, i18n } = useTranslation('community');
+  const router = useRouter();
 
-  const createdAtLabel = useMemo(() => formatDate(post.createdAt, i18n.language), [post.createdAt, i18n.language]);
-  const topicLabel = useMemo(() => topicToLabel(post.topic, t), [post.topic, t]);
+  const createdAtLabel = useMemo(
+    () => formatDate(post.createdAt, i18n.language),
+    [post.createdAt, i18n.language],
+  );
+  const topicLabel = useMemo(
+    () => topicToLabel(post.topic, t),
+    [post.topic, t],
+  );
 
   const firstImage = post.images && post.images.length > 0 ? post.images[0] : null;
 
+  const handleOpenPost = () => {
+    router.push(`/community/post/${post.id}`);
+  };
+
   return (
     <article
+      role="button"
+      tabIndex={0}
+      onClick={handleOpenPost}
+      onKeyDown={event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          handleOpenPost();
+        }
+      }}
       className={cn(
-        'w-full rounded-2xl md:rounded-3xl rounded-2xl bg-background/60 dark:bg-background-dark',
+        'w-full rounded-2xl md:rounded-3xl bg-background/60 dark:bg-background-dark',
         'border border-slate-100/80 dark:border-slate-100/80',
         'shadow-sm hover:shadow-lg transition-shadow',
         'px-4 sm:px-5 md:px-6 py-3.5 sm:py-4 md:py-5',
+        'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       )}
     >
       {/* header */}

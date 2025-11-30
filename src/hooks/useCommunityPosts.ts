@@ -102,16 +102,15 @@ export function useCommunityPosts(
     const unsubscribe = onSnapshot(
       q,
       snapshot => {
-        const nextPosts: CommunityPostWithId[] = snapshot.docs.map(docSnap => {
-          const data = docSnap.data() as CommunityPost;
+        const rawPosts: CommunityPostWithId[] = snapshot.docs.map(docSnap => {
+  const data = docSnap.data() as CommunityPost;
+  return {
+    id: docSnap.id,
+    ...data,
+  };
+});
 
-          return {
-            id: docSnap.id,
-            ...data,
-          };
-        });
-
-        setPosts(nextPosts);
+        setPosts(rawPosts);
         setLoading(false);
       },
       (err: FirestoreError) => {
