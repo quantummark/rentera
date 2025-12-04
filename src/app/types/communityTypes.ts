@@ -26,6 +26,7 @@ export interface CommunityPost {
   city?: string; // місто/район, до якого відноситься пост
   content: string;
   images: string[]; // масив URL’ів (може бути [])
+  videos: string[]; // масив URL’ів (може бути [])
 
   // счётчики
   likesCount: number;

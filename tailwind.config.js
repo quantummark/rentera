@@ -1,4 +1,4 @@
-import { fontFamily } from 'tailwindcss/defaultTheme'
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 
 export default {
@@ -16,8 +16,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', ...fontFamily.sans],
-        mono: ['var(--font-geist-mono)', ...fontFamily.mono],
+        sans: ['Inter', ...(defaultTheme.fontFamily?.sans ?? [])],
       },
       colors: {
         border: 'var(--border)',

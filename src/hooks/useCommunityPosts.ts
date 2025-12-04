@@ -38,6 +38,7 @@ export interface CommunityPost {
   content: string;
 
   images?: string[];
+  videos?: string[];
 
   likesCount: number;
   commentsCount: number;

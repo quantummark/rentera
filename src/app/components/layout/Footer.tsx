@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <footer
       className={cn(
-        'mt-20 px-6 md:px-12 py-10 text-sm transition-colors rounded-t-2xl',
+        'mt-20 px-6 md:px-12 py-10 text-sm border-t border-border shadow-sm transition-colors rounded-t-2xl',
         resolvedTheme === 'dark' ? 'bg-zinc-950 text-muted' : 'bg-orange-100 text-muted-foreground'
       )}
     >

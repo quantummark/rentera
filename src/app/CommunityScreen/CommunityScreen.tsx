@@ -6,10 +6,12 @@ import CommunityHero from './CommunityHero';
 import CommunityTopicMenu from './CommunityTopicMenu';
 import CommunityPostComposer from './CommunityPostComposer';
 import CommunityFeed from './CommunityFeed';
+import { useCommunityStats } from '@/hooks/useCommunityStats';
 
 export default function CommunityScreen() {
   const [activeTopic, setActiveTopic] = useState<CommunityTopicFilter>('all');
   const composerRef = useRef<HTMLDivElement | null>(null);
+  const { stats, loading } = useCommunityStats();
 
   const handleScrollToComposer = () => {
     if (composerRef.current) {
@@ -25,7 +27,17 @@ export default function CommunityScreen() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-1 sm:px-6 md:px-8 py-3 sm:py-6 md:py-8">
         
         {/* Hero-блок */}
-        <CommunityHero onCreatePostClick={handleScrollToComposer} />
+        <CommunityHero
+  onCreatePostClick={handleScrollToComposer}
+  stats={
+    stats
+      ? {
+          membersCount: stats.totalUsers,
+          postsCount: stats.postsCount,
+        }
+      : undefined
+  }
+/>
 
         {/* Меню + Composer + Лента */}
         <section className="mt-4 flex w-full flex-col gap-4 sm:gap-6">
