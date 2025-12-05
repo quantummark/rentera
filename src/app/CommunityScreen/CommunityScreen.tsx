@@ -25,37 +25,44 @@ export default function CommunityScreen() {
   return (
     <main className="min-h-screen w-full">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-1 sm:px-6 md:px-8 py-3 sm:py-6 md:py-8">
-        
-        {/* Hero-блок */}
+        {/* Hero-блок (широкий как и был) */}
         <CommunityHero
-  onCreatePostClick={handleScrollToComposer}
-  stats={
-    stats
-      ? {
-          membersCount: stats.totalUsers,
-          postsCount: stats.postsCount,
-        }
-      : undefined
-  }
-/>
+          onCreatePostClick={handleScrollToComposer}
+          stats={
+            stats
+              ? {
+                  membersCount: stats.totalUsers,
+                  postsCount: stats.postsCount,
+                }
+              : undefined
+          }
+        />
 
         {/* Меню + Composer + Лента */}
         <section className="mt-4 flex w-full flex-col gap-4 sm:gap-6">
-          
+          {/* Топик-меню тоже широкое, как раньше */}
           <CommunityTopicMenu
             activeTopic={activeTopic}
             onTopicChange={setActiveTopic}
           />
 
-          {/* Composer */}
-          <div ref={composerRef}>
-            <CommunityPostComposer
-              activeTopic={activeTopic}
-              onPostCreated={() => {}}
-            />
-          </div>
+          {/* Центральная колонка как в Twitter:
+              - на мобилке: w-full
+              - на десктопе: центрированная узкая колонка */}
+          <div className="flex w-full justify-center">
+            <div className="w-full md:max-w-2xl lg:max-w-3xl space-y-4 sm:space-y-6">
+              {/* Composer */}
+              <div ref={composerRef}>
+                <CommunityPostComposer
+                  activeTopic={activeTopic}
+                  onPostCreated={() => {}}
+                />
+              </div>
 
-          <CommunityFeed activeTopic={activeTopic} />
+              {/* Лента постов */}
+              <CommunityFeed activeTopic={activeTopic} />
+            </div>
+          </div>
         </section>
       </div>
     </main>

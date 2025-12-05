@@ -168,14 +168,13 @@ function CommunityPostCard({ post }: CommunityPostCardProps) {
         </p>
 
         {firstImage && (
-          <div className="overflow-hidden rounded-xl border border-slate-100/80 dark:border-slate-100/80 bg-slate-100/80 dark:bg-background-dark">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={firstImage}
-              alt={t('feed.imageAlt')}
-              className="h-48 w-full object-cover sm:h-56 md:h-64"
-            />
-          </div>
+          <div className="relative w-full overflow-hidden rounded-xl border border-slate-100/80 dark:border-slate-100/80 bg-slate-100/80 dark:bg-background-dark">
+  <img
+    src={firstImage}
+    alt={t('feed.imageAlt')}
+    className="w-full h-auto max-h-[600px] object-cover"
+  />
+</div>
         )}
       </div>
 
