@@ -9,6 +9,8 @@ import {
   Share2,
   Bookmark,
   MapPin,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import {
   doc,
@@ -31,8 +33,11 @@ import {
   Truck,
   Wallet,
   Smile,
+  X,
   MapPin as TopicPin,
 } from 'lucide-react';
+import Image from 'next/image';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface PostFullViewProps {
   postId: string;
@@ -57,6 +62,32 @@ export default function PostFullView({
 
   const [copying, setCopying] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // 🔥 новый стейт для просмотра картинок
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const handleOpenImage = (index: number) => {
+    if (!post?.images || post.images.length === 0) return;
+    setActiveImageIndex(index);
+    setImageViewerOpen(true);
+  };
+
+  const handleCloseImage = () => {
+    setImageViewerOpen(false);
+  };
+
+  const handleNextImage = () => {
+    if (!post?.images || post.images.length === 0) return;
+    setActiveImageIndex((prev) => (prev + 1) % post.images.length);
+  };
+
+  const handlePrevImage = () => {
+    if (!post?.images || post.images.length === 0) return;
+    setActiveImageIndex((prev) =>
+      (prev - 1 + post.images.length) % post.images.length,
+    );
+  };
 
   useEffect(() => {
     if (!postId) return;
@@ -262,38 +293,44 @@ export default function PostFullView({
         </p>
 
         {canShowImages && (
-          <div className="mt-2">
-            {post.images.length === 1 ? (
-              <div className="overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 bg-slate-950/5 dark:bg-slate-950/40">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={post.images[0]}
-                  alt="Post image"
-                  className="h-auto w-full max-h-[420px] object-cover"
-                />
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {post.images.slice(0, 4).map((url, index) => (
-                  <div
-                    key={url}
-                    className={cn(
-                      'overflow-hidden rounded-xl border border-white/30 dark:border-white/10 bg-slate-950/5 dark:bg-slate-950/40',
-                      index === 0 && post.images.length > 2 && 'col-span-2',
-                    )}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={url}
-                      alt={`Post image ${index + 1}`}
-                      className="h-40 w-full object-cover sm:h-48 md:h-56"
-                    />
-                  </div>
-                ))}
-              </div>
+  <div className="mt-2">
+    {post.images.length === 1 ? (
+      <button
+        type="button"
+        onClick={() => handleOpenImage(0)}
+        className="block w-full overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 bg-slate-950/5 dark:bg-slate-950/40 cursor-zoom-in"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={post.images[0]}
+          alt="Post image"
+          className="h-auto w-full max-h-[420px] object-cover"
+        />
+      </button>
+    ) : (
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        {post.images.slice(0, 4).map((url, index) => (
+          <button
+            key={url}
+            type="button"
+            onClick={() => handleOpenImage(index)}
+            className={cn(
+              'overflow-hidden rounded-xl border border-white/30 dark:border-white/10 bg-slate-950/5 dark:bg-slate-950/40 cursor-zoom-in',
+              index === 0 && post.images.length > 2 && 'col-span-2',
             )}
-          </div>
-        )}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={url}
+              alt={`Post image ${index + 1}`}
+              className="h-40 w-full object-cover sm:h-48 md:h-56"
+            />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
       </section>
 
       {/* Action bar */}
@@ -382,6 +419,50 @@ export default function PostFullView({
         className="mt-2"
         initialCount={post.commentsCount}
       />
+      {/* 🔥 Полноэкранный просмотр изображений */}
+      {canShowImages && (
+        <Dialog open={imageViewerOpen} onOpenChange={setImageViewerOpen}>
+          <DialogContent className="max-w-screen-xl w-full h-[90vh] p-0 bg-black text-white">
+            <div className="relative w-full h-full flex items-center justify-center">
+              <Image
+                src={post.images[activeImageIndex]}
+                alt={`Post image ${activeImageIndex + 1}`}
+                fill
+                className="object-contain"
+              />
+
+              {/* Кнопка закрытия (дополнительно к встроенной в DialogContent) */}
+              <button
+                type="button"
+                onClick={handleCloseImage}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/70 rounded-full"
+              >
+                <X className="h-6 w-6" />
+              </button>
+
+              {/* Стрелки переключения */}
+              {post.images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 rounded-full"
+                  >
+                    <ChevronLeft className="h-7 w-7" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-black/70 rounded-full"
+                  >
+                    <ChevronRight className="h-7 w-7" />
+                  </button>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </article>
   );
 }

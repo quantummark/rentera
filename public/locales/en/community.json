@@ -1,0 +1,94 @@
+{
+  "hero": {
+    "title": "Renterya Community",
+    "subtitle": "A community where it’s easy to find a roommate, share personal experience, and get advice on renting housing.",
+    "ctaCreatePost": "Create post",
+    "ctaHint": "Create your first post. 🙂",
+    "badgeRealStories": "Real rental stories",
+    "badgeTrustedCommunity": "Trusted community",
+    "badgeOwnersRenters": "Owners and renters together",
+    "stats": {
+      "members": "Members",
+      "posts": "Posts",
+      "trustScore": "Trust score"
+    }
+  },
+
+  "topics": {
+    "ariaLabel": "Community topics",
+    "title": "Topics",
+    "subtitle": "Filter discussions by categories",
+    "all": "All topics",
+    "experience": "Renting & experience",
+    "roommates": "Roommates / co-living",
+    "household": "Household & repairs",
+    "moving": "Moving & relocation",
+    "finance": "Finance & insurance",
+    "fun": "Funny stories",
+    "recommendations": "Areas & recommendations"
+  },
+
+  "composer": {
+    "topicLabel": "Topic",
+    "topicPlaceholder": "Select a topic",
+    "topicSelectPlaceholder": "Choose a topic",
+    "cityLabel": "City / district",
+    "cityPlaceholder": "Optional",
+    "placeholder": "Share your experience, ask a question, or tell a story about renting…",
+    "addPhotoDisabled": "Add media (photo/video)",
+    "hint": "Be polite and keep discussions focused on housing and renting topics.",
+    "postButton": "Publish",
+    "posting": "Publishing…",
+    "loginToPost": "Log in to publish",
+    "video": "Video",
+    "removeMedia": "Remove media",
+    "imageAlt": "Selected image",
+    "errors.generic": "An error occurred while adding media. Please try again.",
+    "errors.fileTooLarge": "File \"{{fileName}}\" is too large. Maximum {{maxSize}} MB.",
+    "errors.maxMediaFiles": "Maximum {{maxFiles}} files per post.",
+    "errors": {
+      "emptyContent": "Please write something before publishing.",
+      "noTopic": "Please choose a topic so others can easily find your post.",
+      "generic": "An error occurred while creating the post. Please try again."
+    }
+  },
+
+  "feed": {
+    "emptyAll": "There are no posts yet. Be the first to share your experience 🙌",
+    "emptyTopic": "There are no discussions in this topic yet. Create the first post and start the conversation 🙌",
+    "errorGeneric": "Failed to load the feed. Please refresh the page.",
+    "save": "Save",
+    "imageAlt": "Image from post",
+    "badges": {
+      "owner": "Owner",
+      "renter": "Renter"
+    }
+  },
+
+  "comments": {
+    "title": "Comments",
+    "count": "{{count}} comments",
+    "error": "Failed to load comments. Please refresh the page.",
+    "placeholder": "Write a comment about your rental experience, a question, or an opinion…",
+    "replyPlaceholder": "Your reply…",
+    "send": "Send",
+    "sending": "Sending…",
+    "loginPrompt": "To leave a comment, please log in to your account.",
+    "loginButton": "Log in",
+    "empty": "No comments yet. Be the first to start the discussion ✨",
+    "reply": "Reply",
+    "cancel": "Cancel",
+    "you": "You"
+  },
+
+  "post": {
+    "error": "Failed to load the post.",
+    "notFound": "Post not found.",
+    "share": "Share",
+    "save": "Save",
+    "copied": "Link copied",
+    "stats": "{{likes}} likes · {{comments}} comments",
+    "backToCommunity": "Back to community",
+    "back": "Back"
+  }
+}
