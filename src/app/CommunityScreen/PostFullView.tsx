@@ -304,7 +304,7 @@ export default function PostFullView({
         <img
           src={post.images[0]}
           alt="Post image"
-          className="h-auto w-full max-h-[420px] object-cover"
+          className="aspect-square w-full object-cover"
         />
       </button>
     ) : (
