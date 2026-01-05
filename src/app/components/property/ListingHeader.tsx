@@ -316,9 +316,10 @@ export default function ListingHeader({
         {/* Кнопки действий */}
 <div className="pt-4 py-4 flex flex-col gap-2">
   {/* ✅ Кнопка аренды возвращена */}
-  <RentRequestButton
+  <RentRequestButton 
     listingId={listing.listingId}
     ownerId={listing.ownerId}
+    listingTitle={listing.title || ''}
   />
 
   {/* Кнопка «написати власнику» — secondary CTA */}
