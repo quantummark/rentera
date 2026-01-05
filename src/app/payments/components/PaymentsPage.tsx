@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { FirestoreError } from 'firebase/firestore';
 
@@ -15,27 +14,25 @@ import BaseEmptyState from './BaseEmptyState';
 type UserRole = 'owner' | 'renter';
 type PageMode = 'contract' | 'dashboard';
 
+type PaymentsPageProps =
+  | { mode: 'dashboard'; contractId?: never; className?: string }
+  | { mode: 'contract'; contractId: string; className?: string };
+
 function safeString(value: string | null | undefined): string {
   return (value ?? '').trim();
 }
 
-export default function PaymentsPage() {
+export default function PaymentsPage(props: PaymentsPageProps) {
   const { t } = useTranslation(['payments', 'common']);
-
-  const searchParams = useSearchParams();
-  const contractId = useMemo(() => safeString(searchParams.get('contractId')), [searchParams]);
 
   const [userType, userProfile, userLoading] = useUserTypeWithProfile();
 
   const uid = userProfile?.uid ?? '';
   const role = (userType === 'owner' || userType === 'renter' ? userType : null) as UserRole | null;
 
-  const pageMode: PageMode = contractId ? 'contract' : 'dashboard';
+  const pageMode: PageMode = props.mode;
+  const contractId = pageMode === 'contract' ? safeString(props.contractId) : '';
 
-  // Один вызов useRentalPayments — чтобы:
-  // 1) не нарушать правила хуков
-  // 2) уже сейчас показывать реальные данные
-  // 3) дальше можно будет передавать payments вниз (или оставить внутри view-компонентов)
   const paymentsQuery = useMemo(() => {
     if (!role || !uid) {
       // режим "нет данных" — хук внутри сам корректно завершится
@@ -49,7 +46,7 @@ export default function PaymentsPage() {
       };
     }
 
-    if (contractId) {
+    if (pageMode === 'contract' && contractId) {
       return {
         mode: 'contract' as const,
         contractId,
@@ -73,8 +70,9 @@ export default function PaymentsPage() {
       limit: 50,
       orderByField: 'dueDate' as const,
     };
-  }, [role, uid, contractId]);
+  }, [role, uid, pageMode, contractId]);
 
+  // TODO: лучше типизировать useRentalPayments, но пока оставим минимум правок
   const { payments, loading: paymentsLoading, error: paymentsError } = useRentalPayments(paymentsQuery as any);
 
   const isAuthReady = !userLoading;
@@ -92,9 +90,17 @@ export default function PaymentsPage() {
 
   return (
     <main className="min-h-screen w-full">
-      <div className={cn('mx-auto w-full max-w-6xl px-3 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8')}>
-        {/* Header всегда сверху */}
-        <PaymentsHeader mode={pageMode} role={role ?? 'renter'} contractId={contractId || undefined} />
+      <div
+        className={cn(
+          'mx-auto w-full max-w-6xl px-3 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8',
+          props.className
+        )}
+      >
+        <PaymentsHeader
+          mode={pageMode}
+          role={role ?? 'renter'}
+          contractId={pageMode === 'contract' && contractId ? contractId : undefined}
+        />
 
         {/* Loading пользователя */}
         {userLoading && (
@@ -141,7 +147,7 @@ export default function PaymentsPage() {
           </div>
         )}
 
-        {/* Реальные данные (временно) */}
+        {/* Реальные данные */}
         {isAuthReady &&
           isSignedIn &&
           isRoleReady &&
@@ -156,12 +162,12 @@ export default function PaymentsPage() {
               </div>
 
               <div className="space-y-3">
-                {payments.map(p => (
+                {payments.map((p) => (
                   <article
                     key={p.id}
                     className={cn(
                       'w-full rounded-2xl border border-slate-200/70 bg-white/50 p-4 backdrop-blur',
-                      'dark:border-slate-800/70 dark:bg-background-dark',
+                      'dark:border-slate-800/70 dark:bg-background-dark'
                     )}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -208,7 +214,6 @@ function PaymentsErrorBlock({
   error: FirestoreError;
   fallbackText: string;
 }) {
-  // Firestore часто даёт полезный message — но показываем аккуратно, без "страшных" деталей
   const details = (error?.message || '').slice(0, 220);
 
   return (
@@ -219,10 +224,13 @@ function PaymentsErrorBlock({
   );
 }
 
-function formatDateSafe(value: any): string {
+// Если у тебя value = Firestore Timestamp — отлично, если нет — вернёт ''
+function formatDateSafe(value: unknown): string {
   try {
-    if (!value?.toDate) return '';
-    return value.toDate().toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+    if (!value || typeof value !== 'object') return '';
+    const maybe = value as { toDate?: () => Date };
+    if (typeof maybe.toDate !== 'function') return '';
+    return maybe.toDate().toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
   } catch {
     return '';
   }

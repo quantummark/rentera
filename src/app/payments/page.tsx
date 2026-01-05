@@ -1,5 +1,5 @@
 import PaymentsPage from './components/PaymentsPage';
 
 export default function Page() {
-  return <PaymentsPage />;
+  return <PaymentsPage mode="dashboard" />;
 }
