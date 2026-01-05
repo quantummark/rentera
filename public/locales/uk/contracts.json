@@ -20,6 +20,14 @@
     "paid": "Сплачено",
     "Agreement": "Договір",
     "accept": "Прийняти",
-    "decline": "Відхилити"
+    "decline": "Відхилити",
 
+    "status.signed": "Підписано",
+    "status.active": "Активний",
+    "status.pending": "Очікує",
+    "status.declined": "Відхилено",
+    "status.unknown": "Невідомо",
+    "noImage": "Немає зображення",
+    "paymentStatus": "Оплата:",
+    "notPaid": "Не сплачено"
 }

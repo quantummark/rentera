@@ -49,18 +49,39 @@ export function useContracts() {
         const contract: AgreementType = { id: docSnap.id, ...data };
 
         // Получаем данные объекта
-        if (contract.listingId) {
-          const listingDoc = await getDoc(doc(db, 'listings', contract.listingId));
-          if (listingDoc.exists()) {
-            const listingData = listingDoc.data();
-            contract.title = listingData.title || 'Объект';
-            contract.shortDescription = listingData.shortDescription;
-            contract.listingImageUrl = listingData.imageUrl;
-          }
-        }
+if (contract.listingId) {
+  const listingDoc = await getDoc(doc(db, 'listings', contract.listingId));
+
+  if (listingDoc.exists()) {
+    const listingData = listingDoc.data() as {
+      title?: string;
+      shortDescription?: string;
+      photos?: string[];
+    };
+
+    // ✅ title: сначала то, что уже в contracts, иначе из listing
+    contract.title = contract.title || listingData.title || 'Объект';
+
+    // ✅ shortDescription: не затираем если уже есть
+    contract.shortDescription = contract.shortDescription || listingData.shortDescription;
+
+    // ✅ image: СНАЧАЛА contracts.listingImageUrl, иначе listing.photos[0]
+    const firstPhoto =
+      Array.isArray(listingData.photos) && listingData.photos.length > 0
+        ? listingData.photos[0]
+        : undefined;
+
+    contract.listingImageUrl = contract.listingImageUrl || firstPhoto;
+  }
+}
+
+// ✅ если вообще нет картинки — можно поставить плейсхолдер
+contract.listingImageUrl = contract.listingImageUrl || '/placeholder.png';
 
         // Преобразуем дату запроса в объект Date
-        contract.requestDate = (contract.requestDate as unknown as Timestamp).toDate();
+        const rd = (contract.requestDate as unknown) as Timestamp | Date | undefined;
+        contract.requestDate =
+        rd instanceof Date ? rd : rd?.toDate?.() ?? new Date();
         
 
         // Получаем данные владельца
@@ -115,15 +136,34 @@ const deleteContract = async (id: string) => {
       const contract: AgreementType = { id: docSnap.id, ...data };
 
       // Получаем данные объекта
-      if (contract.listingId) {
-        const listingDoc = await getDoc(doc(db, 'listings', contract.listingId));
-        if (listingDoc.exists()) {
-          const listingData = listingDoc.data();
-          contract.title = listingData.title || 'Объект';
-          contract.shortDescription = listingData.shortDescription;
-          contract.listingImageUrl = listingData.imageUrl;
-        }
-      }
+if (contract.listingId) {
+  const listingDoc = await getDoc(doc(db, 'listings', contract.listingId));
+
+  if (listingDoc.exists()) {
+    const listingData = listingDoc.data() as {
+      title?: string;
+      shortDescription?: string;
+      photos?: string[];
+    };
+
+    // ✅ title: сначала то, что уже в contracts, иначе из listing
+    contract.title = contract.title || listingData.title || 'Объект';
+
+    // ✅ shortDescription: не затираем если уже есть
+    contract.shortDescription = contract.shortDescription || listingData.shortDescription;
+
+    // ✅ image: СНАЧАЛА contracts.listingImageUrl, иначе listing.photos[0]
+    const firstPhoto =
+      Array.isArray(listingData.photos) && listingData.photos.length > 0
+        ? listingData.photos[0]
+        : undefined;
+
+    contract.listingImageUrl = contract.listingImageUrl || firstPhoto;
+  }
+}
+
+// ✅ если вообще нет картинки — можно поставить плейсхолдер
+contract.listingImageUrl = contract.listingImageUrl || '/placeholder.png';
 
       // Данные владельца
       const ownerDoc = await getDoc(doc(db, 'owner', contract.ownerId));

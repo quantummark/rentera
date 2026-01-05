@@ -20,5 +20,14 @@
     "paid": "Paid",
     "Agreement": "Agreement",
     "accept": "Accept",
-    "decline": "Decline"
+    "decline": "Decline",
+
+    "status.signed": "Signed",
+    "status.active": "Active",
+    "status.pending": "Pending",
+    "status.declined": "Declined",
+    "status.unknown": "Unknown",
+    "noImage": "No image",
+    "paymentStatus": "Payment:",
+    "notPaid": "Not paid"
 }

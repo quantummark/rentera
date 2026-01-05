@@ -10,7 +10,6 @@ import React from 'react';
 interface OwnerListingControlsProps {
   listingId: string;
 
-  /** Если задать href — используется <Link asChild>. Если не задан, используем onView/onEdit или дефолтные маршруты */
   viewHref?: string;
   editHref?: string;
 
@@ -18,12 +17,8 @@ interface OwnerListingControlsProps {
   onEdit?: (listingId: string) => void;
   onDelete?: (listingId: string) => void;
 
-  /** Остановить всплытие клика (если вся карточка кликабельна) */
   stopPropagation?: boolean;
-
-  /** Делает кнопки компактнее (для тесных карточек) */
   compact?: boolean;
-
   className?: string;
 }
 
@@ -41,8 +36,8 @@ export default function OwnerListingControls({
   const { t } = useTranslation(['ownerListingControls']);
 
   const sizeClasses = compact
-    ? 'h-8 px-3 text-xs sm:h-9 sm:px-4 sm:text-sm'
-    : 'h-9 px-4 text-sm sm:h-10 sm:px-5 sm:text-sm';
+    ? 'h-9 px-3 text-xs sm:h-10 sm:px-4 sm:text-sm'
+    : 'h-10 px-4 text-sm sm:h-10 sm:px-5 sm:text-sm';
 
   const handle = (cb?: (id: string) => void) => (e: React.MouseEvent) => {
     if (stopPropagation) e.stopPropagation();
@@ -55,19 +50,37 @@ export default function OwnerListingControls({
     if (ok) onDelete?.(listingId);
   };
 
-  // Дефолтные маршруты
   const defaultViewHref = `/listing/${listingId}`;
   const defaultEditHref = `/listing/${listingId}?edit=1`;
 
+  // единый стиль для кнопок: стеклянно-аккуратно, как в твоей карточке
+  const baseBtn =
+    'w-full justify-center gap-2 rounded-xl border backdrop-blur-md shadow-sm active:scale-[0.98] transition';
+
+  const orangeBtn = cn(
+    baseBtn,
+    'border-orange-500/25 text-orange-600 bg-orange-500/10 hover:bg-orange-500/15'
+  );
+
+  const redBtn = cn(
+    baseBtn,
+    'border-red-500/25 text-red-600 bg-red-500/10 hover:bg-red-500/15'
+  );
+
+  // ✅ ВАЖНО: сетка для стабильного размещения
+  // Mobile: 2 колонки (View/Edit), Delete на всю ширину
+  // Desktop: 3 колонки в один ряд
   return (
-    <div className={cn('flex flex-wrap items-center gap-2', className)}>
+    <div
+      className={cn(
+        'grid w-full gap-2',
+        'grid-cols-2 sm:grid-cols-3',
+        className
+      )}
+    >
       {/* View */}
       {viewHref ? (
-        <Button
-          asChild
-          variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
-        >
+        <Button asChild variant="outline" className={cn(orangeBtn, sizeClasses)}>
           <Link
             href={viewHref}
             prefetch={false}
@@ -82,7 +95,7 @@ export default function OwnerListingControls({
         <Button
           type="button"
           variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
+          className={cn(orangeBtn, sizeClasses)}
           onClick={handle(onView)}
           aria-label={t('ownerListingControls:viewAria')}
           title={t('ownerListingControls:view')}
@@ -91,11 +104,7 @@ export default function OwnerListingControls({
           <span className="whitespace-nowrap">{t('ownerListingControls:view')}</span>
         </Button>
       ) : (
-        <Button
-          asChild
-          variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
-        >
+        <Button asChild variant="outline" className={cn(orangeBtn, sizeClasses)}>
           <Link
             href={defaultViewHref}
             prefetch={false}
@@ -110,11 +119,7 @@ export default function OwnerListingControls({
 
       {/* Edit */}
       {editHref ? (
-        <Button
-          asChild
-          variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
-        >
+        <Button asChild variant="outline" className={cn(orangeBtn, sizeClasses)}>
           <Link
             href={editHref}
             prefetch={false}
@@ -129,7 +134,7 @@ export default function OwnerListingControls({
         <Button
           type="button"
           variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
+          className={cn(orangeBtn, sizeClasses)}
           onClick={handle(onEdit)}
           aria-label={t('ownerListingControls:editAria')}
           title={t('ownerListingControls:edit')}
@@ -138,11 +143,7 @@ export default function OwnerListingControls({
           <span className="whitespace-nowrap">{t('ownerListingControls:edit')}</span>
         </Button>
       ) : (
-        <Button
-          asChild
-          variant="outline"
-          className={cn('border-orange-300 text-orange-600 hover:bg-orange-100', sizeClasses)}
-        >
+        <Button asChild variant="outline" className={cn(orangeBtn, sizeClasses)}>
           <Link
             href={defaultEditHref}
             prefetch={false}
@@ -159,7 +160,12 @@ export default function OwnerListingControls({
       <Button
         type="button"
         variant="outline"
-        className={cn('border-red-300 text-red-600 hover:bg-red-100', sizeClasses)}
+        className={cn(
+          redBtn,
+          sizeClasses,
+          // на мобилке — на всю ширину внизу, на sm+ становится обычной колонкой
+          'col-span-2 sm:col-span-1'
+        )}
         onClick={handleDelete}
         aria-label={t('ownerListingControls:deleteAria')}
         title={t('ownerListingControls:delete')}

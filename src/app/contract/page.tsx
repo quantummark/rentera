@@ -6,16 +6,75 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle, XCircle, Clock, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { Timestamp } from 'firebase/firestore';
 
 export default function ContractsLanding() {
   const [userType] = useUserTypeWithProfile();
-  const { contracts, loading } = useContracts();
+  const { contracts, loading, deleteContract } = useContracts();
   const { t } = useTranslation(['contracts', 'common']);
 
-  const { deleteContract } = useContracts(); // предполагаем, что есть такой хук
-const handleDeleteContract = (id: string) => {
-  if (confirm(t('contracts:deleteConfirmation'))) {
-    deleteContract(id);
+  const handleDeleteContract = (id: string) => {
+    if (confirm(t('contracts:deleteConfirmation'))) {
+      deleteContract(id);
+    }
+  };
+
+  const statusUi = (status?: string) => {
+    switch (status) {
+      case 'signed':
+        return {
+          label: t('contracts:status.signed'),
+          icon: <Check className="h-4 w-4" />,
+          chip: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+        };
+      case 'active':
+        return {
+          label: t('contracts:status.active'),
+          icon: <CheckCircle className="h-4 w-4" />,
+          chip: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+        };
+      case 'pending':
+        return {
+          label: t('contracts:status.pending'),
+          icon: <Clock className="h-4 w-4" />,
+          chip: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+        };
+      case 'declined':
+        return {
+          label: t('contracts:status.declined'),
+          icon: <XCircle className="h-4 w-4" />,
+          chip: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
+        };
+      default:
+        return {
+          label: (status ?? '').toUpperCase() || t('contracts:status.unknown'),
+          icon: null,
+          chip: 'bg-slate-500/10 text-slate-700 border-slate-500/20',
+        };
+    }
+  };
+
+  type DateLike = Date | Timestamp | string | number | null | undefined;
+
+  const fmtDate = (value?: DateLike): string => {
+  if (!value) return '-';
+
+  try {
+    let date: Date;
+
+    if (value instanceof Date) {
+      date = value;
+    } else if (value instanceof Timestamp) {
+      date = value.toDate();
+    } else {
+      date = new Date(value);
+    }
+
+    if (isNaN(date.getTime())) return '-';
+
+    return date.toLocaleDateString('uk-UA');
+  } catch {
+    return '-';
   }
 };
 
@@ -27,7 +86,7 @@ const handleDeleteContract = (id: string) => {
         </p>
         <Link href="/login">
           <Button className="px-4 py-2 bg-orange-500 hover:bg-orange-600 transition text-white rounded-lg text-sm font-semibold">
-            {t('common:login')} 
+            {t('common:login')}
           </Button>
         </Link>
       </div>
@@ -43,7 +102,16 @@ const handleDeleteContract = (id: string) => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
+    <div
+  className="
+    min-h-screen
+    max-w-5xl
+    mx-auto
+    px-4 sm:px-6 lg:px-8
+    pt-6 pb-16
+    space-y-6
+  "
+>
       <h1 className="text-2xl font-bold">{t('contracts:myContracts')}</h1>
 
       {contracts.length === 0 ? (
@@ -61,133 +129,210 @@ const handleDeleteContract = (id: string) => {
       ) : (
         <div className="grid gap-4">
           {contracts.map((c: AgreementType) => {
-  const isOwner = userType === 'owner';
-  const isRenter = userType === 'renter';
-  const isPaid = c.isPaid ?? false; // предполагаем, что поле isPaid есть в объекте договора
-  const otherUserName = isOwner ? c.renterName : c.ownerName;
-  const otherUserAvatar = isOwner ? c.renterAvatar : c.ownerAvatar;
+            const isOwner = userType === 'owner';
+            const isRenter = userType === 'renter';
+            const isPaid = c.isPaid ?? false;
 
-  // Цвет и иконка статуса
-  const statusColor =
-    c.status === 'active'      ? 'text-green-600' :
-    c.status === 'declined'    ? 'text-red-600' :
-    c.status === 'pending'     ? 'text-yellow-500' :
-    c.status === 'signed'      ? (isPaid ? 'text-green-600' : 'text-green-600') :
-    'text-gray-500';
+            const otherUserName = isOwner ? c.renterName : c.ownerName;
+            const otherUserAvatar = isOwner ? c.renterAvatar : c.ownerAvatar;
+            const profileHref = isOwner
+              ? `/profile/renter/${c.renterId}`
+              : `/profile/owner/${c.ownerId}`;
 
-  const statusIcon =
-    c.status === 'active'      ? <CheckCircle className="inline w-5 h-5 mr-1" /> :
-    c.status === 'declined'    ? <XCircle className="inline w-5 h-5 mr-1" /> :
-    c.status === 'pending'     ? <Clock className="inline w-5 h-5 mr-1" /> :
-    c.status === 'signed'      ? (isPaid ? <Check className="inline w-5 h-5 mr-1" /> : <Check className="inline w-5 h-5 mr-1" />) :
-    null;
+            const s = statusUi(c.status);
 
-  return (
-    <div
-      key={c.id}
-      className="flex flex-col md:flex-row border rounded-xl p-4 hover:shadow-md transition gap-4 items-center"
-    >
-      {/* Фото объекта */}
-      {c.listingImageUrl && (
-        <img
-          src={c.listingImageUrl}
-          alt={c.title}
-          className="w-28 h-20 object-cover rounded-lg"
-        />
-      )}
+            const canPay = isRenter && c.status === 'signed' && !isPaid;
 
-      <div className="flex-1 flex flex-col gap-2">
-        {/* Название объекта */}
-        <p className="font-semibold text-lg">{c.title || t('common:untitled')}</p>
-
-        {/* Другой пользователь */}
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            {otherUserAvatar && (
-              <img
-                src={otherUserAvatar}
-                alt={otherUserName}
-                className="w-8 h-8 rounded-full"
-              />
-            )}
-            <span className="text-sm font-medium">{otherUserName}</span>
-          </div>
-
-          {/* Ссылка на профиль */}
-          <Link
-            href={isOwner ? `/profile/renter/${c.renterId}` : `/profile/owner/${c.ownerId}`}
-            className="text-sm text-black-500 hover:underline"
-          >
-            {t('common:goToProfile')}
-          </Link>
-        </div>
-
-        {/* Статус */}
-        <p className={`flex items-center text-sm font-medium ${statusColor}`}>
-          {statusIcon} {c.status.toUpperCase()}
-        </p>
-
-        {/* Дата запроса */}
-        <p className="text-sm text-muted-foreground">
-          {t('contracts:requestDate')} {c.requestDate ? new Date(c.requestDate).toLocaleDateString() : '-'}
-        </p>
-      </div>
-
-      {/* Действия */}
-      <div className="flex flex-col gap-2 md:justify-end">
-        <div className="flex flex-wrap gap-2">
-          {/* Кнопка Перейти к договору */}
-          <Link href={`/contract/${c.id}`}>
-            <Button
-              size="sm"
-              className="text-orange-600 border border-orange-300 bg-orange-50 hover:bg-orange-100"
-            >
-              {t('contracts:goToContract')}
-            </Button>
-          </Link>
-
-          {isRenter && c.status === 'signed' && !isPaid && (
-  <div className="relative inline-block">
-    {/* Пульсирующее кольцо */}
-    <span
-      className={`
-        absolute inset-0
-        rounded-full
-        bg-green-300/50
-        animate-[ping_3s_infinite]
-      `}
-    />
-
-    {/* Ваша кнопка поверх анимации */}
-    <Button
-      size="sm"
-      className={`
-        relative
-        text-green-600 border border-green-300 bg-green-50
-        hover:bg-green-100
-        transition
-      `}
-      onClick={() => alert('Запускаем процесс оплаты…')}
-    >
-      {t('contracts:pay')}
-    </Button>
+            return (
+              <div
+                key={c.id}
+                className="
+                  group relative
+                  rounded-2xl border border-border/60
+                  bg-background
+                  p-4 sm:p-5
+                  shadow-sm hover:shadow-lg hover:shadow-black/5
+                  transition-all
+                "
+              >
+                <div className="flex flex-col md:flex-row gap-4 md:items-center">
+                  {/* Фото объекта */}
+                  <div className="w-full md:w-[170px] shrink-0">
+                    <div className="relative w-full h-[110px] rounded-xl overflow-hidden border border-border/50 bg-muted">
+                      {c.listingImageUrl ? (
+  <img
+    src={c.listingImageUrl}
+    alt={c.title || 'Listing'}
+    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+    onLoad={() => console.log('✅ IMG loaded:', c.listingImageUrl)}
+    onError={(e) => {
+      console.log('❌ IMG failed:', c.listingImageUrl);
+      console.log('Contract id:', c.id);
+      (e.currentTarget as HTMLImageElement).src = '/placeholder.png';
+    }}
+  />
+) : (
+  <div className="w-full h-full grid place-items-center text-sm text-muted-foreground">
+    {t('contracts:noImage')}
   </div>
 )}
 
-          {/* Кнопка Удалить */}
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => handleDeleteContract(c.id)}
-            className="text-red-600 border border-red-300 bg-red-50 hover:bg-red-100"
-          >
-            {t('contracts:delete')}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-})}
+                      {/* Статус на фото */}
+                      <div className="absolute top-2 left-2">
+                        <span
+                          className={`
+                            inline-flex items-center gap-1.5
+                            rounded-full border
+                            px-2.5 py-1 text-xs font-semibold
+                            backdrop-blur-md
+                            ${s.chip}
+                          `}
+                        >
+                          {s.icon}
+                          {s.label}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Контент */}
+                  <div className="flex-1 min-w-0">
+                    {/* Заголовок */}
+                    <div className="flex items-start justify-between gap-3">
+                      <Link
+                        href={`/contract/${c.id}`}
+                        className="
+                          text-lg sm:text-xl font-bold text-foreground
+                          leading-snug
+                          hover:underline underline-offset-4
+                          line-clamp-1
+                        "
+                      >
+                        {c.title || t('common:untitled')}
+                      </Link>
+
+                      {/* Статус справа на ПК (дублируем как «премиум» якорь) */}
+                      <span
+                        className={`
+                          hidden md:inline-flex
+                          items-center gap-1.5
+                          rounded-full border
+                          px-3 py-1.5 text-xs font-semibold
+                          backdrop-blur-md
+                          ${s.chip}
+                        `}
+                      >
+                        {s.icon}
+                        {s.label}
+                      </span>
+                    </div>
+
+                    {/* Другой пользователь (аватар+имя = ссылка) */}
+                    <Link
+                      href={profileHref}
+                      className="
+                        mt-2 inline-flex items-center gap-2
+                        max-w-full
+                        group/user
+                      "
+                    >
+                      <img
+                        src={otherUserAvatar || '/avatar-placeholder.png'}
+                        alt={otherUserName || 'User'}
+                        className="w-9 h-9 rounded-full object-cover border border-border/60"
+                      />
+                      <span className="text-sm font-semibold text-foreground truncate group-hover/user:underline underline-offset-4">
+                        {otherUserName || t('common:unknownUser')}
+                      </span>
+                    </Link>
+
+                    {/* Метаданные */}
+                    <div className="mt-2 text-sm text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
+                      <span>
+                        {t('contracts:requestDate')}{' '}
+                        <span className="font-medium text-foreground/80">
+                          {fmtDate(c.requestDate)}
+                        </span>
+                      </span>
+
+                      {c.status === 'signed' && (
+                        <span>
+                          {t('contracts:paymentStatus')}{' '}
+                          <span
+                            className={
+                              isPaid
+                                ? 'font-semibold text-emerald-700'
+                                : 'font-semibold text-amber-700'
+                            }
+                          >
+                            {isPaid
+                              ? t('contracts:paid')
+                              : t('contracts:notPaid')}
+                          </span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Действия */}
+                  <div className="md:w-[290px] shrink-0">
+                    <div className="flex flex-col gap-2">
+                      <Link href={`/contract/${c.id}`} className="w-full">
+                        <Button
+                          size="sm"
+                          className="
+                            w-full rounded-xl
+                            bg-orange-500/15
+                            text-orange-700
+                            border border-orange-500/20
+                            hover:bg-orange-500/20
+                            transition
+                          "
+                        >
+                          {t('contracts:goToContract')}
+                        </Button>
+                      </Link>
+
+                      {canPay && (
+                        <Button
+                          size="sm"
+                          className="
+                            relative w-full rounded-xl
+                            bg-emerald-500/15
+                            text-emerald-700
+                            border border-emerald-500/20
+                            hover:bg-emerald-500/20
+                            transition
+                            shadow-sm
+                          "
+                          onClick={() => alert('Запускаем процесс оплаты…')}
+                        >
+                          <span className="pointer-events-none absolute inset-0 rounded-xl bg-emerald-400/10 animate-[pulse_2.5s_ease-in-out_infinite]" />
+                          <span className="relative">{t('contracts:pay')}</span>
+                        </Button>
+                      )}
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeleteContract(c.id)}
+                        className="
+                          w-full rounded-xl
+                          bg-rose-500/10
+                          text-rose-700
+                          border border-rose-500/20
+                          hover:bg-rose-500/15
+                          transition
+                        "
+                      >
+                        {t('contracts:delete')}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

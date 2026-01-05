@@ -17,5 +17,6 @@
   "loading": "Loading...",
   "noAccess": "No access to this page.",
   "comingSoon": "A working page will appear here soon, stay tuned!",
-  "workingOnIt": "We are working on this section and it will be available soon, thank you for your patience!"
+  "workingOnIt": "We are working on this section and it will be available soon, thank you for your patience!",
+  "unknownUser": "User"
 }

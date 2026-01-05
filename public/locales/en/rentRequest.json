@@ -1,11 +1,11 @@
 {
   "cta": {
-    "rentOnline": "💰 Rent online"
+    "rentOnline": "Rent online"
   },
   "status": {
-    "pending": "⏳ Request sent",
-    "accepted": "✅ Accepted",
-    "signed": "📄 Contract signed"
+    "pending": "Request sent",
+    "accepted": "Accepted",
+    "signed": "Contract signed"
   },
   "toast": {
     "alreadySent": {

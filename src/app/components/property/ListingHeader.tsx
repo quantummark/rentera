@@ -20,6 +20,7 @@ import MapLinkButton from './MapLinkButton';
 import FavoriteToggle from '@/app/components/property/FavoriteToggle';
 import { Button } from '@/components/ui/button';
 import RentRequestButton from '@/app/components/Contract/RentRequestButton';
+import CopyLinkButton from '@/app/components/property/CopyLinkButton';
 
 // 🔧 инлайн-редакторы
 import InlineText from '@/app/components/inline/InlineText';
@@ -166,7 +167,21 @@ export default function ListingHeader({
       className="mt-2"
     />
   ) : (
-    <ListingGallery photos={photos} title={listing.title} />
+    <ListingGallery
+  photos={photos}
+  title={listing.title}
+  topRightActions={
+    <div className="flex items-center gap-2">
+      {/* ❤️ */}
+      <div className="flex items-center justify-center w-9 h-9 rounded-full bg-black/35 backdrop-blur-md hover:bg-black/50 transition text-white">
+        <FavoriteToggle listing={listing} />
+      </div>
+
+      {/* 🔗 */}
+      <CopyLinkButton href={`/listing/${listing.listingId}`} />
+    </div>
+  }
+/>
   )}
 </div>
 
@@ -175,94 +190,128 @@ export default function ListingHeader({
       <div className="w-full space-y-3 rounded-2xl border bg-card p-5 shadow-sm md:w-1/3">
         {/* Заголовок + избранное (title — редактируем) */}
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-2xl font-semibold leading-tight text-foreground">
-            <InlineText value={listing.title ?? ''} canEdit={canEdit} onSave={saveTitle} />
-          </h1>
-          <FavoriteToggle listing={listing} />
-        </div>
+  <h1 className="text-2xl font-semibold leading-tight text-foreground">
+    <InlineText value={listing.title ?? ''} canEdit={canEdit} onSave={saveTitle} />
+  </h1>
+</div>
 
         {/* Адрес (каждое поле редактируем отдельно, остаётся верстка «через запятую») */}
-        <div className="flex items-center gap-2 text-base text-muted-foreground">
-          <MapPin className="h-4 w-4 text-blue-500" />
-          <span className="flex flex-wrap items-center gap-x-1">
-            <InlineText value={listing.country ?? ''} canEdit={canEdit} onSave={saveCountry} />{', '}
-            <InlineText value={listing.city ?? ''} canEdit={canEdit} onSave={saveCity} />{', '}
-            <InlineText value={listing.district ?? ''} canEdit={canEdit} onSave={saveDistrict} />{', '}
-            <InlineText value={listing.address ?? ''} canEdit={canEdit} onSave={saveAddress} />
-          </span>
-        </div>
+        <div className="flex items-start justify-between gap-3 text-base text-muted-foreground">
+  <div className="flex items-start gap-2 flex-1 min-w-0">
+    <MapPin className="h-4 w-4 shrink-0 text-blue-500 mt-[2px]" />
+    <span className="min-w-0 flex-1 break-words leading-snug">
+      <InlineText value={listing.country ?? ''} canEdit={canEdit} onSave={saveCountry} />
+      {'• '}
+      <InlineText value={listing.city ?? ''} canEdit={canEdit} onSave={saveCity} />
+      {listing.district ? `• ` : ''}
+      {listing.district && (
+        <InlineText value={listing.district} canEdit={canEdit} onSave={saveDistrict} />
+      )}
+      {listing.address ? `• ` : ''}
+      {listing.address && (
+        <InlineText value={listing.address} canEdit={canEdit} onSave={saveAddress} />
+      )}
+    </span>
+  </div>
 
-        {/* Кнопка карты */}
-        <MapLinkButton address={listing.address} />
+  <MapLinkButton
+    variant="icon"
+    address={`${listing.country ?? ''}, ${listing.city ?? ''}${listing.district ? `, ${listing.district}` : ''}${listing.address ? `, ${listing.address}` : ''}`}
+  />
+</div>
 
-        {/* Детали аренды */}
-        <div className="space-y-3 pt-4 text-base text-foreground">
-          {/* Цена + «в месяц» */}
-          <div className="flex items-baseline gap-2">
-            <span className="text-xl font-bold text-primary">
-              {cur.symbol}{' '}
-              <InlineNumber
-                value={Number(listing.price) || 0}
-                min={0}
-                step={10}
-                canEdit={canEdit}
-                onSave={savePrice}
-              />
-              <span className="text-base font-medium text-foreground/70">
-                {' '}
-                {t('listing:perMonth', 'мес')}
-              </span>
-            </span>
-          </div>
+        {/* Детали аренды — Decision Card */}
+<div className="rounded-2xl bg-card/70 backdrop-blur-md p-4 space-y-4 shadow-sm">
+  {/* Цена + валюта */}
+  <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex items-baseline gap-2">
+      <span className="text-3xl font-bold text-foreground">
+        {cur.symbol}{' '}
+        <InlineNumber
+          value={Number(listing.price) || 0}
+          min={0}
+          step={10}
+          canEdit={canEdit}
+          onSave={savePrice}
+        />
+      </span>
 
-          {/* Валюта (select) */}
-          <div className="text-xs text-muted-foreground">
-            <InlineSelect
-              value={(listing.currency as string) ?? 'USD'}
-              canEdit={canEdit}
-              options={currencyOptions.map((c) => ({ value: c.value, label: c.label }))}
-              onSave={saveCurrency}
-            />
-          </div>
+      <span className="text-sm font-medium text-muted-foreground">
+       {t('listing:perMonth', 'мес')}
+      </span>
+    </div>
 
-          {/* Способ оплаты */}
-          <span className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-full bg-muted py-1 text-base leading-tight">
-            <span className="shrink-0">{paymentIcon}</span>
-            <span className="text-muted-foreground">
-              {t('StepRentConditions:fields.paymentMethod')}
-            </span>
-            <InlineSelect
-              value={(listing.paymentMethod as string) ?? 'cash'}
-              canEdit={canEdit}
-              options={paymentOptions.map((p) => ({ value: p.value, label: p.label }))}
-              onSave={savePaymentMethod}
-            />
-          </span>
+    <div className="text-sm text-muted-foreground">
+      <InlineSelect
+        value={(listing.currency as string) ?? 'USD'}
+        canEdit={canEdit}
+        options={currencyOptions.map((c) => ({ value: c.value, label: c.label }))}
+        onSave={saveCurrency}
+      />
+    </div>
+  </div>
 
-          {/* Страхование */}
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-green-600" />
-            <InlineSwitch
-              value={Boolean(listing.useInsurance)}
-              canEdit={canEdit}
-              onSave={saveInsurance}
-              trueLabel={t('listing:insuranceEnabled')}
-              falseLabel={t('listing:insuranceDisabled')}
-            />
-          </div>
+  {/* Chips row */}
+  <div className="flex flex-wrap gap-2">
+    {/* Способ оплаты (без дубля) */}
+    <div
+      className="
+        inline-flex items-center gap-2
+        rounded-2xl px-3 py-2
+        bg-muted/55 backdrop-blur-md
+        border border-border/60 shadow-sm
+        text-foreground
+        max-w-full
+      "
+    >
+      <span className="shrink-0">{paymentIcon}</span>
+      <InlineSelect
+        value={(listing.paymentMethod as string) ?? 'cash'}
+        canEdit={canEdit}
+        options={paymentOptions.map((p) => ({ value: p.value, label: p.label }))}
+        onSave={savePaymentMethod}
+      />
+    </div>
 
-          {/* Онлайн-оплата */}
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-indigo-500" />
-            <InlineSwitch
-              value={Boolean(listing.onlinePayment)}
-              canEdit={canEdit}
-              onSave={saveOnlinePayment}
-              trueLabel={t('listing:onlinePaymentEnabled')}
-              falseLabel={t('listing:onlinePaymentDisabled')}
-            />
-          </div>
-        </div>
+    {/* Страховка (убрали дубликат) */}
+    <div
+      className={[
+        "inline-flex items-center gap-2 rounded-2xl px-3 py-2 backdrop-blur-md border shadow-sm",
+        listing.useInsurance
+          ? "bg-orange-500/15 border-orange-500/25 text-orange-700"
+          : "bg-muted/40 border-border/60 text-muted-foreground",
+      ].join(' ')}
+    >
+      <ShieldCheck className="h-4 w-4" />
+      <InlineSwitch
+        value={Boolean(listing.useInsurance)}
+        canEdit={canEdit}
+        onSave={saveInsurance}
+        trueLabel={t('listing:insuranceEnabled')}
+        falseLabel={t('listing:insuranceDisabled')}
+      />
+    </div>
+
+    {/* Онлайн-оплата (убрали дубликат) */}
+    <div
+      className={[
+        "inline-flex items-center gap-2 rounded-2xl px-3 py-2 backdrop-blur-md border shadow-sm",
+        listing.onlinePayment
+          ? "bg-indigo-500/15 border-indigo-500/25 text-indigo-700"
+          : "bg-muted/40 border-border/60 text-muted-foreground",
+      ].join(' ')}
+    >
+      <CreditCard className="h-4 w-4" />
+      <InlineSwitch
+        value={Boolean(listing.onlinePayment)}
+        canEdit={canEdit}
+        onSave={saveOnlinePayment}
+        trueLabel={t('listing:onlinePaymentEnabled')}
+        falseLabel={t('listing:onlinePaymentDisabled')}
+      />
+    </div>
+  </div>
+</div>
 
         {/* Кнопки действий */}
 <div className="pt-4 py-4 flex flex-col gap-2">
@@ -272,48 +321,71 @@ export default function ListingHeader({
     ownerId={listing.ownerId}
   />
 
-  {/* ✅ Кнопка «написать владельцу» */}
-  <Button
-    onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
-    variant="outline"
-    className="w-full rounded-full flex items-center justify-center gap-2"
-  >
-    <MessageCircle className="w-4 h-4" />
-    {t('listing:contactOwner')}
-  </Button>
+  {/* Кнопка «написати власнику» — secondary CTA */}
+<Button
+  onClick={() => router.push(`/messages?userId=${listing.ownerId}`)}
+  className="
+    w-full h-12
+    rounded-2xl
+    flex items-center justify-center gap-2
+    bg-muted/60 backdrop-blur-md
+    border border-border/60
+    text-foreground
+    font-medium
+    shadow-sm
+    hover:bg-muted
+    hover:shadow-md
+    transition-all
+    active:scale-[0.98]
+  "
+>
+  <MessageCircle className="w-4 h-4 text-muted-foreground" />
+  {t('listing:contactOwner')}
+</Button>
 </div>
 
-        {/* Блок «Владелец» — без редактирования */}
-        <div className="border-t pt-4">
-          <div className="flex items-center gap-4">
-            <Image
-              src={listing.ownerAvatar || '/avatar-placeholder.png'}
-              alt={listing.ownerName}
-              width={56}
-              height={56}
-              className="h-14 w-14 rounded-full object-cover"
-            />
-            <div className="flex-1">
-              <p className="text-base font-medium leading-tight">{listing.ownerName}</p>
-              <p className="text-sm text-muted-foreground">
-                ⭐ {Number(listing.ownerRating ?? 0).toFixed(1)} / 5
-              </p>
+        {/* Блок «Владелец» */}
+<div className="border-t pt-4">
+  <Link
+    href={`/profile/owner/${listing.ownerId}`}
+    className="
+      group
+      flex items-center gap-4
+      cursor-pointer
+    "
+  >
+    {/* Аватар */}
+    <Image
+      src={listing.ownerAvatar || '/avatar-placeholder.png'}
+      alt={listing.ownerName}
+      width={56}
+      height={56}
+      className="
+        h-14 w-14 rounded-full object-cover
+        transition-transform
+        group-hover:scale-[1.03]
+      "
+    />
 
-              <div className="mt-3 justify-center">
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full px-3 text-primary hover:underline"
-                >
-                  <Link href={`/profile/owner/${listing.ownerId}`}>
-                    {t('listing:viewOwnerProfile')}
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+    {/* Имя + рейтинг */}
+    <div className="flex flex-col justify-center">
+      <p
+        className="
+          text-base font-medium leading-tight
+          transition-colors
+          group-hover:underline
+          group-hover:text-primary
+        "
+      >
+        {listing.ownerName}
+      </p>
+
+      <p className="text-sm text-muted-foreground">
+        ⭐ {Number(listing.ownerRating ?? 0).toFixed(1)} / 5
+      </p>
+    </div>
+  </Link>
+</div>
       </div>
     </div>
   );

@@ -20,5 +20,14 @@
     "paid": "Оплачено",
     "Agreement": "Договор",
     "accept": "Принять",
-    "decline": "Отклонить"
+    "decline": "Отклонить",
+
+    "status.signed": "Подписано",
+    "status.active": "Активный",
+    "status.pending": "Ожидает",
+    "status.declined": "Отклонено",
+    "status.unknown": "Неизвестно",
+    "noImage": "Нет изображения",
+    "paymentStatus": "Оплата:",
+    "notPaid": "Не оплачено"
 }
