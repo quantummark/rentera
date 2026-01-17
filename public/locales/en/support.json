@@ -1,0 +1,59 @@
+{
+  "home": {
+    "title": "Renterya Support",
+    "subtitle": "We’re here to help. Choose a topic and message us in chat.",
+    "cardsAria": "Main support scenarios",
+    "slaNote": "We typically reply within 24 hours. If you’re offline, leave your email in chat."
+  },
+  "cards": {
+    "idea": {
+      "title": "Suggest an idea",
+      "desc": "Have a thought on how to make Renterya better? Send it — we’ll read it.",
+      "cta": "Share an idea"
+    },
+    "complaint": {
+      "title": "Report an issue",
+      "desc": "Problem with a user, a listing, or chat behavior? We’ll look into it.",
+      "cta": "Submit a report"
+    },
+    "help": {
+      "title": "Platform help",
+      "desc": "Not sure how something works? We’ll guide you step by step.",
+      "cta": "Get help"
+    }
+  },
+  "quickLinks": {
+    "title": "Quick actions",
+    "rentOut": "How to rent out a place",
+    "findHome": "How to find a place",
+    "payments": "Payments and subscription",
+    "contract": "Online contract",
+    "community": "Community posts",
+    "profile": "Create a profile"
+  },
+  "ideaPage": {
+    "title": "Suggest an idea",
+    "subtitle": "Have a thought on how to make Renterya better? Message us — we carefully review all suggestions.",
+    "tips": {
+      "1": "What would you like to improve?",
+      "2": "Why is it important or helpful for users?",
+      "3": "How do you imagine it working in real life?"
+    }
+  },
+  "complaintPage": {
+    "title": "Report an issue",
+    "subtitle": "Describe the situation in as much detail as possible. We’ll review your message within 24 hours.",
+    "confirm": "I confirm I will provide accurate information and submit this report in good faith.",
+    "tips": {
+      "1": "Describe what exactly went wrong",
+      "2": "Add details or examples if possible",
+      "3": "Please provide accurate information — it helps us review your report"
+    }
+  },
+  "helpPage": {
+    "title": "Platform help",
+    "subtitle": "Try finding an answer below — or message us in chat if you need assistance.",
+    "chatTitle": "Didn’t find an answer?",
+    "chatSubtitle": "Tell us what isn’t working — we’ll help you figure out the next steps."
+  }
+}

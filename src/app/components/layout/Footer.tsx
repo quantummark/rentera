@@ -75,7 +75,7 @@ export default function Footer() {
             {t('footer:slogan')}
           </p>
           <p className="mt-4 text-xs text-muted-foreground">
-            © 2025 Renterya. {t('footer:rights')}
+            © 2026 Renterya. {t('footer:rights')}
           </p>
         </div>
       </div>

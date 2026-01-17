@@ -1,16 +1,24 @@
-// Делаем страницу с информацией о том что страница скоро появится
 'use client';
 
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function SupportPage() {
-    const { t } = useTranslation('common');
+import SupportHero from './components/SupportHero';
+import SupportCardGrid from './components/SupportCardGrid';
 
-    return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark px-4">
-            <h1 className="text-3xl font-bold mb-4">{t('common:comingSoon')} 😉</h1> 
-            <p className="text-lg text-center max-w-xl">{t('common:workingOnIt')}</p>
-        </div>
-    );
+export default function SupportPage() {
+  const { t } = useTranslation(['support']);
+
+  return (
+    <main className="mx-auto w-full max-w-5xl px-4 py-8 md:py-12">
+      <SupportHero
+        title={t('support:home.title', 'Підтримка Rentera')}
+        subtitle={t(
+          'support:home.subtitle',
+          'Ми тут, щоб допомогти вам. Оберіть тему — і напишіть нам у чаті.'
+        )}
+      />
+
+      <SupportCardGrid />
+    </main>
+  );
 }
