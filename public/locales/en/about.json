@@ -1,0 +1,52 @@
+{
+  "hero": {
+    "title": "Renterya — a direct rental housing platform",
+    "subtitle": "We help owners and renters connect directly — simply, clearly, and without unnecessary intermediaries.",
+    "badge1": "No middlemen",
+    "badge2": "Online contract",
+    "badge3": "24/7 support",
+    "imageAlt": "About Renterya"
+  },
+  "what": {
+    "title": "What we do",
+    "subtitle": "Renterya brings housing search, communication, agreements, and support together in one place — making renting calmer and easier."
+  },
+  "values": {
+    "direct": {
+      "title": "Direct agreements",
+      "desc": "We built Renterya for renting without agents or intermediaries — honestly and transparently."
+    },
+    "safety": {
+      "title": "Safety and trust",
+      "desc": "We design rules and tools that protect both owners and renters."
+    },
+    "simple": {
+      "title": "Simplicity",
+      "desc": "Less bureaucracy — more comfort. Everything important in just a few clicks."
+    }
+  },
+  "direction": {
+    "title": "Where we are going",
+    "subtitle": "We grow Renterya step by step: launching, testing ideas, improving the product, and scaling.",
+    "launch": {
+      "title": "Launch in Kyiv",
+      "desc": "We start with a real market and real users."
+    },
+    "contracts": {
+      "title": "Online contracts and payments",
+      "desc": "Signing documents and handling payments in one clear flow."
+    },
+    "community": {
+      "title": "Community and support",
+      "desc": "Sharing experience and helping each other rent with confidence."
+    }
+  },
+  "belief": {
+    "title": "What we believe in",
+    "text": "Renting should feel safe and simple. Clear rules, fair terms, and support when it truly matters — that’s what we’re building."
+  },
+  "images": {
+    "cityAlt": "City",
+    "homeAlt": "Home"
+  }
+}
