@@ -643,13 +643,27 @@ function normalizeStringField(value: unknown, fallback = ''): string {
     disabled={isFrozen}
   />
   <label
-    htmlFor="agreement-confirm"
-    className="text-sm text-foreground/70 dark:text-foreground-dark/70"
+  htmlFor="agreement-confirm"
+  className="text-sm text-foreground/70 dark:text-foreground-dark/70 leading-relaxed"
+>
+  {t('AgreementForm:confirmRulesAcknowledgment')}{' '}
+
+  <a
+    href="/legal/electronic-consent"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      underline
+      underline-offset-4
+      decoration-foreground/40
+      transition-colors
+      hover:decoration-orange-500
+      hover:text-orange-500
+    "
   >
-    {t(
-      'AgreementForm:confirmRulesAcknowledgment'
-    )}
-  </label>
+    {t('AgreementForm:termsAndConditions')}
+  </a>
+</label>
 </div>
 
       {!isFrozen ? (

@@ -1,0 +1,103 @@
+{
+  "title": "Terms of Use",
+  "subtitle": "These Terms govern the use of the Renterya platform. Please read them carefully before you start using the service.",
+  "meta": {
+    "site": "Website",
+    "updated": "Last updated",
+    "updatedValue": "19.01.2026",
+    "privacyLink": "Privacy Policy"
+  },
+  "toc": {
+    "title": "Contents"
+  },
+  "sections": {
+    "intro": {
+      "title": "General provisions",
+      "p1": "These Terms of Use define the rules for access to and use of the Renterya online platform.",
+      "p2": "By using the Platform, you confirm that you have read, understood, and agree to these Terms."
+    },
+    "about": {
+      "title": "About the Renterya platform",
+      "p1": "Renterya is a direct long-term housing rental platform that provides technical tools for interaction between owners and renters.",
+      "li1": "The Platform is not a party to the rental agreement.",
+      "li2": "All arrangements are made directly between users."
+    },
+    "eligibility": {
+      "title": "Who can use the platform",
+      "p1": "Use of Renterya is permitted only for adults.",
+      "li1": "The user must be at least 18 years old.",
+      "li2": "The user guarantees the truthfulness of the information provided."
+    },
+    "account": {
+      "title": "Registration and account",
+      "p1": "To use the main features of the Platform, you must create a personal account.",
+      "li1": "One user may have only one account.",
+      "li2": "The user is responsible for all actions performed from their account.",
+      "li3": "Transfer of access to third parties is prohibited."
+    },
+    "directRent": {
+      "title": "Direct rental",
+      "p1": "Renterya operates on the principle of direct rental without intermediaries.",
+      "li1": "Registration of realtors and agencies is prohibited.",
+      "li2": "If intermediary activity is detected, the account may be blocked."
+    },
+    "contracts": {
+      "title": "Online contracts",
+      "p1": "The Platform may provide tools for creating and signing online contracts.",
+      "p2": "The contract is concluded exclusively between the owner and the renter."
+    },
+    "payments": {
+      "title": "Payments and commission",
+      "p1": "Renterya may support online payments using bank cards and cryptocurrencies.",
+      "li1": "The Platform charges a service commission of 2.5%.",
+      "li2": "The commission may be changed with prior notice.",
+      "li3": "Renterya is not responsible for the operation of third-party payment services."
+    },
+    "content": {
+      "title": "User content",
+      "p1": "The user bears full responsibility for the content they publish on the Platform.",
+      "li1": "Publishing false information is prohibited.",
+      "li2": "Fraudulent or manipulative content is prohibited.",
+      "li3": "Advertising third-party services or products is prohibited.",
+      "li4": "Posting indecent materials is prohibited."
+    },
+    "community": {
+      "title": "Community and communication",
+      "p1": "The Platform may contain sections for communication between users.",
+      "li1": "Offensive or aggressive behavior is prohibited.",
+      "li2": "Violations of the rights of other users are prohibited."
+    },
+    "blocking": {
+      "title": "Account blocking",
+      "p1": "Renterya has the right to restrict or terminate access to an account in case of rule violations.",
+      "li1": "Fraud or attempts to deceive.",
+      "li2": "Intermediary activity.",
+      "li3": "Systematic complaints or violations of the Terms."
+    },
+    "liability": {
+      "title": "Platform liability",
+      "p1": "Renterya is not responsible for users’ actions or for their fulfillment of obligations.",
+      "li1": "The Renterya platform provides technical tools for creating and signing electronic contracts between users. The contract is concluded exclusively between the Owner and the Renter. The Platform is not a party to such a contract, does not represent either party, and does not interfere with the content of the arrangements. Renterya does not guarantee proper performance of obligations by the parties to the contract and is not responsible for the consequences of arrangements between them. At the same time, the Platform records technical data of the signing process, which may be used by the parties as confirmation of the fact of agreement on the contract terms.",
+      "li2": "The Platform does not verify the condition of the housing.",
+      "li3": "The Renterya platform is provided as a digital service whose operation may change, be updated, or be temporarily limited for technical reasons. The Platform team makes reasonable efforts to ensure stable operation of the service, but cannot guarantee the complete absence of technical failures or interruptions in access."
+    },
+    "privacy": {
+      "title": "Confidentiality",
+      "p1": "Personal data processing is carried out in accordance with the Renterya Privacy Policy."
+    },
+    "changes": {
+      "title": "Changes to the Terms",
+      "p1": "The platform administration has the right to change these Terms at any time."
+    },
+    "jurisdiction": {
+      "title": "Jurisdiction",
+      "p1": "Ukrainian legislation and the relevant norms of the European Union apply to these Terms."
+    },
+    "contacts": {
+      "title": "Contact information",
+      "p1": "For any questions related to the use of the Platform, you may contact customer support.",
+      "p2": "Email: support@renterya.com"
+    }
+  },
+  "footerNote": "This document is the basic version for the Renterya MVP platform and may be updated as the service evolves."
+}

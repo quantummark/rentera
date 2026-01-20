@@ -4,7 +4,7 @@
     "saving": "Збереження…",
     "saved": "Збережено",
     "save": "Зберегти",
-    "confirmRulesAcknowledgment": "Підтверджую, що ознайомлений з правилами платформи Renterya та погоджуюсь з ними",
+    "confirmRulesAcknowledgment": "Я ознайомився(лась) і погоджуюся з Умовами використання, Політикою конфіденційності та Згодою на електронну форму договору і підпис.",
     "signAndSaveAgreement": "Підписати та зберегти договір",
     "agreementSaved": "Договір збережено",
     "unfreezeAgreement": "Розморозити договір",
@@ -40,7 +40,8 @@
     "ownerPhonePlaceholder": "Телефон власника",
     "renterContactDetails": "Контактні дані орендаря",
     "renterPhonePlaceholder": "Телефон орендаря",
-    "clear": "Очистити"
+    "clear": "Очистити",
+    "termsAndConditions": "Умови та положення онлайн договору оренди"
     
 
 

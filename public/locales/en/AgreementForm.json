@@ -4,7 +4,7 @@
     "saving": "Saving…",
     "saved": "Saved",
     "save": "Save",
-    "confirmRulesAcknowledgment": "I confirm that I have read and agree to the Renterya platform rules",
+    "confirmRulesAcknowledgment": "I have read and agree to the Terms of Use, Privacy Policy, and the Electronic Contract & Signature Consent.",
     "signAndSaveAgreement": "Sign and Save Agreement",
     "agreementSaved": "Agreement Saved",
     "unfreezeAgreement": "Unfreeze Agreement",
@@ -40,5 +40,6 @@
     "ownerPhonePlaceholder": "Owner's phone number",
     "renterContactDetails": "Renter's contact details",
     "renterPhonePlaceholder": "Renter's phone number",
-    "clear": "Clear"
+    "clear": "Clear",
+    "termsAndConditions": "Terms and Conditions of the online rental agreement"
 }

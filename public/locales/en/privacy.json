@@ -1,0 +1,101 @@
+{
+  "title": "Privacy Policy",
+  "subtitle": "This Policy explains what data we collect, why it is necessary, and how we protect it.",
+  "meta": {
+    "site": "Website",
+    "updated": "Last updated",
+    "updatedValue": "19.01.2026",
+    "termsLink": "Terms of Use"
+  },
+  "toc": {
+    "title": "Contents"
+  },
+  "sections": {
+    "intro": {
+      "title": "General provisions",
+      "p1": "This Privacy Policy describes how the Renterya platform collects, uses, and protects users’ personal data.",
+      "p2": "By using the Platform, you confirm that you have reviewed this Policy and agree to its terms."
+    },
+    "data": {
+      "title": "What data we collect",
+      "p1": "We may collect and process the following categories of data depending on how you use the Platform:",
+      "li1": "first and last name;",
+      "li2": "email address;",
+      "li3": "phone number;",
+      "li4": "profile photo (optional);",
+      "li5": "housing and listing information (for owners);",
+      "li6": "chat messages and support requests;",
+      "li7": "technical data (IP address, device type, browser, session data)."
+    },
+    "purpose": {
+      "title": "Why we process data",
+      "p1": "We use personal data solely to ensure the operation of the service and improve user experience, including for:",
+      "li1": "creating and maintaining an account;",
+      "li2": "providing Platform functionality;",
+      "li3": "communication between users;",
+      "li4": "processing support requests and chat responses;",
+      "li5": "ensuring security, preventing fraud, and violations of rules;",
+      "li6": "analytics and service improvement."
+    },
+    "payments": {
+      "title": "Payments",
+      "p1": "Renterya may support online payments via bank cards and/or cryptocurrencies through third-party payment services.",
+      "p2": "We do not store full bank card details. Payment data is processed by payment providers in accordance with their rules and policies.",
+      "p3": "The Platform may receive confirmation of payment success, amount, and technical transaction identifiers for status display and accounting purposes."
+    },
+    "sharing": {
+      "title": "Data sharing with third parties",
+      "p1": "We may share data only to the extent necessary for Platform operation in the following cases:",
+      "li1": "with payment providers — for payment processing;",
+      "li2": "with infrastructure providers (hosting, data storage, technical support) — to ensure service operation;",
+      "li3": "upon lawful request of government authorities or a court;",
+      "li4": "to prevent fraud or abuse when necessary to protect users and the Platform.",
+      "p2": "We do not sell users’ personal data and do not share it with third parties for marketing purposes without your consent."
+    },
+    "cookies": {
+      "title": "Cookies and analytics",
+      "p1": "Renterya may use cookies and similar technologies to ensure proper Platform operation and improve user experience.",
+      "li1": "saving user settings (for example, language);",
+      "li2": "ensuring security and operational stability;",
+      "li3": "analyzing service usage and improving functionality.",
+      "p2": "You may restrict or disable cookies in your browser settings; however, this may affect the operation of certain features."
+    },
+    "storage": {
+      "title": "Data storage",
+      "p1": "We store personal data only for as long as necessary to provide the service and fulfill legal obligations.",
+      "p2": "We apply technical and organizational measures to protect data from unauthorized access, loss, or alteration."
+    },
+    "rights": {
+      "title": "User rights",
+      "p1": "You have the right to:",
+      "li1": "obtain information about the data we process;",
+      "li2": "correct or update your data;",
+      "li3": "delete your account in profile settings;",
+      "li4": "withdraw consent to data processing where processing is based on consent;",
+      "li5": "contact us regarding privacy matters.",
+      "p2": "To exercise your rights, please contact support."
+    },
+    "deletion": {
+      "title": "Account deletion",
+      "p1": "You may submit a request to delete your account through customer support.",
+      "p2": "After account deletion, we may retain certain data only in cases and for periods required by law (for example, to fulfill legal obligations or resolve disputes)."
+    },
+    "security": {
+      "title": "Information security",
+      "p1": "We use modern data protection methods; however, no method of internet transmission can guarantee absolute security. Please use strong passwords and do not share account access with third parties."
+    },
+    "changes": {
+      "title": "Policy changes",
+      "p1": "We may periodically update this Policy. The current version is always available on the Renterya website."
+    },
+    "contacts": {
+      "title": "Contacts",
+      "p1": "If you have any questions regarding privacy or personal data processing, please contact us.",
+      "p2": "Email: support@renterya.com",
+      "p3": "Platform operator: Renterya (a project within The Emerald Group)",
+      "p4": "Mailing address: Creative State Kyiv, Gulliver Mall, Kyiv, Ukraine",
+      "p5": "We value your privacy and strive to provide a safe experience on Renterya."
+    }
+  },
+  "footerNote": "This document is the basic version for the Renterya MVP platform and may be updated as the service evolves."
+}

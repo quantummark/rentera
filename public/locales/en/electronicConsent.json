@@ -1,0 +1,61 @@
+{
+  "title": "Consent to the Use of Electronic Contract Format and Electronic Signature",
+  "subtitle": "This document explains how the electronic contract format works on Renterya and how the signing confirmation is recorded.",
+  "meta": {
+    "site": "Website",
+    "updated": "Last updated",
+    "updatedValue": "19.01.2026",
+    "termsLink": "Terms of Use",
+    "privacyLink": "Privacy Policy"
+  },
+  "toc": {
+    "title": "Contents"
+  },
+  "callout": {
+    "title": "In short: what you confirm",
+    "li1": "The electronic contract format is acceptable to you.",
+    "li2": "You sign the contract voluntarily and consciously.",
+    "li3": "Technical signing data may be used as evidence in case of a dispute."
+  },
+  "sections": {
+    "intro": {
+      "title": "1. General provisions",
+      "p1": "This document defines the terms for using the electronic contract format and electronic signature on the Renterya platform.",
+      "p2": "By signing a contract on the Platform, the parties confirm their voluntary consent to the terms of this Consent."
+    },
+    "eForm": {
+      "title": "2. Electronic contract format",
+      "p1": "The parties agree that the contract generated in digital form on the Renterya platform constitutes an electronic document.",
+      "li1": "A paper copy of the contract is not required to confirm the agreements between the parties.",
+      "li2": "The electronic contract is considered agreed upon after being signed by both parties in the установленном manner.",
+      "li3": "The Platform is not a party to the contract and does not interfere with the content of the agreements."
+    },
+    "signature": {
+      "title": "3. How electronic signature works on Renterya",
+      "p1": "Signing a contract on Renterya represents the digital recording of the parties’ expression of will.",
+      "li1": "The user provides a handwritten graphic signature in a designated signature field.",
+      "li2": "The user confirms acceptance of this Consent and the Platform rules by checking the corresponding box.",
+      "li3": "The Platform records technical attributes of the signing event, including date, time, IP address, session identifier, and other technical parameters.",
+      "li4": "Signing data may be stored in encrypted form to confirm the fact of signing.",
+      "p2": "The Platform stores only the technical record of the signing process and does not conduct legal expertise of the contract content."
+    },
+    "legal": {
+      "title": "4. Legal significance and use in disputes",
+      "p1": "The parties acknowledge that the electronic document generated on the Platform, together with the recorded technical signing data, may be used as evidence of agreement on the contract terms between them.",
+      "p2": "At the same time, Renterya does not guarantee the legal validity of the document in every specific situation, as this depends on applicable law, dispute circumstances, and the totality of evidence provided by the parties."
+    },
+    "responsibility": {
+      "title": "5. Parties’ responsibility and limitation of Platform liability",
+      "p1": "The parties bear full responsibility for the accuracy of the provided information and for ensuring that the signing is performed by an authorized person.",
+      "li1": "Disputes related to the contract are resolved exclusively between the Owner and the Renter.",
+      "li2": "Renterya is not a party to the contract, does not represent either party, and does not ensure fulfillment of contractual obligations.",
+      "li3": "The Platform does not perform identity verification at the level of government or qualified trust services and does not provide notarization."
+    },
+    "final": {
+      "title": "6. Final provisions",
+      "p1": "This Consent is a mandatory condition for using the online contract feature. Without confirming consent, contract signing on the Platform is not possible.",
+      "p2": "Renterya may update the provisions of this Consent in accordance with service development and changes in legislation."
+    }
+  },
+  "footerNote": "This document represents the basic MVP version and may be updated as the service evolves."
+}
