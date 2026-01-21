@@ -26,7 +26,6 @@
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--background);
     color: var(--foreground);
-    padding: 1rem;
     overflow-y: scroll;
   }
 }

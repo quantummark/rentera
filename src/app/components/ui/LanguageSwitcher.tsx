@@ -60,11 +60,19 @@ export const LanguageSwitcher = () => {
   return (
     <DropdownMenu
       trigger={
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
-          <Globe className="w-4 h-4" aria-hidden="true" />
-          <span aria-live="polite">{currentLabel}</span>
-        </Button>
-      }
+  <Button
+    variant="ghost"
+    size="icon"
+    aria-label="Change language"
+    className="
+      rounded-xl border border-border/60 bg-background/40 backdrop-blur-md
+      hover:bg-foreground/5
+      focus-visible:ring-2 focus-visible:ring-orange-500/40
+    "
+  >
+    <Globe className="h-5 w-5" aria-hidden="true" />
+  </Button>
+}
     >
       {LANGS.map(({ code, label }) => (
         <button
