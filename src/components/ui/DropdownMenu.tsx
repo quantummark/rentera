@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 type Align = 'start' | 'center' | 'end';
 type Side = 'bottom' | 'top';
@@ -18,7 +19,7 @@ interface DropdownMenuProps {
   closeOnSelect?: boolean;
 }
 
-/** Элемент меню: без какого-либо выделения (hover/focus/active) */
+/** Пункт меню: премиум hover/focus */
 export function DropdownItem({
   children,
   onSelect,
@@ -49,20 +50,11 @@ export function DropdownItem({
       disabled={disabled}
       onClick={handleClick}
       className={cn(
-        // типографика
-        'w-full text-left text-sm px-3 py-2 rounded-md',
-        // базовые цвета из темы
-        'bg-transparent text-foreground',
-        // никаких эффектов выделения
-        '!outline-none focus:!outline-none',
-        '!ring-0 focus:!ring-0 focus-visible:!ring-0',
-        '!shadow-none focus:!shadow-none active:!shadow-none',
-        '!bg-transparent hover:!bg-transparent focus:!bg-transparent active:!bg-transparent',
-        '!text-foreground hover:!text-foreground focus:!text-foreground active:!text-foreground',
-        // disabled
+        'w-full text-left text-sm px-3 py-2 rounded-xl',
+        'text-foreground transition-colors',
+        'hover:bg-foreground/5',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/35',
         'disabled:opacity-50 disabled:cursor-not-allowed',
-        // плавности тут не нужны, но оставим если вдруг текст/иконки меняются
-        'transition-none',
         className
       )}
     >
@@ -72,7 +64,7 @@ export function DropdownItem({
 }
 
 export function DropdownDivider() {
-  return <div className="my-1 h-px bg-border" role="separator" />;
+  return <div className="my-1 h-px bg-border/70" role="separator" />;
 }
 
 export default function DropdownMenu({
@@ -81,18 +73,26 @@ export default function DropdownMenu({
   className,
   align = 'end',
   side = 'bottom',
-  sideOffset = 8,
+  sideOffset = 10,
   open: controlledOpen,
   onOpenChange,
   closeOnSelect = true,
 }: DropdownMenuProps) {
+  // ✅ хуки всегда в одном и том же порядке
+  const { theme } = useTheme();
+
+  const [mounted, setMounted] = useState(false);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const open = controlledOpen ?? uncontrolledOpen;
 
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+
   const [computedSide, setComputedSide] = useState<Side>(side);
+
+  useEffect(() => setMounted(true), []);
+
+  const open = controlledOpen ?? uncontrolledOpen;
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -103,6 +103,10 @@ export default function DropdownMenu({
   );
 
   const onTriggerClick = useCallback(() => setOpen(!open), [open, setOpen]);
+
+  // theme может быть undefined до маунта — подстрахуем
+  const safeTheme = mounted ? theme : 'light';
+  const isDark = safeTheme === 'dark';
 
   // клик вне
   useEffect(() => {
@@ -115,12 +119,14 @@ export default function DropdownMenu({
     return () => document.removeEventListener('mousedown', onDocMouseDown);
   }, [open, setOpen]);
 
-  // клавиатура (без визуального фокуса у пунктов)
+  // клавиатура
   useEffect(() => {
     if (!open) return;
 
     const getItems = () =>
-      Array.from(panelRef.current?.querySelectorAll<HTMLElement>('[data-menu-item]:not([disabled])') ?? []);
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>('[data-menu-item]:not([disabled])') ?? []
+      );
 
     let focusIndex = -1;
     const focusItem = (idx: number) => {
@@ -205,7 +211,11 @@ export default function DropdownMenu({
 
   const sideClass = computedSide === 'bottom' ? 'top-full' : 'bottom-full';
   const alignClass =
-    align === 'start' ? 'left-0' : align === 'center' ? 'left-1/2 -translate-x-1/2' : 'right-0';
+    align === 'start'
+      ? 'left-0'
+      : align === 'center'
+        ? 'left-1/2 -translate-x-1/2'
+        : 'right-0';
 
   return (
     <div ref={rootRef} className="relative inline-block text-left">
@@ -221,37 +231,27 @@ export default function DropdownMenu({
         role="menu"
         aria-hidden={!open}
         className={cn(
-          'absolute z-50 min-w-[12rem] rounded-xl',
-          sideClass,
-          alignClass,
+          'absolute z-[9999] min-w-[12rem] overflow-hidden',
+          'rounded-2xl border border-border/70',
+          'backdrop-blur-xl backdrop-saturate-150',
+          isDark
+  ? 'bg-zinc-950/92 text-foreground'
+  : 'bg-white/98 text-foreground ring-1 ring-black/10',
+          'shadow-[0_18px_60px_-24px_rgba(0,0,0,0.65)]',
           'origin-top-right transition-all duration-150 ease-out motion-reduce:transition-none',
           open ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
-          // визуал панели
-          'bg-popover text-popover-foreground shadow-lg ring-1 ring-black/10',
-          'backdrop-blur supports-[backdrop-filter]:bg-popover/90',
-
-          // ❌ глобальный сброс: никакого фона/тени/рамки на hover/focus/active
-          '[&_[data-menu-item]:hover]:!bg-transparent [&_[data-menu-item]:focus]:!bg-transparent [&_[data-menu-item]:active]:!bg-transparent',
-          '[&_[data-menu-item]_*:hover]:!bg-transparent [&_[data-menu-item]_*:focus]:!bg-transparent [&_[data-menu-item]_*:active]:!bg-transparent',
-          '[&_[data-menu-item]:hover]:!shadow-none [&_[data-menu-item]:focus]:!shadow-none [&_[data-menu-item]:active]:!shadow-none',
-          '[&_[data-menu-item]:hover]:!ring-0 [&_[data-menu-item]:focus]:!ring-0 [&_[data-menu-item]:active]:!ring-0',
-
-          // фикс схемы цветов строго по теме сайта
-          '[color-scheme:light] dark:[color-scheme:dark]',
-
+          sideClass,
+          alignClass,
           className
         )}
         style={{
           marginTop: computedSide === 'bottom' ? sideOffset : undefined,
           marginBottom: computedSide === 'top' ? sideOffset : undefined,
+          colorScheme: isDark ? 'dark' : 'light',
         }}
         onClickCapture={onItemClickCapture}
       >
-
-        {/* контент */}
-        <div className="relative z-10 p-2 space-y-1">
-          {children}
-        </div>
+        <div className="relative z-10 p-2 space-y-1">{children}</div>
       </div>
     </div>
   );
