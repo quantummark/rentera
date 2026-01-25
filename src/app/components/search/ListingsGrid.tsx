@@ -33,10 +33,10 @@ export default function ListingsGrid() {
       {/* Header row: title / count / sort */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">{t('results.title')}</p>
+          <p className="text-base font-medium text-foreground">{t('results.title')}</p>
 
           {!loading && !error && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t('results.found', { count: results.length })}
             </p>
           )}
