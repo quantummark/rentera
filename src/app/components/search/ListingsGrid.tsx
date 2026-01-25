@@ -1,63 +1,97 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import ListingCard from '@/app/components/property/ListingCard';
-import { useListingsSearch } from '@/hooks/useListingsSearch';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import DropdownMenu from '@/components/ui/DropdownMenu';
+
+import { Button } from '@/components/ui/button';
+import DropdownMenu, { DropdownItem } from '@/components/ui/DropdownMenu';
+
+import ListingCard from '@/app/components/property/ListingCard';
+import { type SortKey } from '@/hooks/useListingsSearch';
+import { useListingsSearchCtx } from '@/context/ListingsSearchContext';
 
 export default function ListingsGrid() {
   const { t } = useTranslation('listings');
-  const { results, search } = useListingsSearch(); // Убрали неиспользуемую переменную `loading`
-  const [page, setPage] = useState(1);
-  const [sort, setSort] = useState<'new' | 'cheap' | 'expensive'>('new');
 
-  const itemsPerPage = 9;
+  const { results, loading, error, hasMore, search, loadMore } = useListingsSearchCtx();
+  const [sort, setSort] = useState<SortKey>('new');
 
-  // Вызов поиска при загрузке компонента
+  // ✅ Если пользователь зашёл без поиска — показываем последние объявления
   useEffect(() => {
-    search({});
-  }, [search]); // Добавили зависимость от search
+    void search({ sort: 'new' });
+  }, [search]);
 
-  const sortedListings = useMemo(() => {
-    const sorted = [...results];
-    switch (sort) {
-      case 'cheap':
-        return sorted.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
-      case 'expensive':
-        return sorted.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
-      default:
-        return sorted.sort((a, b) => {
-          const dateA = new Date(a.createdAt ?? '').getTime();
-          const dateB = new Date(b.createdAt ?? '').getTime();
-          return dateB - dateA;
-        });
-    }
-  }, [results, sort]);
+  // ✅ Когда меняем сортировку — перезапрашиваем сервер
+  useEffect(() => {
+    void search({ sort });
+  }, [sort, search]);
 
-  const visibleListings = sortedListings.slice(0, page * itemsPerPage);
-  
+  const showEmpty = !loading && !error && results.length === 0;
 
   return (
     <div className="space-y-6">
-      {/* Сортировка с использованием DropdownMenu */}
-      <div className="flex rounded-md border-gray-200 justify-end">
-        <DropdownMenu
-          trigger={
-            <Button variant="outline">{t(`sort.${sort}`)}</Button>
-          }
-        >
-          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('new')}>{t('sort.new')}</div>
-          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('expensive')}>{t('sort.expensive')}</div>
-          <div className="p-2 rounded-md hover:ring-1 hover:ring-ring hover:ring-offset-1 hover:ring-offset-background" onClick={() => setSort('cheap')}>{t('sort.cheap')}</div>
-        </DropdownMenu>
+      {/* Header row: title / count / sort */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-foreground">{t('results.title')}</p>
+
+          {!loading && !error && (
+            <p className="text-xs text-muted-foreground">
+              {t('results.found', { count: results.length })}
+            </p>
+          )}
+        </div>
+
+        {/* Sort */}
+        <div className="flex justify-end">
+          <DropdownMenu
+            align="end"
+            trigger={
+              <Button variant="outline" className="rounded-xl">
+                {t('sort.label')}: {t(`sort.${sort}`)}
+              </Button>
+            }
+          >
+            <DropdownItem onSelect={() => setSort('new')}>{t('sort.new')}</DropdownItem>
+            <DropdownItem onSelect={() => setSort('cheap')}>{t('sort.cheap')}</DropdownItem>
+            <DropdownItem onSelect={() => setSort('expensive')}>{t('sort.expensive')}</DropdownItem>
+          </DropdownMenu>
+        </div>
       </div>
 
-      {/* Сетка карточек */}
-      {visibleListings.length ? (
+      {/* Error */}
+      {error && !loading && (
+        <div className="rounded-2xl border border-border/60 bg-background/40 p-6 text-center backdrop-blur-md">
+          <p className="text-sm text-foreground">{t('states.error')}</p>
+          <p className="mt-2 text-xs text-muted-foreground">{error}</p>
+
+          <div className="mt-4 flex justify-center">
+            <Button variant="outline" onClick={() => void search({ sort })}>
+              {t('sort.new')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Loading (first load) */}
+      {loading && results.length === 0 && (
+        <div className="rounded-2xl border border-border/60 bg-background/40 p-6 text-center backdrop-blur-md">
+          <p className="text-sm text-muted-foreground">{t('states.loading')}</p>
+        </div>
+      )}
+
+      {/* Empty */}
+      {showEmpty && (
+        <div className="rounded-2xl border border-border/60 bg-background/40 p-10 text-center backdrop-blur-md">
+          <p className="text-sm font-medium text-foreground">{t('results.empty')}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('results.tryChange')}</p>
+        </div>
+      )}
+
+      {/* Grid */}
+      {results.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {visibleListings.map((listing) => (
+          {results.map((listing) => (
             <ListingCard
               key={listing.id}
               listing={listing}
@@ -68,28 +102,19 @@ export default function ListingsGrid() {
             />
           ))}
         </div>
-      ) : (
-        <div className="text-center text-muted-foreground py-10">
-          {t('sort.notFound')}
-        </div>
       )}
 
-      {/* Кнопки пагинации */}
-      {sortedListings.length > itemsPerPage && (
-        <div className="flex justify-between items-center pt-4">
+      {/* Load more */}
+      {!error && results.length > 0 && (
+        <div className="flex justify-center pt-2">
           <Button
+            onClick={() => void loadMore()}
+            disabled={loading || !hasMore}
+            className="rounded-xl"
             variant="outline"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
           >
-            {t('sort.prev')}
+            {loading ? t('states.loading') : t('pagination.more')}
           </Button>
-
-          {visibleListings.length < sortedListings.length && (
-            <Button onClick={() => setPage((p) => p + 1)}>
-              {t('sort.more')}
-            </Button>
-          )}
         </div>
       )}
     </div>

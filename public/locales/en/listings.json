@@ -1,10 +1,25 @@
 {
-  "sort": {
-    "new": "Newest",
-    "expensive": "Expensive",
-    "cheap": "Cheap"
+  "results": {
+    "title": "Search results",
+    "found": "{{count}} listings found",
+    "empty": "No listings found for your search",
+    "tryChange": "Try adjusting your search filters"
   },
-  "notFound": "No listings found",
-  "prev": "Previous",
-  "more": "Show more"
+
+  "sort": {
+    "label": "Sort by",
+    "new": "Newest first",
+    "cheap": "Lowest price first",
+    "expensive": "Highest price first"
+  },
+
+  "pagination": {
+    "prev": "Previous",
+    "more": "Load more"
+  },
+
+  "states": {
+    "loading": "Loading listings…",
+    "error": "Failed to load listings"
+  }
 }

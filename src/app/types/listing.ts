@@ -9,6 +9,8 @@ export interface Listing {
   type: string;
   area: number;
   rooms: number;
+  cityKey?: string;
+  cityAliases?: string[];
 
   price: number;
   currency: string;

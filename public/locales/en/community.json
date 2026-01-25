@@ -50,7 +50,9 @@
       "emptyContent": "Please write something before publishing.",
       "noTopic": "Please choose a topic so others can easily find your post.",
       "generic": "An error occurred while creating the post. Please try again."
-    }
+    },
+    "loginHintPrefix": "To publish a post, log in:",
+    "loginHintLink": "Log in / Sign up"
   },
 
   "feed": {

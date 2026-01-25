@@ -114,9 +114,9 @@ export default function CommunityHero({
       <div className="relative z-10 flex w-full max-w-6xl flex-col gap-8 md:flex-row md:items-center">
         {/* Левая часть: текст + кнопка */}
         <div className="flex-1 space-y-6 text-center md:text-left">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-sans drop-shadow-lg bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-yellow-300 to-orange-500">
-            {t('hero.title')}
-          </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-sans bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-300 drop-shadow-lg">
+  {t('hero.title')}
+</h1>
 
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground dark:text-muted-foreground max-w-xl mx-auto md:mx-0 leading-relaxed tracking-wide">
             {t('hero.subtitle')}
