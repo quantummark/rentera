@@ -198,13 +198,52 @@ export default function ListingCard({ listing }: ListingCardProps) {
         </div>
 
         {/* Правила */}
-        <div className="flex items-center gap-3 py-2 border-t border-b border-dashed border-border/60">
-          <Rule label={t('listing:kids', 'Діти')} ok={!!allowKids} icon={<Baby className="w-4 h-4" />} />
-          <div className="w-px h-3 bg-border/70" />
-          <Rule label={t('listing:pets', 'Тварини')} ok={!!allowPets} icon={<PawPrint className="w-4 h-4" />} />
-          <div className="w-px h-3 bg-border/70" />
-          <Rule label={t('listing:smoking', 'Куріння')} ok={!!allowSmoking} icon={<Cigarette className="w-4 h-4" />} />
-        </div>
+<div className="flex items-center gap-3 py-2 border-t border-b border-dashed border-border/60 text-xs font-medium">
+
+  {/* Діти */}
+  <div
+    className={cn(
+      'flex items-center gap-1.5',
+      allowKids
+        ? 'text-emerald-500'
+        : 'text-red-500 line-through opacity-80'
+    )}
+  >
+    <Baby className="w-4 h-4" />
+    <span>{t('listing:kids', 'Діти')}</span>
+  </div>
+
+  <div className="w-px h-3 bg-border/70" />
+
+  {/* Тварини */}
+  <div
+    className={cn(
+      'flex items-center gap-1.5',
+      allowPets
+        ? 'text-emerald-500'
+        : 'text-red-500 line-through opacity-80'
+    )}
+  >
+    <PawPrint className="w-4 h-4" />
+    <span>{t('listing:pets', 'Тварини')}</span>
+  </div>
+
+  <div className="w-px h-3 bg-border/70" />
+
+  {/* Куріння */}
+  <div
+    className={cn(
+      'flex items-center gap-1.5',
+      allowSmoking
+        ? 'text-emerald-500'
+        : 'text-red-500 line-through opacity-80'
+    )}
+  >
+    <Cigarette className="w-4 h-4" />
+    <span>{t('listing:smoking', 'Куріння')}</span>
+  </div>
+
+</div>
 
 {/* Футер: цена + действия */}
 <div className="mt-auto pt-1 flex flex-col gap-3">
