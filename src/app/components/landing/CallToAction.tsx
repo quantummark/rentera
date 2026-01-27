@@ -93,20 +93,53 @@ export default function CallToAction() {
           </div>
 
           {/* Кнопки */}
-          <div className="flex flex-col gap-4 md:flex-row justify-center">
-            <Link
-              href="/search"
-              className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full shadow-lg hover:scale-105 hover:shadow-2xl transition-transform inline-flex items-center justify-center w-full md:w-auto"
-            >
-              {t('cta:startSearch')}
-            </Link>
-            <Link
-              href="/login"
-              className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-yellow-400 via-orange-400 to-orange-500 text-white rounded-full shadow-md hover:scale-105 hover:shadow-xl transition-transform inline-flex items-center justify-center w-full md:w-auto"
-            >
-              {t('cta:startRenting')}
-            </Link>
-          </div>
+          <div className="mt-6 flex flex-col gap-4 md:flex-row md:gap-4 justify-center">
+          <Link
+  href="/search"
+  className="
+    relative overflow-hidden
+    px-9 py-3.5
+    text-lg font-semibold
+    rounded-full
+    bg-orange-500 text-white
+    shadow-[0_10px_30px_rgba(255,140,60,0.35)]
+    transition-all duration-300
+    hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(255,140,60,0.45)]
+    active:translate-y-0
+    inline-flex items-center justify-center
+    w-full md:w-auto
+  "
+>
+  {t('landing:startSearch')}
+</Link>
+
+          <Link
+  href="/login"
+  className="
+    px-9 py-3.5
+    text-lg font-semibold
+    rounded-full
+
+    bg-white/70
+    backdrop-blur-md
+
+    text-slate-800
+    border border-slate-200
+
+    shadow-sm
+    transition-all duration-300
+
+    hover:bg-white
+    hover:shadow-md
+    hover:-translate-y-0.5
+
+    inline-flex items-center justify-center
+    w-full md:w-auto
+  "
+>
+ {t('landing:startRenting')}
+</Link>
+        </div>
         </div>
       </div>
     </section>
