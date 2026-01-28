@@ -82,7 +82,7 @@ export default function UpperBlock() {
 
       {/* ===== Контент ===== */}
       <div className="relative z-10 text-center space-y-6 p-6 md:p-12 w-full max-w-5xl mx-auto">
-        <h1 className="text-3xl md:text-5xl font-bold font-sans uppercase bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-300 drop-shadow-lg">
+        <h1 className="text-3xl md:text-5xl font-bold font-sans uppercase bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-yellow-400 drop-shadow-lg">
   {t('landing:welcome')}
 </h1>
 
@@ -111,7 +111,7 @@ export default function UpperBlock() {
 </Link>
 
           <Link
-  href="/login"
+  href="/rent-out"
   className="
     px-9 py-3.5
     text-lg font-semibold

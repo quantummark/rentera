@@ -114,7 +114,7 @@ export default function CallToAction() {
 </Link>
 
           <Link
-  href="/login"
+  href="/rent-out"
   className="
     px-9 py-3.5
     text-lg font-semibold

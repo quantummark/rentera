@@ -1,0 +1,251 @@
+{
+  "hero": {
+    "kicker": "For property owners",
+    "title": "A new generation of rental",
+    "titleTail": " — for owners who value control and security",
+    "subtitle": "Renterya brings together direct communication, property protection, online contracts, and payments in one modern platform.",
+    "primaryCta": "Create owner profile",
+    "secondaryCta": "Get assistance",
+    "microcopy": "Free registration • No obligations • Takes just a few minutes"
+  },
+
+  "trustChips": {
+    "noMediators": "No intermediaries",
+    "directChat": "Direct chat with renter",
+    "protection": "Protection up to ₴250,000",
+    "renterProfile": "Renter profile",
+    "onlineContract": "Online contract",
+    "subscriptionPayments": "Subscription payments",
+    "community": "Owners community",
+    "fee": "2.5% fee on online payments"
+  },
+
+  "howItWorks": {
+    "title": "How to rent out your property on Renterya",
+    "subtitle": "A simple process where you stay in control at every step — from listing to contract and recurring payments.",
+    "stepLabel": "Step",
+    "steps": {
+      "1": {
+        "title": "Create an owner profile",
+        "desc": "Fill in basic information — it takes only a few minutes."
+      },
+      "2": {
+        "title": "Add your property",
+        "desc": "Upload photos, describe the property, and set house rules."
+      },
+      "3": {
+        "title": "Set rental conditions",
+        "desc": "Specify price, rental term, deposit, or rent without a deposit using protection."
+      },
+      "4": {
+        "title": "Receive requests and chat",
+        "desc": "All communication happens directly on the platform — without intermediaries or “call me later.”"
+      },
+      "5": {
+        "title": "Review the renter profile and choose the best option",
+        "desc": "Budget, rental term, employment, children, pets, smoking — key parameters are visible immediately."
+      },
+      "6": {
+        "title": "Sign the contract online",
+        "desc": "Fix all agreements quickly — without paperwork, scans, or extra meetings."
+      },
+      "7": {
+        "title": "Connect your card to receive payments",
+        "desc": "Link your card on the payments page to receive funds directly."
+      },
+      "8": {
+        "title": "Receive online subscription payments",
+        "desc": "Recurring payments — stable, transparent, and convenient for both parties."
+      }
+    },
+    "footerPrefix": "You stay in control. ",
+    "footerAccent": "Renterya",
+    "footerSuffix": " provides the tools to make renting modern, secure, and predictable."
+  },
+
+  "benefits": {
+    "title": "Why owners choose Renterya",
+    "subtitle": "We’ve combined the key tools of modern renting into one platform — so you can feel calm, confident, and in control.",
+    "badge": "Benefit",
+    "items": {
+      "1": {
+        "title": "No intermediaries",
+        "desc": "You rent directly — without agents, extra commissions, or outside pressure. Full control stays with you."
+      },
+      "2": {
+        "title": "Direct chat with renter",
+        "desc": "Communicate and record agreements in one place — no lost messages or delays."
+      },
+      "3": {
+        "title": "Property protection up to ₴250,000",
+        "desc": "Renting without a deposit can be safe. Insurance protection helps reduce risks and attract more renters."
+      },
+      "4": {
+        "title": "Renter profile with key parameters",
+        "desc": "You see essential information before deciding: rental term, employment, budget, children, pets, smoking — all transparent."
+      },
+      "5": {
+        "title": "Online contract in minutes",
+        "desc": "Create and sign contracts online — without paperwork, scans, or unnecessary bureaucracy."
+      },
+      "6": {
+        "title": "Subscription-based online payments",
+        "desc": "Recurring payments without reminders or delays. Easier for you to manage rent, easier for renters to pay."
+      },
+      "7": {
+        "title": "Owners community",
+        "desc": "Experience sharing, advice, and a live platform environment. Get support from other owners and find renters faster."
+      },
+      "8": {
+        "title": "Transparent 2.5% fee on online payments",
+        "desc": "No hidden fees. Renters pay no commission — you pay only for service and results when using online payments."
+      }
+    },
+    "footerPrefix": "Renterya is built for owners who want to rent out property in a modern way: fast, direct, and fully in control.",
+    "footerAccent": ""
+  },
+
+  "protection": {
+    "title": "Property protection instead of a deposit",
+    "subtitle": "Rent out your property without a deposit — without risking your real estate.",
+    "body": "Renterya offers a modern approach to renting: instead of a mandatory deposit — property insurance protection up to ₴250,000.",
+    "body2": "The renter pays a monthly insurance contribution together with rent, allowing the owner to maintain financial security without requiring a deposit.",
+    "benefitsBadge": "What protection provides",
+    "bullets": {
+      "1": "ability to rent without a deposit",
+      "2": "more renter applications",
+      "3": "monthly insurance contribution from the renter",
+      "4": "financial protection of property",
+      "5": "peace of mind and owner confidence"
+    },
+    "coverage": {
+      "title": "What property protection may cover",
+      "subtitle": "Insurance coverage may include:",
+      "items": {
+        "1": "damage to furniture and household appliances",
+        "2": "damage to interior and renovation elements",
+        "3": "damage caused by water, fire, and other household incidents"
+      }
+    },
+    "amount": "₴250,000",
+    "amountLabel": "Maximum insurance coverage amount (according to platform terms).",
+    "note": "Property protection is an additional level of security and is applied in accordance with platform conditions. All details are available during rental and contract setup.",
+    "closingPrefix": "Modern renting is not fear. ",
+    "closingAccent": "It’s confidence."
+  },
+
+  "renterProfile": {
+    "title": "You know who you rent to",
+    "subtitle": "The renter profile shows key parameters before you decide — so you can choose confidently and with fewer risks.",
+    "body": "Renterya helps owners make balanced decisions. Before confirming the rental, you see essential information that affects living comfort and compliance with your rules.",
+    "fieldsTitle": "Key profile parameters",
+    "fields": {
+      "1": "Preferred rental term",
+      "2": "Employment status",
+      "3": "Budget",
+      "4": "Children",
+      "5": "Smoking",
+      "6": "Pets"
+    },
+    "whyTitle": "Why this matters",
+    "whyText": "This reduces random applications, saves your time, and helps you find a renter who truly fits your expectations.",
+    "summary": "Fewer surprises. More confidence.",
+    "closingAccent": "Transparency",
+    "closingSuffix": " means comfortable renting for both sides."
+  },
+
+  "community": {
+    "title": "Renterya owners community",
+    "subtitle": "A space where owners share experience, get support, and find renters faster.",
+    "body": "Renterya is more than listings. It’s an environment where you can ask questions, receive answers from other owners, share experience and advice, and publish your property in the community to attract renter attention.",
+    "badge": "Community",
+    "cards": {
+      "1": {
+        "title": "Experience sharing",
+        "desc": "Real advice from owners: how to prepare property, which rules work, and how to avoid common mistakes."
+      },
+      "2": {
+        "title": "Support and mutual help",
+        "desc": "Ask, share, and receive recommendations — in a convenient format directly on the platform."
+      },
+      "3": {
+        "title": "Faster renter search",
+        "desc": "Community publishing helps increase reach and receive applications faster."
+      }
+    },
+    "closingPrefix": "When community experience exists — ",
+    "closingAccent": "renting becomes easier",
+    "closingSuffix": "."
+  },
+
+  "docsPayments": {
+    "title": "Everything for renting — in one place",
+    "subtitle": "From agreements to payments — without paperwork, scans, or third-party services.",
+    "badge": "Service",
+    "cards": {
+      "contract": {
+        "title": "Online contract",
+        "body": "Create and sign contracts directly on the platform. Terms are fixed transparently — without confusion or verbal agreements.",
+        "bullets": {
+          "1": "fast setup without paperwork",
+          "2": "convenient for owners and renters",
+          "3": "important agreements are recorded"
+        }
+      },
+      "payments": {
+        "title": "Subscription payments",
+        "body": "The renter pays rent online on the platform — regularly and on time. The owner receives predictable payments without reminders or unnecessary messages.",
+        "bullets": {
+          "1": "recurring online payments",
+          "2": "fewer delays and stress",
+          "3": "transparent payment history"
+        }
+      }
+    },
+    "closingAccent": "Less routine.",
+    "closingRest": "More order."
+  },
+
+  "pricing": {
+    "title": "Transparent fee with no hidden charges",
+    "subtitle": "Renterya is a completely free platform. We do not charge for registration, property listings, or platform usage.",
+    "main": {
+      "value": "2.5%",
+      "note": "The platform’s only fee applies solely to online payments — charged to the owner.",
+      "extra": "If rent is not paid online — no commission applies."
+    },
+    "tiles": {
+      "owner": {
+        "title": "For owner",
+        "value": "2.5% fee",
+        "note": "only on online payments"
+      },
+      "renter": {
+        "title": "For renter",
+        "value": "0% fee",
+        "note": "the renter pays only rent and a monthly insurance contribution of ₴280 (if property protection is chosen instead of a deposit)"
+      },
+      "free": {
+        "title": "Free",
+        "value": "₴0 for usage",
+        "note": "no subscriptions, plans, or hidden fees"
+      }
+    },
+    "footerPrefix": "You pay only when you receive ",
+    "footerAccent": "real payments",
+    "footerSuffix": " through Renterya."
+  },
+
+  "finalCta": {
+    "title": "Ready to start with ",
+    "brand": "Renterya",
+    "titleSuffix": "?",
+    "subtitle": "We’re here — even if you’re renting out for the first time.",
+    "body1": "If you have doubts or are using a platform like this for the first time — don’t worry.",
+    "body2": "Our team will help you create an owner profile, add your property, and correctly publish your listing. We’ll guide you step by step — so you can receive your first rental requests.",
+    "primaryCta": "Create profile",
+    "secondaryCta": "Get assistance",
+    "microcopy": "Free. No obligations. We support you at every stage.",
+    "footer": "Renterya — a modern path to confident property renting."
+  }
+}
