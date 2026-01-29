@@ -7,53 +7,64 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 
-type RentOutDocumentsAndPaymentsProps = {
+type LandingCommunityProps = {
   className?: string;
   sectionId?: string;
 };
 
-type InfoCard = {
+type CommunityCard = {
   titleKey: string;
   titleFallback: string;
-  bodyKey: string;
-  bodyFallback: string;
-  bullets: Array<{ key: string; fallback: string }>;
+  descKey: string;
+  descFallback: string;
 };
 
-export default function RentOutDocumentsAndPayments({
+export default function LandingCommunity({
   className,
-  sectionId = 'rent-out-docs-payments',
-}: RentOutDocumentsAndPaymentsProps) {
-  const { t } = useTranslation(['rentOut']);
+  sectionId = 'landing-community',
+}: LandingCommunityProps) {
+  const { t } = useTranslation(['landing']);
   const { theme } = useTheme();
 
   const isDark = theme === 'dark';
 
-  const cards: InfoCard[] = useMemo(
+  const cards: CommunityCard[] = useMemo(
     () => [
       {
-        titleKey: 'rentOut:docsPayments.cards.contract.title',
-        titleFallback: 'Онлайн-договір',
-        bodyKey: 'rentOut:docsPayments.cards.contract.body',
-        bodyFallback:
-          'Створюйте та підписуйте договір прямо на платформі. Умови фіксуються прозоро — без плутанини та “домовились на словах”.',
-        bullets: [
-          { key: 'rentOut:docsPayments.cards.contract.bullets.1', fallback: 'швидке оформлення без паперів' },
-          { key: 'rentOut:docsPayments.cards.contract.bullets.2', fallback: 'зручно для власника й орендаря' },
-          { key: 'rentOut:docsPayments.cards.contract.bullets.3', fallback: 'важливі домовленості зафіксовані' },
-        ],
+        titleKey: 'landing:community.cards.1.title',
+        titleFallback: 'Поради та досвід',
+        descKey: 'landing:community.cards.1.desc',
+        descFallback: 'Досвід переїзду, побуту та оренди — коротко, по-людськи і без зайвої “теорії”.',
       },
       {
-        titleKey: 'rentOut:docsPayments.cards.payments.title',
-        titleFallback: 'Платежі по підписці',
-        bodyKey: 'rentOut:docsPayments.cards.payments.body',
-        bodyFallback:
-          'Орендар сплачує оренду онлайн на платформі — регулярно та вчасно. Власник отримує передбачувані платежі без нагадувань і зайвих повідомлень.',
-        bullets: [
-          { key: 'rentOut:docsPayments.cards.payments.bullets.1', fallback: 'регулярні платежі онлайн' },
-          { key: 'rentOut:docsPayments.cards.payments.bullets.2', fallback: 'менше затримок і стресу' },
-          { key: 'rentOut:docsPayments.cards.payments.bullets.3', fallback: 'прозора історія оплат' },
-        ],
+        titleKey: 'landing:community.cards.2.title',
+        titleFallback: 'Питання та відповіді',
+        descKey: 'landing:community.cards.2.desc',
+        descFallback: 'Запитуйте та отримуйте відповіді від спільноти — коли потрібно швидко розібратись.',
+      },
+      {
+        titleKey: 'landing:community.cards.3.title',
+        titleFallback: 'Реальні історії та кейси',
+        descKey: 'landing:community.cards.3.desc',
+        descFallback: 'Досвід інших допомагає уникати помилок і приймати рішення впевненіше.',
+      },
+      {
+        titleKey: 'landing:community.cards.4.title',
+        titleFallback: 'Розкажіть свою історію',
+        descKey: 'landing:community.cards.4.desc',
+        descFallback: 'Діліться своїм досвідом оренди, порадами та лайфхаками з іншими учасниками комʼюніті.',
+      },
+      {
+        titleKey: 'landing:community.cards.5.title',
+        titleFallback: 'Пошук співмешканця',
+        descKey: 'landing:community.cards.5.desc',
+        descFallback: 'Можливість знайти людину для спільної оренди — щоб розділити витрати та зняти житло разом.',
+      },
+      {
+        titleKey: 'landing:community.cards.6.title',
+        titleFallback: 'Місцеві рекомендації',
+        descKey: 'landing:community.cards.6.desc',
+        descFallback: 'Рекомендації від місцевих жителів — де краще жити, що варто знати і як адаптуватись.',
       },
     ],
     []
@@ -68,6 +79,7 @@ export default function RentOutDocumentsAndPayments({
       ),
       title: isDark ? 'text-white' : 'text-foreground',
       softText: isDark ? 'text-white/70' : 'text-foreground/70',
+
       gridDots: cn(
         'pointer-events-none absolute inset-0 opacity-[0.06]',
         isDark ? 'bg-[radial-gradient(#fff_1px,transparent_1px)]' : 'bg-[radial-gradient(#000_1px,transparent_1px)]',
@@ -75,17 +87,17 @@ export default function RentOutDocumentsAndPayments({
       ),
       glowTop: cn(
         'pointer-events-none absolute -top-28 -right-24 h-80 w-80 rounded-full blur-3xl opacity-60',
-        isDark ? 'bg-orange-500/20' : 'bg-orange-400/16'
+        isDark ? 'bg-orange-500/18' : 'bg-orange-400/14'
       ),
       glowBottom: cn(
         'pointer-events-none absolute -bottom-32 -left-28 h-96 w-96 rounded-full blur-3xl opacity-60',
         isDark ? 'bg-yellow-500/14' : 'bg-yellow-300/18'
       ),
 
-      grid: 'mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-2',
+      grid: 'mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3',
 
       card: cn(
-        'group relative overflow-hidden rounded-2xl border p-4 sm:p-6',
+        'group relative overflow-hidden rounded-2xl border p-4 sm:p-5',
         'transition-all duration-200',
         isDark ? 'bg-white/5 border-white/10' : 'bg-black/[0.03] border-black/10'
       ),
@@ -108,20 +120,15 @@ export default function RentOutDocumentsAndPayments({
       ),
 
       cardTitle: cn('mt-3 text-base sm:text-lg font-semibold leading-snug', isDark ? 'text-white' : 'text-foreground'),
-      cardBody: cn('mt-2 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/70' : 'text-foreground/70'),
-
-      bulletList: 'mt-4 space-y-2',
-      bullet: cn(
-        'flex items-start gap-2 rounded-xl border px-3 py-2 text-sm sm:text-base',
-        isDark ? 'border-white/10 bg-white/4 text-white/75' : 'border-black/10 bg-white/60 text-foreground/75'
-      ),
-      bulletIcon: cn('mt-1 h-2 w-2 shrink-0 rounded-full', isDark ? 'bg-orange-300/90' : 'bg-orange-500/90'),
+      cardDesc: cn('mt-1.5 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/70' : 'text-foreground/70'),
 
       closing: cn('mt-6 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/65' : 'text-foreground/65'),
       closingAccent: cn(
         'font-semibold text-orange-500',
   isDark && 'text-orange-400'
       ),
+
+      tagline: cn('mt-3 text-xs sm:text-sm leading-relaxed', isDark ? 'text-white/60' : 'text-foreground/60'),
     };
   }, [className, isDark]);
 
@@ -141,12 +148,20 @@ export default function RentOutDocumentsAndPayments({
             className="max-w-3xl"
           >
             <h2 className={cn('text-2xl sm:text-3xl font-bold', styles.title)}>
-              {t('rentOut:docsPayments.title', 'Усе для оренди — в одному місці')}
+              {t('landing:community.title', 'Живе комʼюніті — коли є в кого запитати')}
             </h2>
+
             <p className={cn('mt-3 text-base sm:text-lg leading-relaxed', styles.softText)}>
               {t(
-                'rentOut:docsPayments.subtitle',
-                'Від домовленостей до оплати — без паперів, сканів і сторонніх сервісів.'
+                'landing:community.subtitle',
+                'Rentera — це не лише пошук житла. Це простір, де люди підтримують один одного та діляться досвідом.'
+              )}
+            </p>
+
+            <p className={cn('mt-4 text-base leading-relaxed', styles.softText)}>
+              {t(
+                'landing:community.body',
+                'Переїзд і оренда — це завжди питання. У комʼюніті Rentera ви можете знайти відповіді, поради та реальні історії людей, які проходили цей шлях.'
               )}
             </p>
           </motion.div>
@@ -158,25 +173,16 @@ export default function RentOutDocumentsAndPayments({
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.35, ease: 'easeOut', delay: Math.min(idx * 0.06, 0.18) }}
+                transition={{ duration: 0.35, ease: 'easeOut', delay: Math.min(idx * 0.05, 0.2) }}
                 className={cn(styles.card, styles.cardHover)}
               >
                 <div className={styles.badge}>
                   <span className={styles.dot} aria-hidden="true" />
-                  {t('rentOut:docsPayments.badge', 'Сервіс')}
+                  {t('landing:community.badge', 'Комʼюніті')}
                 </div>
 
                 <div className={styles.cardTitle}>{t(c.titleKey, c.titleFallback)}</div>
-                <div className={styles.cardBody}>{t(c.bodyKey, c.bodyFallback)}</div>
-
-                <div className={styles.bulletList}>
-                  {c.bullets.map((b) => (
-                    <div key={b.key} className={styles.bullet}>
-                      <span className={styles.bulletIcon} aria-hidden="true" />
-                      <span>{t(b.key, b.fallback)}</span>
-                    </div>
-                  ))}
-                </div>
+                <div className={styles.cardDesc}>{t(c.descKey, c.descFallback)}</div>
 
                 <div className={styles.shine} />
               </motion.div>
@@ -190,9 +196,14 @@ export default function RentOutDocumentsAndPayments({
             transition={{ duration: 0.4, ease: 'easeOut', delay: 0.05 }}
             className={styles.closing}
           >
-            <span className={styles.closingAccent}>{t('rentOut:docsPayments.closingAccent', 'Менше рутини.')}</span>{' '}
-            {t('rentOut:docsPayments.closingRest', 'Більше порядку.')}
+            {t('landing:community.closingPrefix', 'Оренда стає простішою, коли ')}
+            <span className={styles.closingAccent}>{t('landing:community.closingAccent', 'ти не один')}</span>
+            {t('landing:community.closingSuffix', '.')}
           </motion.div>
+
+          <div className={styles.tagline}>
+            {t('landing:community.tagline', 'Жива спільнота. Реальні люди. Справжня підтримка.')}
+          </div>
         </div>
       </div>
     </section>

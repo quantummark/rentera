@@ -1,31 +1,23 @@
-'use client';
+import LandingHero from '@/app/components/landing/LandingHero';
+import LandingTrustChips from '@/app/components/landing/LandingTrustChips';
+import LandingHowItWorks from '@/app/components/landing/LandingHowItWorks';
+import LandingWhyRentera from '@/app/components/landing/LandingWhyRentera';
+import LandingDocumentsAndPayments from '@/app/components/landing/LandingDocumentsAndPayments';
+import LandingCommunity from '@/app/components/landing/LandingCommunity';
+import LandingForOwners from '@/app/components/landing/LandingForOwners';
+import LandingFinalCTA from '@/app/components/landing/LandingFinalCTA';
 
-import Hero from '@/app/components/landing/UpperBlock';
-import CallToAction from '@/app/components/landing/CallToAction';
-import Benefits from '@/app/components/landing/Benefits';
-import HowItWorks from '@/app/components/landing/HowItWorks';
-import Motivation from '@/app/components/landing/Motivation';
-import { Suspense } from 'react';
-
-export default function HomePage() {
+export default function Page() {
   return (
-    <Suspense fallback={<div>Загрузка...</div>}>
-      <main className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <Hero />
-
-        {/* Преимущества Rentera */}
-        <Benefits />
-
-        {/* Как работает Rentera */}
-        <HowItWorks />
-
-        {/* Мотивационный блок */}
-        <Motivation />
-
-        {/* Призыв к действию */}
-        <CallToAction />
-      </main>
-    </Suspense>
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-10 px-1 sm:px-0">
+      <LandingHero />
+      <LandingTrustChips />
+      <LandingHowItWorks />
+      <LandingWhyRentera />
+      <LandingDocumentsAndPayments />
+      <LandingCommunity />
+      <LandingForOwners />
+      <LandingFinalCTA />
+    </div>
   );
 }

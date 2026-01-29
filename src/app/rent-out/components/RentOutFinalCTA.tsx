@@ -64,15 +64,17 @@ export default function RentOutFinalCTA({
 
       gradientWord: cn(
         'bg-clip-text text-transparent',
-        isDark
-          ? 'bg-gradient-to-r from-orange-300 via-yellow-200 to-orange-400'
-          : 'bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500'
+  isDark
+    ? 'bg-gradient-to-r from-orange-200 to-orange-400'
+    : 'bg-gradient-to-r from-orange-400 to-orange-600'
       ),
 
       primaryBtn: cn(
-        'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold',
-        isDark ? 'bg-white text-black hover:bg-white/90' : 'bg-black text-white hover:bg-black/90'
-      ),
+  'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold transition-all',
+  isDark
+    ? 'bg-orange-500 text-white hover:bg-orange-400 shadow-[0_8px_30px_rgba(249,115,22,0.35)]'
+    : 'bg-orange-500 text-white hover:bg-orange-600 shadow-[0_8px_30px_rgba(249,115,22,0.25)]'
+),
       secondaryBtn: cn(
         'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold border',
         isDark ? 'border-white/20 text-white hover:bg-white/5' : 'border-black/15 text-foreground hover:bg-black/5'

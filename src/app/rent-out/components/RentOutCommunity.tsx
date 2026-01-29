@@ -105,10 +105,8 @@ export default function RentOutCommunity({
 
       closing: cn('mt-6 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/65' : 'text-foreground/65'),
       closingAccent: cn(
-        'bg-clip-text text-transparent font-semibold',
-        isDark
-          ? 'bg-gradient-to-r from-orange-300 via-yellow-200 to-orange-400'
-          : 'bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500'
+        'font-semibold text-orange-500',
+  isDark && 'text-orange-400'
       ),
     };
   }, [className, isDark]);

@@ -1,9 +1,212 @@
 {
-  "welcome": "Welcome to Renterya",
-  "subtitle": "Direct rental — no middlemen. Sign and pay online. Transparent, simple, and a little bit magical. ✨",
-  "startSearch": "🔍 Start searching",
-  "startRenting": "🗝️ Rent out",
-  "verifiedOwners": "Verified Owners",
-  "verifiedListings": "Verified Listings",
-  "support": "24/7 Support"
+  "hero": {
+    "kicker": "Modern rental platform",
+    "title": "Find housing without intermediaries — ",
+    "titleAccent": "easily and calmly",
+    "subtitle": "Renterya combines direct communication, online contracts, and convenient payments in one modern platform.",
+    "primaryCta": "Start housing search",
+    "secondaryCta": "I am a property owner",
+    "microcopyFree": "Free",
+    "microcopySep1": " • ",
+    "microcopyNoMediators": "No intermediaries",
+    "microcopySep2": " • ",
+    "microcopyNoStress": "No unnecessary stress"
+  },
+
+  "trustChips": {
+    "1": "No intermediaries",
+    "2": "Direct chat between parties",
+    "3": "Online contract",
+    "4": "Subscription payments",
+    "5": "Live community",
+    "6": "Next-generation platform"
+  },
+
+  "howItWorks": {
+    "title": "How it works — simple and clear",
+    "subtitle": "From search to move-in — just a few steps without chaos, calls, or unnecessary people.",
+    "stepLabel": "Step",
+    "stepNumber": {
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6"
+    },
+    "steps": {
+      "1": {
+        "title": "Find housing",
+        "desc": "Browse listings, use filters, and choose what fits you best."
+      },
+      "2": {
+        "title": "Message the owner in chat",
+        "desc": "Ask questions, arrange viewings, and clarify details — directly, without intermediaries."
+      },
+      "3": {
+        "title": "Agree on the terms",
+        "desc": "Rental period, rules, and living details — everything is transparent and recorded."
+      },
+      "4": {
+        "title": "Sign the online contract",
+        "desc": "When everything is agreed — sign the contract online directly on the platform."
+      },
+      "5": {
+        "title": "Pay conveniently",
+        "desc": "Online payments and recurring billing — less stress, more order."
+      },
+      "6": {
+        "title": "Move in and enjoy life",
+        "desc": "Settle into your new home and enjoy comfort and convenience."
+      }
+    },
+    "closingPrefix": "Renting can be easy. ",
+    "closingAccent": "That’s exactly how we made it",
+    "closingSuffix": "."
+  },
+
+  "whyRentera": {
+    "title": "Renterya is more than listings",
+    "subtitle": "We removed chaos from the rental process and made it modern: transparent, manageable, and without unnecessary people.",
+    "body": "Housing rental is often complicated by endless calls, intermediaries, and additional fees. Renterya was created so that only direct contact remains between owner and renter — without third parties and unnecessary costs.",
+    "badge": "Benefit",
+    "features": {
+      "1": {
+        "title": "Direct contact, no intermediaries",
+        "desc": "Communicate directly with the owner in chat — quickly and without extra steps."
+      },
+      "2": {
+        "title": "Order in details",
+        "desc": "Terms, rules, and agreements — clear and structured."
+      },
+      "3": {
+        "title": "Online contract — not later, but immediately",
+        "desc": "Once everything is agreed, signing happens online directly on the platform."
+      },
+      "4": {
+        "title": "Payments — simple and regular",
+        "desc": "Online payments and payment history — without reminders or unnecessary messages."
+      }
+    },
+    "finalPrefix": "Renterya — when renting feels like a service, not like a ",
+    "finalAccent": "“quest”",
+    "finalSuffix": "."
+  },
+
+  "docsPayments": {
+    "title": "Contract, payments, and protection — without extra stress",
+    "subtitle": "Renterya helps make renting clear and calm from day one.",
+    "badge": "Service",
+    "cards": {
+      "contract": {
+        "title": "Online contract",
+        "body": "Sign the contract online directly on the platform — without paperwork, scans, or confusion. Rental terms are fixed and accessible at any time.",
+        "bullets": {
+          "1": "everything is clear from day one",
+          "2": "less risk of misunderstandings",
+          "3": "the contract is always at hand"
+        }
+      },
+      "payments": {
+        "title": "Online payments",
+        "body": "Pay rent online — regularly and conveniently. Payment history is stored in your account.",
+        "bullets": {
+          "1": "recurring payments without reminders",
+          "2": "transparent payment history",
+          "3": "convenient and fast"
+        }
+      },
+      "protection": {
+        "title": "Property protection",
+        "body": "The option to move in without a large deposit — paying rent and a small monthly contribution to Renterya’s partner insurance fund.",
+        "bullets": {
+          "1": "less financial pressure at move-in",
+          "2": "more trust between parties",
+          "3": "a modern approach to renting"
+        }
+      }
+    },
+    "footerPrefix": "Renting can be simple, ",
+    "footerAccent": "clear and modern",
+    "footerSuffix": "."
+  },
+
+  "community": {
+    "title": "A living community — when there’s someone to ask",
+    "subtitle": "Renterya is not only about finding housing. It’s a space where people support each other and share experience.",
+    "body": "Moving and renting always raise questions. In the Renterya community, you can find answers, advice, and real stories from people who have already gone through this journey.",
+    "badge": "Community",
+    "cards": {
+      "1": {
+        "title": "Advice and experience",
+        "desc": "Moving, living, and rental experience — short, human, and without unnecessary theory."
+      },
+      "2": {
+        "title": "Questions and answers",
+        "desc": "Ask and receive answers from the community — when you need clarity quickly."
+      },
+      "3": {
+        "title": "Real stories and cases",
+        "desc": "Others’ experience helps avoid mistakes and make decisions with more confidence."
+      },
+      "4": {
+        "title": "Share your story",
+        "desc": "Share your rental experience, tips, and life hacks with other community members."
+      },
+      "5": {
+        "title": "Find a roommate",
+        "desc": "An option to find someone for shared renting — to split costs and live together."
+      },
+      "6": {
+        "title": "Local recommendations",
+        "desc": "Tips from locals — where to live, what to know, and how to adapt."
+      }
+    },
+    "closingPrefix": "Renting becomes easier when ",
+    "closingAccent": "you’re not alone",
+    "closingSuffix": ".",
+    "tagline": "Live community. Real people. Genuine support."
+  },
+
+  "forOwners": {
+    "title": "Renting out property? A dedicated space for owners",
+    "subtitle": "We created a separate page for owners with all rental tools, property protection, and an online process from the first request to payment.",
+    "bullets": {
+      "1": "No intermediaries — direct contact with the renter",
+      "2": "Property protection instead of a large deposit",
+      "3": "Online contract and signing on the platform",
+      "4": "Recurring subscription payments",
+      "5": "Community for experience sharing and renter discovery"
+    },
+    "cta": "Go to owners section",
+    "micro1": "Free registration",
+    "sep1": " • ",
+    "micro2": "Only 2.5% fee on online payments",
+    "sep2": " • ",
+    "micro3": "No hidden conditions",
+    "preview": {
+      "title": "Owner page",
+      "text": "Everything in one place: property protection, renter profile, contract, payments, and community.",
+      "pill1": "Protection",
+      "pill2": "Contract",
+      "pill3": "Payments",
+      "pill4": "Community",
+      "footer": "Renterya — when renting out property is as convenient as using a service."
+    }
+  },
+
+  "finalCta": {
+    "titlePrefix": "Start your search — and find ",
+    "titleAccent": "“your” home",
+    "titleSuffix": " without unnecessary stress",
+    "subtitle": "Renterya was created to make renting simple: direct chat, online contracts, and organized payments.",
+    "primaryCta": "Start housing search",
+    "secondaryCta": "Get assistance",
+    "micro1": "Free",
+    "sep1": " • ",
+    "micro2": "No intermediaries",
+    "sep2": " • ",
+    "micro3": "Everything in one place",
+    "helperLine": "If you are using the platform for the first time — we’ll guide you on where to start."
+  }
 }

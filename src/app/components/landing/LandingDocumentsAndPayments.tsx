@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 
-type RentOutDocumentsAndPaymentsProps = {
+type LandingDocumentsAndPaymentsProps = {
   className?: string;
   sectionId?: string;
 };
@@ -20,11 +20,11 @@ type InfoCard = {
   bullets: Array<{ key: string; fallback: string }>;
 };
 
-export default function RentOutDocumentsAndPayments({
+export default function LandingDocumentsAndPayments({
   className,
-  sectionId = 'rent-out-docs-payments',
-}: RentOutDocumentsAndPaymentsProps) {
-  const { t } = useTranslation(['rentOut']);
+  sectionId = 'landing-docs-payments',
+}: LandingDocumentsAndPaymentsProps) {
+  const { t } = useTranslation(['landing']);
   const { theme } = useTheme();
 
   const isDark = theme === 'dark';
@@ -32,27 +32,39 @@ export default function RentOutDocumentsAndPayments({
   const cards: InfoCard[] = useMemo(
     () => [
       {
-        titleKey: 'rentOut:docsPayments.cards.contract.title',
+        titleKey: 'landing:docsPayments.cards.contract.title',
         titleFallback: 'Онлайн-договір',
-        bodyKey: 'rentOut:docsPayments.cards.contract.body',
+        bodyKey: 'landing:docsPayments.cards.contract.body',
         bodyFallback:
-          'Створюйте та підписуйте договір прямо на платформі. Умови фіксуються прозоро — без плутанини та “домовились на словах”.',
+          'Підписуйте договір онлайн прямо на платформі — без паперів, сканів і плутанини. Умови оренди зафіксовані та доступні в будь-який момент.',
         bullets: [
-          { key: 'rentOut:docsPayments.cards.contract.bullets.1', fallback: 'швидке оформлення без паперів' },
-          { key: 'rentOut:docsPayments.cards.contract.bullets.2', fallback: 'зручно для власника й орендаря' },
-          { key: 'rentOut:docsPayments.cards.contract.bullets.3', fallback: 'важливі домовленості зафіксовані' },
+          { key: 'landing:docsPayments.cards.contract.bullets.1', fallback: 'все зрозуміло з першого дня' },
+          { key: 'landing:docsPayments.cards.contract.bullets.2', fallback: 'менше ризику непорозумінь' },
+          { key: 'landing:docsPayments.cards.contract.bullets.3', fallback: 'договір завжди під рукою' },
         ],
       },
       {
-        titleKey: 'rentOut:docsPayments.cards.payments.title',
-        titleFallback: 'Платежі по підписці',
-        bodyKey: 'rentOut:docsPayments.cards.payments.body',
+        titleKey: 'landing:docsPayments.cards.payments.title',
+        titleFallback: 'Онлайн-оплата',
+        bodyKey: 'landing:docsPayments.cards.payments.body',
         bodyFallback:
-          'Орендар сплачує оренду онлайн на платформі — регулярно та вчасно. Власник отримує передбачувані платежі без нагадувань і зайвих повідомлень.',
+          'Сплачуйте оренду онлайн — регулярно та зручно. Історія платежів зберігається у вашому кабінеті.',
         bullets: [
-          { key: 'rentOut:docsPayments.cards.payments.bullets.1', fallback: 'регулярні платежі онлайн' },
-          { key: 'rentOut:docsPayments.cards.payments.bullets.2', fallback: 'менше затримок і стресу' },
-          { key: 'rentOut:docsPayments.cards.payments.bullets.3', fallback: 'прозора історія оплат' },
+          { key: 'landing:docsPayments.cards.payments.bullets.1', fallback: 'регулярні платежі без нагадувань' },
+          { key: 'landing:docsPayments.cards.payments.bullets.2', fallback: 'прозора історія оплат' },
+          { key: 'landing:docsPayments.cards.payments.bullets.3', fallback: 'більше порядку в побуті' },
+        ],
+      },
+      {
+        titleKey: 'landing:docsPayments.cards.protection.title',
+        titleFallback: 'Захист житла',
+        bodyKey: 'landing:docsPayments.cards.protection.body',
+        bodyFallback:
+          'Можливість заїхати без великого залогу — сплачуючи оренду та невеликий щомісячний внесок у страховий фонд партнера Rentera.',
+        bullets: [
+          { key: 'landing:docsPayments.cards.protection.bullets.1', fallback: 'менше фінансового навантаження при заселенні' },
+          { key: 'landing:docsPayments.cards.protection.bullets.2', fallback: 'більше довіри між сторонами' },
+          { key: 'landing:docsPayments.cards.protection.bullets.3', fallback: 'сучасний підхід до оренди' },
         ],
       },
     ],
@@ -68,6 +80,7 @@ export default function RentOutDocumentsAndPayments({
       ),
       title: isDark ? 'text-white' : 'text-foreground',
       softText: isDark ? 'text-white/70' : 'text-foreground/70',
+
       gridDots: cn(
         'pointer-events-none absolute inset-0 opacity-[0.06]',
         isDark ? 'bg-[radial-gradient(#fff_1px,transparent_1px)]' : 'bg-[radial-gradient(#000_1px,transparent_1px)]',
@@ -82,7 +95,7 @@ export default function RentOutDocumentsAndPayments({
         isDark ? 'bg-yellow-500/14' : 'bg-yellow-300/18'
       ),
 
-      grid: 'mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-2',
+      grid: 'mt-6 sm:mt-8 grid gap-3 sm:gap-4 md:grid-cols-3',
 
       card: cn(
         'group relative overflow-hidden rounded-2xl border p-4 sm:p-6',
@@ -117,8 +130,8 @@ export default function RentOutDocumentsAndPayments({
       ),
       bulletIcon: cn('mt-1 h-2 w-2 shrink-0 rounded-full', isDark ? 'bg-orange-300/90' : 'bg-orange-500/90'),
 
-      closing: cn('mt-6 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/65' : 'text-foreground/65'),
-      closingAccent: cn(
+      footer: cn('mt-6 text-sm sm:text-base leading-relaxed', isDark ? 'text-white/65' : 'text-foreground/65'),
+      footerAccent: cn(
         'font-semibold text-orange-500',
   isDark && 'text-orange-400'
       ),
@@ -141,13 +154,10 @@ export default function RentOutDocumentsAndPayments({
             className="max-w-3xl"
           >
             <h2 className={cn('text-2xl sm:text-3xl font-bold', styles.title)}>
-              {t('rentOut:docsPayments.title', 'Усе для оренди — в одному місці')}
+              {t('landing:docsPayments.title', 'Договір, платежі та захист — без зайвого стресу')}
             </h2>
             <p className={cn('mt-3 text-base sm:text-lg leading-relaxed', styles.softText)}>
-              {t(
-                'rentOut:docsPayments.subtitle',
-                'Від домовленостей до оплати — без паперів, сканів і сторонніх сервісів.'
-              )}
+              {t('landing:docsPayments.subtitle', 'Rentera допомагає зробити оренду зрозумілою та спокійною з першого дня.')}
             </p>
           </motion.div>
 
@@ -163,7 +173,7 @@ export default function RentOutDocumentsAndPayments({
               >
                 <div className={styles.badge}>
                   <span className={styles.dot} aria-hidden="true" />
-                  {t('rentOut:docsPayments.badge', 'Сервіс')}
+                  {t('landing:docsPayments.badge', 'Сервіс')}
                 </div>
 
                 <div className={styles.cardTitle}>{t(c.titleKey, c.titleFallback)}</div>
@@ -188,10 +198,11 @@ export default function RentOutDocumentsAndPayments({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.4, ease: 'easeOut', delay: 0.05 }}
-            className={styles.closing}
+            className={styles.footer}
           >
-            <span className={styles.closingAccent}>{t('rentOut:docsPayments.closingAccent', 'Менше рутини.')}</span>{' '}
-            {t('rentOut:docsPayments.closingRest', 'Більше порядку.')}
+            {t('landing:docsPayments.footerPrefix', 'Оренда може бути без страху, великих сум наперед і ')}
+            <span className={styles.footerAccent}>{t('landing:docsPayments.footerAccent', 'зайвого напруження')}</span>
+            {t('landing:docsPayments.footerSuffix', '.')}
           </motion.div>
         </div>
       </div>
