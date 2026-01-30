@@ -223,7 +223,7 @@
       "renter": {
         "title": "For renter",
         "value": "0% fee",
-        "note": "the renter pays only rent and a monthly insurance contribution of ₴280 (if property protection is chosen instead of a deposit)"
+        "note": "the renter pays only rent and a monthly insurance contribution (if protection is chosen)"
       },
       "free": {
         "title": "Free",
@@ -240,7 +240,7 @@
     "title": "Ready to start with ",
     "brand": "Renterya",
     "titleSuffix": "?",
-    "subtitle": "We’re here — even if you’re renting out for the first time.",
+    "subtitle": "We’re here for you at every step — from the first move to stable renting.",
     "body1": "If you have doubts or are using a platform like this for the first time — don’t worry.",
     "body2": "Our team will help you create an owner profile, add your property, and correctly publish your listing. We’ll guide you step by step — so you can receive your first rental requests.",
     "primaryCta": "Create profile",

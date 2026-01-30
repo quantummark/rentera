@@ -23,7 +23,7 @@ export default function LandingFinalCTA({
   className,
   sectionId = 'landing-final-cta',
   searchHref = '/search',
-  helpHref = '/support',
+  helpHref = '/support/help',
   onSearchClick,
   onHelpClick,
 }: LandingFinalCTAProps) {

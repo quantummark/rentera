@@ -16,18 +16,22 @@ type RentOutHeroProps = {
 
   /** Якор на цій же сторінці (наприклад секція "Як працює"). */
   secondaryScrollId?: string;
-
+  /** Куди вести за допомогою (підтримка/чат/контакти). */
+  helpHref?: string;
   /** Дозволяє підмінити поведінку кнопок, якщо треба */
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
+  onHelpClick?: () => void;
 };
 
 export default function RentOutHero({
   className,
   primaryHref = '/login',
-  secondaryScrollId = '/support/help',
+  secondaryScrollId = 'rent-out-how-it-works',
+  helpHref = '/support/help',
   onPrimaryClick,
   onSecondaryClick,
+  onHelpClick,
 }: RentOutHeroProps) {
   const { t } = useTranslation(['rentOut']);
   const { theme } = useTheme();
@@ -133,10 +137,15 @@ export default function RentOutHero({
                   <a href={primaryHref}>{t('rentOut:hero.primaryCta', 'Створити профіль власника')}</a>
                 </Button>
               )}
-
-              <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={handleSecondary}>
-                {t('rentOut:hero.secondaryCta', 'Дізнатися більше')}
-              </Button>
+              {onHelpClick ? (
+                <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={onHelpClick}>
+                  {t('rentOut:hero.secondaryCta', 'Дізнатися більше')}
+                </Button>
+              ) : (
+                <Button asChild variant="outline" className={styles.secondaryBtn}>
+                  <a href={helpHref}>{t('rentOut:hero.secondaryCta', 'Дізнатися більше')}</a>
+                </Button>
+              )}
             </div>
 
             <p className={cn('mt-3', styles.microcopy)}>
