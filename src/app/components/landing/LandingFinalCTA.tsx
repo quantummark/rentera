@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type LandingFinalCTAProps = {
   className?: string;
@@ -14,9 +15,6 @@ type LandingFinalCTAProps = {
 
   searchHref?: string;
   helpHref?: string;
-
-  onSearchClick?: () => void;
-  onHelpClick?: () => void;
 };
 
 export default function LandingFinalCTA({
@@ -24,8 +22,6 @@ export default function LandingFinalCTA({
   sectionId = 'landing-final-cta',
   searchHref = '/search',
   helpHref = '/support/help',
-  onSearchClick,
-  onHelpClick,
 }: LandingFinalCTAProps) {
   const { t } = useTranslation(['landing']);
   const { theme } = useTheme();
@@ -69,30 +65,25 @@ export default function LandingFinalCTA({
       title: cn('text-2xl sm:text-3xl md:text-4xl font-bold leading-tight', titleText),
       titleAccent: cn(
         'bg-clip-text text-transparent',
-  isDark
-    ? 'bg-gradient-to-r from-orange-200 to-orange-400'
-    : 'bg-gradient-to-r from-orange-400 to-orange-600'
+        isDark ? 'bg-gradient-to-r from-orange-200 to-orange-400' : 'bg-gradient-to-r from-orange-400 to-orange-600'
       ),
 
       subtitle: cn('mt-3 text-base sm:text-lg leading-relaxed', softText),
 
       actions: 'mt-6 flex flex-col sm:flex-row justify-center gap-3 sm:items-center',
       primaryBtn: cn(
-  'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold transition-all',
-  isDark
-    ? 'bg-orange-500 text-white hover:bg-orange-400 shadow-[0_8px_30px_rgba(249,115,22,0.35)]'
-    : 'bg-orange-500 text-white hover:bg-orange-600 shadow-[0_8px_30px_rgba(249,115,22,0.25)]'
-),
+        'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold transition-all',
+        isDark
+          ? 'bg-orange-500 text-white hover:bg-orange-400 shadow-[0_8px_30px_rgba(249,115,22,0.35)]'
+          : 'bg-orange-500 text-white hover:bg-orange-600 shadow-[0_8px_30px_rgba(249,115,22,0.25)]'
+      ),
       secondaryBtn: cn(
-        'rounded-2xl px-6 py-5 sm:py-6 text-sm sm:text-base font-semibold border',
+        'rounded-2xl px-6 py-5 sm:py-6 text-sm sm:text-base font-semibold border transition-all',
         isDark ? 'border-white/20 text-white hover:bg-white/5' : 'border-black/15 text-foreground hover:bg-black/5'
       ),
 
       microcopy: cn('mt-4 text-xs sm:text-sm leading-relaxed', isDark ? 'text-white/60' : 'text-foreground/60'),
-      microAccent: cn(
-        'font-semibold text-orange-500',
-  isDark && 'text-orange-400'
-      ),
+      microAccent: cn('font-semibold text-orange-500', isDark && 'text-orange-400'),
 
       helperLine: cn('mt-3 text-xs sm:text-sm leading-relaxed', isDark ? 'text-white/65' : 'text-foreground/65'),
     };
@@ -128,25 +119,17 @@ export default function LandingFinalCTA({
             </p>
 
             <div className={styles.actions}>
-              {onSearchClick ? (
-                <Button type="button" className={styles.primaryBtn} onClick={onSearchClick}>
+              <Button asChild className={styles.primaryBtn}>
+                <Link href={searchHref} prefetch>
                   {t('landing:finalCta.primaryCta', 'Почати пошук житла')}
-                </Button>
-              ) : (
-                <Button asChild className={styles.primaryBtn}>
-                  <a href={searchHref}>{t('landing:finalCta.primaryCta', 'Почати пошук житла')}</a>
-                </Button>
-              )}
+                </Link>
+              </Button>
 
-              {onHelpClick ? (
-                <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={onHelpClick}>
+              <Button asChild variant="outline" className={styles.secondaryBtn}>
+                <Link href={helpHref} prefetch>
                   {t('landing:finalCta.secondaryCta', 'Отримати допомогу')}
-                </Button>
-              ) : (
-                <Button asChild variant="outline" className={styles.secondaryBtn}>
-                  <a href={helpHref}>{t('landing:finalCta.secondaryCta', 'Отримати допомогу')}</a>
-                </Button>
-              )}
+                </Link>
+              </Button>
             </div>
 
             <div className={styles.microcopy}>

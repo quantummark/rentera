@@ -1,6 +1,16 @@
 {
   "title": "Please sign in",
-  "description": "To fully use the platform, please sign in — all features will become available.",
-  "magicTitle": "Rental magic is on 🔮",
-  "magicText": "No agents allowed — their spells are too tricky. Only owners and renters with pure hearts! Try to sneak in and we’ll turn your account into a cat 🐱… kidding, but the magic is watching!"
+  "description": "We’re glad to see you again! To fully use the platform, please sign in — all features will become available. If you’re new here, registration takes just a few clicks.",
+
+  "magicTitle": "The magic of direct renting is active",
+
+  "magicTextPrefix": "Renterya is a space for honest renting. No agents. No schemes. No hidden fees.",
+
+  "magicTextMiddle": "The platform is designed exclusively for direct interaction between property owners and renters. If you represent an agency or act as an intermediary, this service is not intended for you.",
+
+  "magicTextSuffix": "We deliberately protect the Renterya community and reserve the right to",
+
+  "magicTextLink": "restrict or block accounts",
+
+  "magicTextAfterLink": "that violate the principles of direct renting."
 }

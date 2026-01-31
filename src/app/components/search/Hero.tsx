@@ -1,36 +1,54 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import SearchIntro from './SearchIntro';
 import SearchCard from './SearchCard';
 import { cn } from '@/lib/utils';
 
 export default function Hero() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   return (
-    <section className={cn('w-full px-1 sm:px-6 md:px-8')}>
+    <section className="w-full px-1 sm:px-6 md:px-8">
       <div
         className={cn(
-          'relative mx-auto w-full max-w-7xl overflow-hidden rounded-2xl',
-          // ВАЖНО: убрали min-h-screen и вертикальный центринг
+          'relative mx-auto w-full max-w-7xl overflow-hidden rounded-3xl',
           'py-10 sm:py-12 lg:py-12'
         )}
       >
-        {/* ===== Перформантный фон: мягкие видимые пятна ===== */}
+        {/* ===== ФОН ===== */}
         <div
-          className="absolute inset-0 -z-10"
+          className="absolute inset-0 -z-10 transition-colors duration-700"
           style={{
-            background: `
-              radial-gradient(50rem 50rem at 0% 10%,   rgba(255,120,60,0.55), transparent 65%),
-              radial-gradient(60rem 60rem at 100% 90%, rgba(110,80,255,0.52), transparent 70%),
-              radial-gradient(42rem 42rem at 55% 45%,  rgba(60,200,255,0.38), transparent 65%),
-              radial-gradient(55rem 35rem at 50% -5%,  rgba(255,255,255,0.14), transparent 70%),
-              linear-gradient(180deg, rgba(5,8,15,1) 0%, rgba(10,14,25,1) 40%, rgba(15,18,30,1) 100%)
-              center / cover no-repeat
-            `,
+            background: isDark
+              ? `
+                radial-gradient(60rem 45rem at 10% 15%, rgba(255,140,80,0.35), transparent 70%),
+                radial-gradient(55rem 55rem at 90% 30%, rgba(120,100,255,0.32), transparent 70%),
+                radial-gradient(45rem 45rem at 50% 85%, rgba(80,200,255,0.22), transparent 70%),
+                linear-gradient(
+                  180deg,
+                  rgba(10,12,20,1) 0%,
+                  rgba(16,20,32,1) 50%,
+                  rgba(18,22,36,1) 100%
+                )
+              `
+              : `
+                radial-gradient(60rem 45rem at 10% 20%, rgba(255,190,150,0.45), transparent 70%),
+                radial-gradient(55rem 55rem at 90% 25%, rgba(180,210,255,0.45), transparent 70%),
+                radial-gradient(45rem 45rem at 50% 80%, rgba(220,190,255,0.35), transparent 70%),
+                linear-gradient(
+                  180deg,
+                  #ffffff 0%,
+                  #f7f9fc 60%,
+                  #f3f6fb 100%
+                )
+              `,
           }}
         />
 
-        {/* ===== Контент ===== */}
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-1 sm:px-6 md:px-10 text-center text-white">
+        {/* ===== КОНТЕНТ ===== */}
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-3 sm:px-6 md:px-10 text-center">
           <SearchIntro />
 
           <div className="mt-8 sm:mt-10">

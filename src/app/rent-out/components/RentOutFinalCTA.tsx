@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type RentOutFinalCTAProps = {
   className?: string;
@@ -17,9 +18,6 @@ type RentOutFinalCTAProps = {
 
   /** Куди вести за допомогою (підтримка/чат/контакти). */
   helpHref?: string;
-
-  onPrimaryClick?: () => void;
-  onHelpClick?: () => void;
 };
 
 export default function RentOutFinalCTA({
@@ -27,8 +25,6 @@ export default function RentOutFinalCTA({
   sectionId = 'rent-out-final-cta',
   primaryHref = '/login',
   helpHref = '/support/help',
-  onPrimaryClick,
-  onHelpClick,
 }: RentOutFinalCTAProps) {
   const { t } = useTranslation(['rentOut']);
   const { theme } = useTheme();
@@ -122,26 +118,18 @@ export default function RentOutFinalCTA({
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-              {onPrimaryClick ? (
-                <Button type="button" className={styles.primaryBtn} onClick={onPrimaryClick}>
-                  {t('rentOut:finalCta.primaryCta', 'Створити профіль')}
-                </Button>
-              ) : (
-                <Button asChild className={styles.primaryBtn}>
-                  <a href={primaryHref}>{t('rentOut:finalCta.primaryCta', 'Створити профіль')}</a>
-                </Button>
-              )}
+  <Button asChild className={styles.primaryBtn}>
+    <Link href={primaryHref} prefetch>
+      {t('rentOut:finalCta.primaryCta', 'Створити профіль')}
+    </Link>
+  </Button>
 
-              {onHelpClick ? (
-                <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={onHelpClick}>
-                  {t('rentOut:finalCta.secondaryCta', 'Отримати допомогу')}
-                </Button>
-              ) : (
-                <Button asChild variant="outline" className={styles.secondaryBtn}>
-                  <a href={helpHref}>{t('rentOut:finalCta.secondaryCta', 'Отримати допомогу')}</a>
-                </Button>
-              )}
-            </div>
+  <Button asChild variant="outline" className={styles.secondaryBtn}>
+    <Link href={helpHref} prefetch>
+      {t('rentOut:finalCta.secondaryCta', 'Отримати допомогу')}
+    </Link>
+  </Button>
+</div>
 
             <div className={styles.microcopy}>
               {t(

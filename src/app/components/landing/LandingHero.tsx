@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type LandingHeroProps = {
   className?: string;
@@ -17,9 +18,6 @@ type LandingHeroProps = {
 
   /** Куди вести власника */
   ownerHref?: string;
-
-  onSearchClick?: () => void;
-  onOwnerClick?: () => void;
 };
 
 export default function LandingHero({
@@ -27,8 +25,6 @@ export default function LandingHero({
   sectionId = 'landing-hero',
   searchHref = '/search',
   ownerHref = '/rent-out',
-  onSearchClick,
-  onOwnerClick,
 }: LandingHeroProps) {
   const { t } = useTranslation(['landing']);
   const { theme } = useTheme();
@@ -44,12 +40,9 @@ export default function LandingHero({
       wrap: cn('px-1 sm:px-3', className),
       section: cn('relative overflow-hidden rounded-3xl border', sectionBg),
 
-      // “lifestyle” ощущение без реальной картинки: мягкие световые пятна + легкий шум/точки
       gridDots: cn(
         'pointer-events-none absolute inset-0 opacity-[0.06]',
-        isDark
-          ? 'bg-[radial-gradient(#fff_1px,transparent_1px)]'
-          : 'bg-[radial-gradient(#000_1px,transparent_1px)]',
+        isDark ? 'bg-[radial-gradient(#fff_1px,transparent_1px)]' : 'bg-[radial-gradient(#000_1px,transparent_1px)]',
         'bg-[length:18px_18px]'
       ),
       glow1: cn(
@@ -67,7 +60,6 @@ export default function LandingHero({
           : 'bg-[radial-gradient(1200px_420px_at_30%_0%,rgba(0,0,0,0.06),transparent_65%)]'
       ),
 
-      // Glass container
       inner: cn(
         'relative mx-auto max-w-5xl rounded-3xl border p-5 sm:p-8 md:p-10',
         isDark ? 'bg-white/5 border-white/10' : 'bg-black/[0.03] border-black/10'
@@ -84,30 +76,25 @@ export default function LandingHero({
 
       title: cn('mt-4 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight', titleText),
       titleGradient: cn(
-  'bg-clip-text text-transparent',
-  isDark
-    ? 'bg-gradient-to-r from-orange-200 to-orange-400'
-    : 'bg-gradient-to-r from-orange-400 to-orange-600'
-),
+        'bg-clip-text text-transparent',
+        isDark ? 'bg-gradient-to-r from-orange-200 to-orange-400' : 'bg-gradient-to-r from-orange-400 to-orange-600'
+      ),
       subtitle: cn('mt-4 text-base sm:text-lg leading-relaxed', softText),
 
       actions: 'mt-6 flex flex-col sm:flex-row gap-3 sm:items-center',
       primaryBtn: cn(
-  'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold transition-all',
-  isDark
-    ? 'bg-orange-500 text-white hover:bg-orange-400 shadow-[0_8px_30px_rgba(249,115,22,0.35)]'
-    : 'bg-orange-500 text-white hover:bg-orange-600 shadow-[0_8px_30px_rgba(249,115,22,0.25)]'
-),
+        'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold transition-all',
+        isDark
+          ? 'bg-orange-500 text-white hover:bg-orange-400 shadow-[0_8px_30px_rgba(249,115,22,0.35)]'
+          : 'bg-orange-500 text-white hover:bg-orange-600 shadow-[0_8px_30px_rgba(249,115,22,0.25)]'
+      ),
       secondaryBtn: cn(
         'rounded-2xl px-5 py-5 sm:py-6 text-sm sm:text-base font-semibold border',
         isDark ? 'border-white/20 text-white hover:bg-white/5' : 'border-black/15 text-foreground hover:bg-black/5'
       ),
 
       microcopy: cn('mt-3 text-xs sm:text-sm leading-relaxed', isDark ? 'text-white/60' : 'text-foreground/60'),
-      microcopyAccent: cn(
-  'font-semibold text-orange-500',
-  isDark && 'text-orange-400'
-),
+      microcopyAccent: cn('font-semibold text-orange-500', isDark && 'text-orange-400'),
     };
   }, [className, isDark]);
 
@@ -147,31 +134,25 @@ export default function LandingHero({
             </p>
 
             <div className={styles.actions}>
-              {onSearchClick ? (
-                <Button type="button" className={styles.primaryBtn} onClick={onSearchClick}>
+              <Button asChild className={styles.primaryBtn}>
+                <Link href={searchHref} prefetch>
                   {t('landing:hero.primaryCta', 'Почати пошук житла')}
-                </Button>
-              ) : (
-                <Button asChild className={styles.primaryBtn}>
-                  <a href={searchHref}>{t('landing:hero.primaryCta', 'Почати пошук житла')}</a>
-                </Button>
-              )}
+                </Link>
+              </Button>
 
-              {onOwnerClick ? (
-                <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={onOwnerClick}>
+              <Button asChild variant="outline" className={styles.secondaryBtn}>
+                <Link href={ownerHref} prefetch>
                   {t('landing:hero.secondaryCta', 'Я власник житла')}
-                </Button>
-              ) : (
-                <Button asChild variant="outline" className={styles.secondaryBtn}>
-                  <a href={ownerHref}>{t('landing:hero.secondaryCta', 'Я власник житла')}</a>
-                </Button>
-              )}
+                </Link>
+              </Button>
             </div>
 
             <div className={styles.microcopy}>
               <span className={styles.microcopyAccent}>{t('landing:hero.microcopyFree', 'Безкоштовно')}</span>
               {t('landing:hero.microcopySep1', ' • ')}
-              <span className={styles.microcopyAccent}>{t('landing:hero.microcopyNoMediators', 'Без посередників')}</span>
+              <span className={styles.microcopyAccent}>
+                {t('landing:hero.microcopyNoMediators', 'Без посередників')}
+              </span>
               {t('landing:hero.microcopySep2', ' • ')}
               <span className={styles.microcopyAccent}>{t('landing:hero.microcopyNoStress', 'Без зайвого стресу')}</span>
             </div>

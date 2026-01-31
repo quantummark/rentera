@@ -7,13 +7,13 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type LandingForOwnersProps = {
   className?: string;
   sectionId?: string;
 
   ownerHref?: string;
-  onOwnerClick?: () => void;
 };
 
 type BulletItem = {
@@ -25,7 +25,6 @@ export default function LandingForOwners({
   className,
   sectionId = 'landing-for-owners',
   ownerHref = '/rent-out',
-  onOwnerClick,
 }: LandingForOwnersProps) {
   const { t } = useTranslation(['landing']);
   const { theme } = useTheme();
@@ -156,17 +155,13 @@ export default function LandingForOwners({
                 ))}
               </div>
 
-              <div className={styles.actions}>
-                {onOwnerClick ? (
-                  <Button type="button" className={styles.primaryBtn} onClick={onOwnerClick}>
-                    {t('landing:forOwners.cta', 'Перейти для власників')}
-                  </Button>
-                ) : (
-                  <Button asChild className={styles.primaryBtn}>
-                    <a href={ownerHref}>{t('landing:forOwners.cta', 'Перейти для власників')}</a>
-                  </Button>
-                )}
-              </div>
+                <div className={styles.actions}>
+  <Button asChild className={styles.primaryBtn}>
+    <Link href={ownerHref} prefetch>
+      {t('landing:forOwners.cta', 'Перейти для власників')}
+    </Link>
+  </Button>
+</div>
 
               <div className={styles.microcopy}>
                 <span className={styles.microAccent}>

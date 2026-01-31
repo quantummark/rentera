@@ -14,10 +14,10 @@ export default function SearchIntro() {
     >
       <h1
         className={cn(
-          'text-3xl sm:text-3xl font-bold tracking-tight leading-tight',
-          'bg-gradient-to-r from-white via-orange-400 to-pink-500',
-          'bg-clip-text text-transparent select-none'
-        )}
+  'text-3xl sm:text-3xl font-bold tracking-tight leading-tight',
+  'bg-gradient-to-r from-orange-300 via-amber-400 to-orange-400',
+  'bg-clip-text text-transparent select-none'
+)}
       >
         {t('hero.title')}
       </h1>

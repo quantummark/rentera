@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type RentOutHeroProps = {
   className?: string;
@@ -19,19 +20,12 @@ type RentOutHeroProps = {
   /** Куди вести за допомогою (підтримка/чат/контакти). */
   helpHref?: string;
   /** Дозволяє підмінити поведінку кнопок, якщо треба */
-  onPrimaryClick?: () => void;
-  onSecondaryClick?: () => void;
-  onHelpClick?: () => void;
 };
 
 export default function RentOutHero({
   className,
   primaryHref = '/login',
-  secondaryScrollId = 'rent-out-how-it-works',
   helpHref = '/support/help',
-  onPrimaryClick,
-  onSecondaryClick,
-  onHelpClick,
 }: RentOutHeroProps) {
   const { t } = useTranslation(['rentOut']);
   const { theme } = useTheme();
@@ -82,16 +76,6 @@ export default function RentOutHero({
     };
   }, [isDark]);
 
-  const handleSecondary = (): void => {
-    if (onSecondaryClick) {
-      onSecondaryClick();
-      return;
-    }
-
-    const el = document.getElementById(secondaryScrollId);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   return (
     <section className={cn('px-1 sm:px-3', className)}>
       <div className={cn(styles.section, 'p-5 sm:p-8 md:p-10')}>
@@ -128,25 +112,18 @@ export default function RentOutHero({
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-              {onPrimaryClick ? (
-                <Button type="button" className={styles.primaryBtn} onClick={onPrimaryClick}>
-                  {t('rentOut:hero.primaryCta', 'Створити профіль власника')}
-                </Button>
-              ) : (
-                <Button asChild className={styles.primaryBtn}>
-                  <a href={primaryHref}>{t('rentOut:hero.primaryCta', 'Створити профіль власника')}</a>
-                </Button>
-              )}
-              {onHelpClick ? (
-                <Button type="button" variant="outline" className={styles.secondaryBtn} onClick={onHelpClick}>
-                  {t('rentOut:hero.secondaryCta', 'Дізнатися більше')}
-                </Button>
-              ) : (
-                <Button asChild variant="outline" className={styles.secondaryBtn}>
-                  <a href={helpHref}>{t('rentOut:hero.secondaryCta', 'Дізнатися більше')}</a>
-                </Button>
-              )}
-            </div>
+  <Button asChild className={styles.primaryBtn}>
+    <Link href={primaryHref} prefetch>
+      {t('rentOut:hero.primaryCta', 'Створити профіль власника')}
+    </Link>
+  </Button>
+
+  <Button asChild variant="outline" className={styles.secondaryBtn}>
+    <Link href={helpHref} prefetch>
+      {t('rentOut:hero.secondaryCta', 'Дізнатися більше')}
+    </Link>
+  </Button>
+</div>
 
             <p className={cn('mt-3', styles.microcopy)}>
               {t('rentOut:hero.microcopy', 'Реєстрація безкоштовна • Без зобовʼязань • Лише кілька хвилин')}

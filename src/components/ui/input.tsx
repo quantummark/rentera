@@ -1,21 +1,51 @@
-import * as React from "react"
+'use client';
 
-import { cn } from "@/lib/utils"
+import * as React from 'react';
+import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+type InputVariant = 'default' | 'pill';
+
+interface InputProps extends React.ComponentProps<'input'> {
+  variant?: InputVariant;
+}
+
+function Input({ className, type, variant = 'default', ...props }: InputProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const base =
+    'flex w-full min-w-0 bg-transparent outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50';
+
+  const defaultStyles = cn(
+    'h-9 rounded-md border px-3 py-1',
+    'text-base md:text-sm',
+    'shadow-xs transition-[color,box-shadow,border-color,background-color]',
+    isDark
+      ? 'border-white/15 bg-white/5 text-white placeholder:text-white/45'
+      : 'border-slate-200 bg-white/70 text-slate-900 placeholder:text-slate-500',
+    'focus-visible:ring-2 focus-visible:ring-orange-400/25 focus-visible:border-orange-300/40'
+  );
+
+  const pillStyles = cn(
+    'h-12 rounded-full border px-5',
+    'text-base md:text-base',
+    'backdrop-blur-md',
+    'shadow-sm transition-[color,box-shadow,border-color,background-color]',
+    isDark
+      ? 'border-white/15 bg-white/8 text-white placeholder:text-white/45 hover:bg-white/10'
+      : 'border-slate-200 bg-white/70 text-slate-900 placeholder:text-slate-500 hover:bg-white',
+    'focus-visible:ring-2 focus-visible:ring-orange-400/30 focus-visible:border-orange-300/45'
+  );
+
   return (
     <input
       type={type}
       data-slot="input"
-      className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-        className
-      )}
+      className={cn(base, variant === 'pill' ? pillStyles : defaultStyles, className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Input }
+export { Input };
