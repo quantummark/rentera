@@ -209,104 +209,125 @@ export default function SearchCard() {
       </div>
 
       {/* Main pills row */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Home className="w-4 h-4 text-orange-500" />
-          <span className="text-base text-muted-foreground">{t('search:type')}</span>
-        </div>
+<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+  {/* Type pair */}
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <Home className="w-4 h-4 text-orange-500" />
+      <span className="text-base text-muted-foreground">{t('search:type')}</span>
+    </div>
 
-        <CustomSelect
-          value={type}
-          onChange={setType}
-          placeholder={t('search:type')}
-          options={[
-            { value: 'apartment', label: t('types:apartment') },
-            { value: 'house', label: t('types:house') },
-            { value: 'room', label: t('types:room') },
-            { value: 'studio', label: t('types:studio') },
-            { value: 'villa', label: t('types:villa') },
-            { value: 'townhouse', label: t('types:townhouse') },
-            { value: 'penthouse', label: t('types:penthouse') },
-            { value: 'loft', label: t('types:loft') },
-            { value: 'duplex', label: t('types:duplex') },
-            { value: 'cottage', label: t('types:cottage') },
-            { value: 'apartmentSuite', label: t('types:apartmentSuite') },
-          ]}
-        />
+    <CustomSelect
+      value={type}
+      onChange={setType}
+      placeholder={t('search:type')}
+      options={[
+        { value: 'apartment', label: t('types:apartment') },
+        { value: 'house', label: t('types:house') },
+        { value: 'room', label: t('types:room') },
+        { value: 'studio', label: t('types:studio') },
+        { value: 'villa', label: t('types:villa') },
+        { value: 'townhouse', label: t('types:townhouse') },
+        { value: 'penthouse', label: t('types:penthouse') },
+        { value: 'loft', label: t('types:loft') },
+        { value: 'duplex', label: t('types:duplex') },
+        { value: 'cottage', label: t('types:cottage') },
+        { value: 'apartmentSuite', label: t('types:apartmentSuite') },
+      ]}
+    />
+  </div>
 
-        <div className="flex items-center gap-2 ml-1">
-          <DoorOpen className="w-4 h-4 text-orange-500" />
-          <span className="text-base text-muted-foreground">{t('search:rooms')}</span>
-        </div>
+  {/* Rooms pair */}
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <DoorOpen className="w-4 h-4 text-orange-500" />
+      <span className="text-base text-muted-foreground">{t('search:rooms')}</span>
+    </div>
 
-        <CustomSelect
-          value={rooms}
-          onChange={(v) => setRooms(v as RoomsValue)}
-          placeholder={t('search:rooms')}
-          options={[
-            { value: '1', label: '1' },
-            { value: '2', label: '2' },
-            { value: '3', label: '3' },
-            { value: '4', label: '4' },
-            { value: '5', label: '5+' },
-          ]}
-        />
-      </div>
+    <CustomSelect
+      value={rooms}
+      onChange={(v) => setRooms(v as RoomsValue)}
+      placeholder={t('search:rooms')}
+      options={[
+        { value: '1', label: '1' },
+        { value: '2', label: '2' },
+        { value: '3', label: '3' },
+        { value: '4', label: '4' },
+        { value: '5', label: '5+' },
+      ]}
+    />
+  </div>
+</div>
     </div>
 
     {/* ===== Secondary pills: insurance/payment/currency ===== */}
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-2">
-        <ShieldCheck className="w-4 h-4 text-orange-500" />
-        <span className="text-base text-muted-foreground">{t('search:insurance')}</span>
-      </div>
-
-      <CustomSelect
-        value={insurance}
-        onChange={(v) => setInsurance(v as YesNo)}
-        placeholder={t('search:insurance')}
-        options={[
-          { value: 'yes', label: t('common:yes') },
-          { value: 'no', label: t('common:no') },
-        ]}
-      />
-
-      <div className="flex items-center gap-2 ml-1">
-        <CreditCard className="w-4 h-4 text-orange-500" />
-        <span className="text-base text-muted-foreground">{t('search:payment')}</span>
-      </div>
-
-      <CustomSelect
-        value={payment}
-        onChange={setPayment}
-        placeholder={t('search:payment')}
-        options={[
-          { value: 'card', label: t('payment:card') },
-          { value: 'cash', label: t('payment:cash') },
-          { value: 'crypto', label: t('payment:crypto') },
-        ]}
-      />
-
-      <div className="flex items-center gap-2 ml-1">
-        <DollarSign className="w-4 h-4 text-orange-500" />
-        <span className="text-base text-muted-foreground">{t('search:currency')}</span>
-      </div>
-
-      <CustomSelect
-        value={currency}
-        onChange={(v) => setCurrency(v as CurrencyUi)}
-        placeholder={t('search:currency')}
-        options={[
-          { value: 'usd', label: 'USD' },
-          { value: 'eur', label: 'EUR' },
-          { value: 'uah', label: 'UAH' },
-          { value: 'btc', label: 'BTC' },
-          { value: 'eth', label: 'ETH' },
-          { value: 'usdt', label: 'USDT' },
-          { value: 'solana', label: 'SOL' },
-        ]}
-      />
+<div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+  {/* Insurance pair */}
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <ShieldCheck className="w-4 h-4 text-orange-500" />
+      <span className="text-base text-muted-foreground">
+        {t('search:insurance')}
+      </span>
     </div>
+
+    <CustomSelect
+      value={insurance}
+      onChange={(v) => setInsurance(v as YesNo)}
+      placeholder={t('search:insurance')}
+      options={[
+        { value: 'yes', label: t('common:yes') },
+        { value: 'no', label: t('common:no') },
+      ]}
+    />
+  </div>
+
+  {/* Payment pair */}
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <CreditCard className="w-4 h-4 text-orange-500" />
+      <span className="text-base text-muted-foreground">
+        {t('search:payment')}
+      </span>
+    </div>
+
+    <CustomSelect
+      value={payment}
+      onChange={setPayment}
+      placeholder={t('search:payment')}
+      options={[
+        { value: 'card', label: t('payment:card') },
+        { value: 'cash', label: t('payment:cash') },
+        { value: 'crypto', label: t('payment:crypto') },
+      ]}
+    />
+  </div>
+
+  {/* Currency pair */}
+  <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <DollarSign className="w-4 h-4 text-orange-500" />
+      <span className="text-base text-muted-foreground">
+        {t('search:currency')}
+      </span>
+    </div>
+
+    <CustomSelect
+      value={currency}
+      onChange={(v) => setCurrency(v as CurrencyUi)}
+      placeholder={t('search:currency')}
+      options={[
+        { value: 'usd', label: 'USD' },
+        { value: 'eur', label: 'EUR' },
+        { value: 'uah', label: 'UAH' },
+        { value: 'btc', label: 'BTC' },
+        { value: 'eth', label: 'ETH' },
+        { value: 'usdt', label: 'USDT' },
+        { value: 'solana', label: 'SOL' },
+      ]}
+    />
+  </div>
+</div>
 
     {/* ===== Budget + rules ===== */}
 <div className="flex flex-col gap-6 md:flex-row md:items-center">
