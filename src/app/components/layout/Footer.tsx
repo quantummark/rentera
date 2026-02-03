@@ -151,18 +151,27 @@ export default function Footer() {
             <div className="flex flex-col justify-between">
               <div>
                 <Link
-                  href="/"
-                  className={cn(
-                    'inline-flex items-center gap-2',
-                    'text-xl font-bold tracking-[0.18em]',
-                    'text-foreground'
-                  )}
-                >
-                  <span className="relative">
-                    RENTERYA
-                    <span aria-hidden className="absolute -bottom-1 left-0 h-px w-full bg-orange-500/60" />
-                  </span>
-                </Link>
+  href="/"
+  className={cn(
+  'group relative text-xl md:text-2xl font-semibold tracking-[0.04em]',
+  'text-foreground transition-colors duration-300 hover:text-orange-500'
+)}
+>
+  <span className="relative inline-block">
+    Renterya
+
+    <span
+      aria-hidden
+      className={cn(
+        'absolute -bottom-1 left-1/2 h-px',
+        'w-[70%] -translate-x-1/2',        // 70% ширины, центрировано
+        'bg-orange-500/80',
+        'transition-all duration-300 ease-out',
+        'group-hover:w-full'               // плавно до 100%
+      )}
+    />
+  </span>
+</Link>
 
                 <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
                   {t('footer:slogan')}

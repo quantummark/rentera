@@ -49,7 +49,7 @@
       },
       "4": {
         "title": "Sign the online contract",
-        "desc": "When everything is agreed — sign the contract online directly on the platform."
+        "desc": "When everything is agreed and you have checked the housing — sign the contract online directly on the platform."
       },
       "5": {
         "title": "Pay conveniently",
@@ -81,7 +81,7 @@
       },
       "3": {
         "title": "Online contract — not later, but immediately",
-        "desc": "Once everything is agreed, signing happens online directly on the platform."
+        "desc": "Once everything is agreed and you have checked the housing, signing happens online directly on the platform."
       },
       "4": {
         "title": "Payments — simple and regular",
@@ -147,7 +147,7 @@
       },
       "3": {
         "title": "Real stories and cases",
-        "desc": "Others’ experience helps avoid mistakes and make decisions with more confidence."
+        "desc": "Read stories from other renters — their successes, mistakes, and useful life hacks."
       },
       "4": {
         "title": "Share your story",
@@ -155,7 +155,7 @@
       },
       "5": {
         "title": "Find a roommate",
-        "desc": "An option to find someone for shared renting — to split costs and live together."
+        "desc": "Find a person for shared living through the community — reliable and with similar interests."
       },
       "6": {
         "title": "Local recommendations",
@@ -170,7 +170,7 @@
 
   "forOwners": {
     "title": "Renting out property? A dedicated space for owners",
-    "subtitle": "We created a separate page for owners with all rental tools, property protection, and an online process from the first request to payment.",
+    "subtitle": "Renterya helps owners efficiently manage rentals: from property protection to online contracts and regular payments.",
     "bullets": {
       "1": "No intermediaries — direct contact with the renter",
       "2": "Property protection instead of a large deposit",
@@ -186,7 +186,7 @@
     "micro3": "No hidden conditions",
     "preview": {
       "title": "Owner page",
-      "text": "Everything in one place: property protection, renter profile, contract, payments, and community.",
+      "text": "Manage your listings, contracts, and payments in one convenient place.",
       "pill1": "Protection",
       "pill2": "Contract",
       "pill3": "Payments",

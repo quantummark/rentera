@@ -1,6 +1,12 @@
 {
-  "title": "Renting out or looking to rent?",
-  "subtitle": "Join Renterya — create a renter profile or register as a property owner.",
+  "title": "Renting out a place? Or looking to rent?",
+  "subtitle": "Join Renterya — create a renter profile or sign up as an owner.",
   "owner": "Create owner profile",
-  "renter": "Create renter profile"
+  "renter": "Create renter profile",
+  "micro": "Takes less than a minute — and unlocks the full platform experience.",
+  "chips": {
+    "noAgents": "No agents",
+    "onlineContract": "Online contract",
+    "oneClickPayments": "One-click payments"
+  }
 }
