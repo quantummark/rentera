@@ -312,7 +312,7 @@ export default function CommunityPostComposer({
     effectiveTopic === null;
 
   const shellClass = cn(
-  'relative rounded-2xl md:rounded-3xl border border-border/60',
+  'relative rounded-2xl md:rounded-3xl border border-gray-300 dark:border-gray-300',
   'bg-background/60 backdrop-blur-xl',
   'shadow-[0_10px_30px_-20px_rgba(0,0,0,0.35)]',
   'px-4 sm:px-5 md:px-6 py-4 sm:py-5 md:py-6',
@@ -323,20 +323,20 @@ export default function CommunityPostComposer({
     'bg-[radial-gradient(700px_circle_at_15%_20%,rgba(249,115,22,0.10),transparent_55%),radial-gradient(700px_circle_at_85%_25%,rgba(255,255,255,0.06),transparent_60%)]';
 
   const pillClass = cn(
-    'inline-flex items-center gap-2 rounded-full border border-border/60',
+    'inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-gray-300',
     'bg-background/40 px-3 py-1.5 text-xs sm:text-sm text-foreground/90',
     'backdrop-blur-md',
   );
 
   const inputClass = cn(
-    'w-full rounded-full border border-border/60 bg-background/40 px-3 py-1.5',
+    'w-full rounded-full border border-gray-300 dark:border-gray-300 bg-background/40 px-3 py-1.5',
     'text-xs sm:text-sm text-foreground placeholder:text-muted-foreground',
     'backdrop-blur-md',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
   );
 
   const textareaClass = cn(
-    'w-full resize-none rounded-2xl border border-border/60 bg-background/40',
+    'w-full resize-none rounded-2xl border border-gray-300 dark:border-gray-300 bg-background/40',
     'px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base text-foreground placeholder:text-muted-foreground',
     'backdrop-blur-md',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
@@ -429,7 +429,7 @@ export default function CommunityPostComposer({
                 <div
                   key={item.previewUrl}
                   className={cn(
-                    'relative overflow-hidden rounded-xl border border-border/60',
+                    'relative overflow-hidden rounded-xl border border-gray-300 dark:border-gray-300',
                     'bg-background/30 backdrop-blur-md',
                   )}
                 >
@@ -442,7 +442,7 @@ export default function CommunityPostComposer({
                     />
                   ) : (
                     <div className="flex h-24 w-full items-center justify-center sm:h-28">
-                      <span className="rounded-full border border-border/60 bg-background/40 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-md">
+                      <span className="rounded-full border border-gray-300 dark:border-gray-300 bg-background/40 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-md">
                         {t('community:composer.video')}
                       </span>
                     </div>
@@ -472,7 +472,7 @@ export default function CommunityPostComposer({
                 type="button"
                 onClick={handleMediaButtonClick}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-full border border-border/60',
+                  'inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-gray-300',
                   'bg-background/40 px-3 py-1.5 text-xs sm:text-sm text-foreground',
                   'backdrop-blur-md shadow-sm hover:bg-foreground/5 transition-colors',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
@@ -523,7 +523,7 @@ export default function CommunityPostComposer({
                 {!isAuthed && !loadingUser && (
                   <div
                     className={cn(
-                      'inline-flex items-center gap-2 rounded-xl border border-border/60',
+                      'inline-flex items-center gap-2 rounded-xl border border-gray-300 dark:border-gray-300',
                       'bg-background/40 px-3 py-2 text-xs text-muted-foreground',
                       'backdrop-blur-md',
                     )}

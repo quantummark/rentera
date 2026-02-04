@@ -7,10 +7,16 @@
     "badgeRealStories": "Real rental stories",
     "badgeTrustedCommunity": "Trusted community",
     "badgeOwnersRenters": "Owners and renters together",
+    "helperLine": "Start with your first post — ask a question, share your experience, or find advice.",
     "stats": {
       "members": "Members",
       "posts": "Posts",
       "trustScore": "Trust score"
+    },
+    "chips": {
+      "realStories": "Real rental stories",
+      "trustedCommunity": "Trusted community",
+      "ownersRenters": "Owners and renters together"
     }
   },
 

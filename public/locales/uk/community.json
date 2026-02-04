@@ -7,10 +7,16 @@
     "badgeRealStories": "Реальні історії оренди",
     "badgeTrustedCommunity": "Спільнота довіри",
     "badgeOwnersRenters": "Власники та орендарі разом",
+    "helperLine": "Почніть з першого посту — запитайте, поділіться або знайдіть поради.",
     "stats": {
       "members": "Учасники",
       "posts": "Пости",
       "trustScore": "Рейтинг довіри"
+    },
+    "chips": {
+      "realStories": "Реальні історії оренди",
+      "trustedCommunity": "Спільнота довіри",
+      "ownersRenters": "Власники та орендарі разом"
     }
   },
 

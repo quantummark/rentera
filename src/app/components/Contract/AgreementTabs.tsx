@@ -26,7 +26,7 @@ export default function AgreementTabs({ agreementId }: AgreementTabsProps) {
   if (!agreement) return <div>{t('contracts:notFound')}</div>;
 
   return (
-    <div className="w-full px-4 mx-auto">
+    <div className="w-full px-1 mx-auto">
   {/* На мобилках max-w-full, с >sm — max-w-6xl */}
   <div className="w-full max-w-full sm:max-w-6xl mx-auto">
     <Tabs
