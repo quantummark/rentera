@@ -111,9 +111,9 @@ export default function RentOutProtection({
       bigNumber: cn(
         'text-4xl sm:text-5xl font-bold tracking-tight',
         'bg-clip-text text-transparent',
-        isDark
-          ? 'bg-gradient-to-r from-orange-300 via-yellow-200 to-orange-400'
-          : 'bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500'
+  isDark
+    ? 'bg-gradient-to-r from-orange-200 to-orange-400'
+    : 'bg-gradient-to-r from-orange-400 to-orange-600'
       ),
       bigNumberLabel: cn('mt-2 text-sm sm:text-base leading-relaxed', softText),
 

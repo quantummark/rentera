@@ -47,12 +47,13 @@
       "p2": "The contract is concluded exclusively between the owner and the renter."
     },
     "payments": {
-      "title": "Payments and commission",
-      "p1": "Renterya may support online payments using bank cards and cryptocurrencies.",
-      "li1": "The Platform charges a service commission of 2.5%.",
-      "li2": "The commission may be changed with prior notice.",
-      "li3": "Renterya is not responsible for the operation of third-party payment services."
-    },
+  "title": "Payments and commission",
+  "p1": "Renterya supports online rental payments using bank cards and other available payment methods through third-party payment providers.",
+  "li1": "The platform applies a service commission of 5% for the owner and 5% for the renter when making online payments through the platform.",
+  "li2": "The commission applies only when online payments are made through Renterya.",
+  "li3": "Renterya reserves the right to change the commission amount with prior notification to users.",
+  "li4": "Renterya is not responsible for the operation of third-party payment services or any technical failures on their side."
+},
     "content": {
       "title": "User content",
       "p1": "The user bears full responsibility for the content they publish on the Platform.",

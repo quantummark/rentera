@@ -38,11 +38,11 @@
       "li6": "analytics and service improvement."
     },
     "payments": {
-      "title": "Payments",
-      "p1": "Renterya may support online payments via bank cards and/or cryptocurrencies through third-party payment services.",
-      "p2": "We do not store full bank card details. Payment data is processed by payment providers in accordance with their rules and policies.",
-      "p3": "The Platform may receive confirmation of payment success, amount, and technical transaction identifiers for status display and accounting purposes."
-    },
+  "title": "Payments",
+  "p1": "Renterya provides the ability to make online rental payments through third-party payment providers using bank cards and other available payment methods.",
+  "p2": "We do not store full bank card details or users’ payment data. Payment information is processed by payment providers in accordance with their privacy policies and security rules.",
+  "p3": "The platform may receive information about payment status, transaction amount, applied service commission, and technical transaction identifiers to display payment status, maintain records, and ensure service operation."
+},
     "sharing": {
       "title": "Data sharing with third parties",
       "p1": "We may share data only to the extent necessary for Platform operation in the following cases:",

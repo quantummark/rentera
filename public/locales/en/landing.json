@@ -2,7 +2,7 @@
   "hero": {
     "kicker": "Modern rental platform",
     "title": "Find housing without intermediaries — ",
-    "titleAccent": "easily and calmly",
+    "titleAccent": "easily and calmly, just as it should be",
     "subtitle": "Renterya combines direct communication, online contracts, and convenient payments in one modern platform.",
     "primaryCta": "Start housing search",
     "secondaryCta": "I am a property owner",
@@ -108,14 +108,15 @@
         }
       },
       "payments": {
-        "title": "Online payments",
-        "body": "Pay rent online — regularly and conveniently. Payment history is stored in your account.",
-        "bullets": {
-          "1": "recurring payments without reminders",
-          "2": "transparent payment history",
-          "3": "convenient and fast"
-        }
-      },
+  "title": "Online payments",
+  "body": "Pay rent online — regularly and conveniently. Payment history is stored in your account. <accent>5% commission</accent> applies only to online payments — it ensures payment security and user support.",
+  "bullets": {
+    "1": "recurring payments without reminders",
+    "2": "transparent payment history",
+    "3": "transaction control and security"
+  }
+},
+
       "protection": {
         "title": "Property protection",
         "body": "The option to move in without a large deposit — paying rent and a small monthly contribution to Renterya’s partner insurance fund.",
@@ -181,7 +182,7 @@
     "cta": "Go to owners section",
     "micro1": "Free registration",
     "sep1": " • ",
-    "micro2": "Only 2.5% fee on online payments",
+    "micro2": "Only 5% fee on online payments",
     "sep2": " • ",
     "micro3": "No hidden conditions",
     "preview": {

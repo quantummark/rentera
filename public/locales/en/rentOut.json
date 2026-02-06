@@ -97,7 +97,7 @@
         "desc": "Experience sharing, advice, and a live platform environment. Get support from other owners and find renters faster."
       },
       "8": {
-        "title": "Transparent 2.5% fee on online payments",
+        "title": "Transparent 5% fee on online payments",
         "desc": "No hidden fees. Renters pay no commission — you pay only for service and results when using online payments."
       }
     },
@@ -207,34 +207,34 @@
   },
 
   "pricing": {
-    "title": "Transparent fee with no hidden charges",
-    "subtitle": "Renterya is a completely free platform. We do not charge for registration, property listings, or platform usage.",
-    "main": {
-      "value": "2.5%",
-      "note": "The platform’s only fee applies solely to online payments — charged to the owner.",
-      "extra": "If rent is not paid online — no commission applies."
-    },
-    "tiles": {
-      "owner": {
-        "title": "For owner",
-        "value": "2.5% fee",
-        "note": "only on online payments"
-      },
-      "renter": {
-        "title": "For renter",
-        "value": "0% fee",
-        "note": "the renter pays only rent and a monthly insurance contribution (if protection is chosen)"
-      },
-      "free": {
-        "title": "Free",
-        "value": "₴0 for usage",
-        "note": "no subscriptions, plans, or hidden fees"
-      }
-    },
-    "footerPrefix": "You pay only when you receive ",
-    "footerAccent": "real payments",
-    "footerSuffix": " through Renterya."
+  "title": "Transparent commission — only for successful rentals",
+  "subtitle": "Renterya is a completely free platform to use. We do not charge for registration, property listings, or communication between users. The commission is charged only after a successful rental and online payment through the platform.",
+  "main": {
+    "value": "5% commission",
+    "note": "Platform commission applied to online rental payments.",
+    "extra": "No subscriptions, plans, or hidden fees. You pay only for service and results."
   },
+  "tiles": {
+    "owner": {
+      "title": "For owner",
+      "value": "Secure transaction",
+      "note": "The commission ensures support, protection, and safety at every stage of the rental — from communication to contract and payments."
+    },
+    "renter": {
+      "title": "For owner",
+      "value": "Convenient online payments",
+      "note": "Secure rental payments through the platform, automatic reminders, and full transaction history. You can manage your payments and stay confident about timely payments."
+    },
+    "free": {
+      "title": "Free",
+      "value": "₴0 for usage",
+      "note": "No subscriptions, plans, or hidden fees. You pay only after a successful rental through Renterya."
+    }
+  },
+  "footerPrefix": "Renterya is a transparent service for owners who want to rent out property in a modern way. ",
+  "footerAccent": "Our commission is an investment in security, convenience, and support that we provide at every stage of the rental process.",
+  "footerSuffix": "We believe modern renting should be simple, safe, and beneficial for all parties."
+},
 
   "finalCta": {
     "title": "Ready to start with ",

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 
@@ -177,7 +177,7 @@ export default function LandingDocumentsAndPayments({
                 </div>
 
                 <div className={styles.cardTitle}>{t(c.titleKey, c.titleFallback)}</div>
-                <div className={styles.cardBody}>{t(c.bodyKey, c.bodyFallback)}</div>
+                <div className={styles.cardBody}><Trans i18nKey={c.bodyKey} defaults={c.bodyFallback} components={{ accent: <span className={styles.footerAccent} /> }} /></div>
 
                 <div className={styles.bulletList}>
                   {c.bullets.map((b) => (

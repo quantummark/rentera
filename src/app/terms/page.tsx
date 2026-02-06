@@ -67,7 +67,7 @@ const SECTIONS: TermsSection[] = [
     titleKey: 'terms:sections.payments.title',
     blocks: [
       { type: 'p', key: 'terms:sections.payments.p1' },
-      { type: 'ul', keys: ['terms:sections.payments.li1', 'terms:sections.payments.li2', 'terms:sections.payments.li3'] }
+      { type: 'ul', keys: ['terms:sections.payments.li1', 'terms:sections.payments.li2', 'terms:sections.payments.li3', 'terms:sections.payments.li4'] }
     ]
   },
   {
